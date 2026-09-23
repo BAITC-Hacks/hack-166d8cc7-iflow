@@ -1,0 +1,227 @@
+/* Halyk Career Quest: an immersive route inside a calm workspace. */
+.journey-professional { color: #202c29; }
+.jp-kicker { display: block; font-size: 10px; font-weight: 550; letter-spacing: 1.6px; color: #72847c; }
+.jp-map { position: relative; isolation: isolate; overflow: hidden; border: 1px solid #245e4c; border-radius: 24px; color: #eefcf4; background: radial-gradient(ellipse at 86% 12%, #106758 0%, transparent 46%), radial-gradient(ellipse at 8% 82%, #14623c 0%, transparent 47%), #062c25; box-shadow: 0 20px 55px #003d2812; }
+.jp-atmosphere { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.jp-atmosphere::after { content: ''; position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 150 174' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M37.5 2 112.5 2 148 87 112.5 172 37.5 172 2 87Z' fill='none' stroke='%2398dbc0' stroke-opacity='.07'/%3E%3C/svg%3E"); background-size: 150px 174px; opacity: .6; mask-image: linear-gradient(120deg, transparent 10%, #000 90%); }
+.jp-aurora { position: absolute; height: 85%; width: 65%; border-radius: 50%; filter: blur(64px); opacity: .38; will-change: transform; }
+.jp-aurora-one { left: -30%; top: -19%; background: radial-gradient(ellipse, #64daa0, #05ac82 35%, transparent 68%); transform: rotate(-32deg); animation: jp-aurora-drift 18s ease-in-out infinite alternate; }
+.jp-aurora-two { right: -30%; bottom: -25%; background: radial-gradient(ellipse, #eac75e, #04bb96 32%, transparent 69%); animation: jp-aurora-drift 23s ease-in-out -6s infinite alternate-reverse; opacity: .26; }
+.jp-orbital { position: absolute; width: 900px; height: 900px; border: 1px solid #b7ebc911; border-radius: 50%; transform: rotate(-30deg) scaleX(.55); }
+.jp-orbital-one { top: -400px; left: 17%; }
+.jp-orbital-two { bottom: -440px; left: -23%; width: 1150px; height: 1150px; border-color: #ddc77415; }
+.jp-particle { position: absolute; width: var(--particle-size); height: var(--particle-size); border-radius: 50%; background: #d9fce5; opacity: .35; box-shadow: 0 0 8px #adf9c9; animation: jp-twinkle 5s ease-in-out var(--particle-delay) infinite alternate; }
+.jp-map-heading { display: flex; align-items: center; justify-content: space-between; padding: 23px 30px; border-bottom: 1px solid #c2f3df17; gap: 16px; background: #05302730; }
+.jp-map-brand { display: flex; align-items: center; gap: 10px; }
+.jp-brand-symbol { width: 35px; height: 35px; display: grid; place-items: center; color: #fae093; border: 1px solid #d9dfaa4a; border-radius: 10px; background: #e5d48c0b; }
+.jp-map-brand > span:last-child { font-size: 13px; font-weight: 600; letter-spacing: 1.6px; }
+.jp-map-brand b { padding-left: 9px; margin-left: 7px; border-left: 1px solid #9cbfad4d; color: #afccbd; font-size: 10px; font-weight: 450; letter-spacing: 1.3px; }
+.jp-map-tools { display: flex; align-items: center; gap: 19px; }
+.jp-map-tools > span { display: flex; align-items: center; gap: 7px; color: #c3e3d2; font-size: 12px; }
+.jp-motion-button { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 33px; padding: 7px 10px; border: 1px solid #bce5d126; border-radius: 7px; background: #ffffff07; color: #c4e6d7; font-size: 11px; }
+.jp-motion-button:hover { background: #ffffff16; }
+.jp-motion-button:disabled { opacity: .8; cursor: default; }
+.jp-map-stage { display: grid; grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr); }
+.jp-map-intro { padding: 57px 12px 39px 42px; min-width: 0; }
+.jp-hero-kicker { display: flex; align-items: center; gap: 8px; color: #bbe5cb; font-size: 10px; letter-spacing: 1.6px; line-height: 1.6; }
+.jp-hero-kicker i { width: 6px; height: 6px; border-radius: 50%; background: #e9cc7d; box-shadow: 0 0 15px #fbe18c80; flex-shrink: 0; }
+.jp-map-intro h1 { color: #f4fff7; font-size: clamp(37px, 3.7vw, 61px); line-height: 1.12; font-weight: 550; letter-spacing: -2.3px; margin: 26px 0 23px; }
+.jp-map-intro h1 > span { color: #e9cc7d; background: linear-gradient(110deg, #ffe8a4, #dfb94f 64%, #fbdf92); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.jp-hero-description { max-width: 350px; font-size: 15px; line-height: 1.85; color: #b8d4c7; }
+.jp-hero-actions { display: grid; justify-items: start; gap: 18px; margin-top: 31px; }
+.jp-hero-cta { display: inline-flex; align-items: center; justify-content: space-between; gap: 22px; min-height: 52px; padding: 15px 22px; border-radius: 9px; color: #12372a; font-size: 14px; font-weight: 550; background: linear-gradient(120deg, #ffe8a8, #e6c15e); box-shadow: 0 7px 24px #efc76d1f, inset 0 1px #ffefc4; transition: transform .2s, box-shadow .2s; }
+.jp-hero-cta:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 34px #f2cb6e38; }
+.jp-hero-link { display: flex; align-items: center; gap: 9px; color: #b9dcca; font-size: 12px; padding: 0; }
+.jp-hero-link:hover { color: #fff7dd; }
+.jp-photo-cluster { position: relative; width: min(100%, 350px); height: 225px; margin: 36px 0 22px; }
+.jp-photo-orbit { position: absolute; width: 265px; height: 185px; left: 28px; top: 12px; border: 1px solid #d1de982b; border-radius: 50%; transform: rotate(-25deg); }
+.jp-photo-orbit::before { content: ''; position: absolute; width: 8px; height: 8px; border-radius: 50%; background: #e7d289; right: 41px; top: 14px; box-shadow: 0 0 22px #e7d289; }
+.jp-photo-hex { position: absolute; padding: 2px; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%); background: linear-gradient(145deg, #e5d083aa, #80caaa23); animation: jp-photo-drift 9s ease-in-out infinite alternate; }
+.jp-photo-hex::after { content: ''; position: absolute; inset: 2px; clip-path: inherit; background: linear-gradient(165deg, transparent 45%, #00281b77); }
+.jp-photo-hex img { width: 100%; height: 100%; object-fit: cover; clip-path: inherit; filter: saturate(.8); }
+.jp-photo-hex-1 { width: 175px; height: 156px; top: 18px; left: 0; }
+.jp-photo-hex-2 { width: 131px; height: 118px; top: 0; left: 163px; animation-delay: -3s; }
+.jp-photo-hex-3 { width: 130px; height: 115px; top: 113px; left: 143px; animation-delay: -6s; }
+.jp-photo-caption { position: absolute; left: 0; bottom: 2px; width: 145px; color: #a1c6b3; font-size: 9px; font-weight: 450; line-height: 1.7; letter-spacing: 1.4px; }
+.jp-hero-identity { display: flex; align-items: center; gap: 11px; padding: 20px 0; }
+.jp-identity-avatar { display: grid; place-items: center; flex-shrink: 0; width: 41px; height: 41px; border: 1px solid #d3ead145; border-radius: 50%; background: linear-gradient(140deg, #a7b77538, #95d6b710); color: #efe5ad; font-size: 12px; font-weight: 500; }
+.jp-hero-identity b { display: block; font-size: 13px; font-weight: 500; color: #e5f4eb; }
+.jp-hero-identity div > span { display: block; font-size: 11px; line-height: 1.6; color: #9dc3af; margin-top: 5px; }
+.jp-hero-stats { display: flex; gap: 27px; border-top: 1px solid #b6d0b325; padding-top: 22px; margin-top: 3px; max-width: 340px; }
+.jp-hero-stats > div { display: flex; gap: 9px; align-items: center; }
+.jp-hero-stats strong { font-size: 30px; font-weight: 450; line-height: 1; letter-spacing: -1px; color: #e0e5b8; }
+.jp-hero-stats strong small { font-size: 15px; }
+.jp-hero-stats span { font-size: 10px; color: #9bbfa8; line-height: 1.6; }
+.jp-map-canvas { position: relative; height: 980px; min-width: 0; scroll-margin-top: 30px; }
+.jp-map-canvas::before { content: ''; position: absolute; top: 10%; bottom: 14%; left: 20%; right: 4%; opacity: .2; border-radius: 50%; filter: blur(55px); transform: rotate(-20deg); background: linear-gradient(170deg, #39cd9c, transparent 36%, #bfbe57 72%, transparent); }
+.jp-map-label { position: absolute; top: 29px; left: 30px; display: flex; align-items: center; gap: 14px; z-index: 1; }
+.jp-map-label > span { font-size: 9px; letter-spacing: 1.6px; color: #9ec7b5; }
+.jp-map-label > b { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 450; color: #e6db9f; }
+.jp-map-route { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.jp-route-glow { stroke: #8be8b950; stroke-width: 10px; filter: blur(7px); }
+.jp-route-line { stroke: #9bd7bc45; stroke-width: 1.5px; }
+.jp-route-flow { stroke: #d7dfa4c9; stroke-width: 2px; stroke-linecap: round; stroke-dasharray: 5 18; animation: jp-route-travel 16s linear infinite; }
+.jp-node { position: absolute; z-index: 2; transform: translate(-50%, -43px); width: 222px; display: flex; flex-direction: column; align-items: center; background: none; padding: 0; text-align: center; color: #eef7ef; }
+.jp-node-halo { position: absolute; top: -9px; width: 104px; height: 97px; background: #cef0c51c; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%); opacity: .2; transition: opacity .2s; }
+.jp-node-point { position: relative; width: 86px; height: 79px; display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 5px; color: #c1efd8; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%); background: linear-gradient(145deg, #70d2a8, #1c8661); transition: transform .22s, background .2s; }
+.jp-node-point::before { content: ''; position: absolute; z-index: -1; inset: 1.5px; clip-path: inherit; background: linear-gradient(150deg, #176f54, #083d30); }
+.jp-node-point > svg { margin-top: 4px; stroke-width: 1.4; }
+.jp-node-point > small { font-size: 9px; color: #a3ccba; font-variant-numeric: tabular-nums; letter-spacing: 1.3px; }
+.jp-node-reward { display: flex; align-items: center; gap: 5px; padding: 4px 7px; border-radius: 5px; margin-top: -8px; z-index: 1; background: linear-gradient(120deg, #e7cb79, #f4e1a4); color: #4c461d; border: 1px solid #fff0be; font-size: 11px; font-weight: 600; box-shadow: 0 3px 11px #061d1a45; }
+.jp-node-reward small { font-size: 9px; font-weight: 400; }
+.jp-node-label { display: grid; justify-items: center; gap: 5px; margin-top: 10px; padding: 7px 9px 9px; max-width: 100%; border-radius: 7px; background: #042d24d6; }
+.jp-node-label > small { font-size: 9px; font-weight: 500; letter-spacing: 1.3px; color: #8ac4a9; }
+.jp-node-label b { font-size: 12px; font-weight: 500; line-height: 1.45; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.jp-node-label em { color: #9ebdaf; font-size: 10px; font-style: normal; line-height: 1.4; }
+.jp-node.is-selected .jp-node-point { background: linear-gradient(130deg, #fff1b4, #e8ba54); color: #fcf0ba; }
+.jp-node.is-selected .jp-node-point::before { background: linear-gradient(150deg, #56955a, #185e40); }
+.jp-node.is-selected .jp-node-point > small { color: #e9e7b1; }
+.jp-node.is-selected .jp-node-halo { opacity: 1; background: #f7e2a151; animation: jp-node-breathe 3.5s ease-in-out infinite alternate; }
+.jp-node.is-selected .jp-node-label { background: #174f3ce8; outline: 1px solid #e4d19b3a; }
+.jp-node.is-selected .jp-node-label > small { color: #efdc99; }
+.jp-node.is-complete .jp-node-point { background: linear-gradient(135deg, #e2c584, #997338); color: #f3de99; }
+.jp-node.is-complete .jp-node-point::before { background: linear-gradient(145deg, #5e6640, #223c2d); }
+.jp-node.is-locked .jp-node-point { background: linear-gradient(145deg, #6b9483, #305c4a); color: #94b3a3; }
+.jp-node.is-locked .jp-node-point::before { background: linear-gradient(150deg, #264d40, #113f30); }
+.jp-node.is-locked .jp-node-label b { color: #bdd0c0; }
+.jp-node:hover .jp-node-point { transform: translateY(-5px); background: #f2dea0; }
+.jp-node:hover .jp-node-halo { opacity: 1; }
+.jp-map button:focus-visible { outline: 2px solid #ffdf80; outline-offset: 5px; }
+.jp-node:focus-visible { border-radius: 8px; outline-offset: 8px !important; }
+.jp-selected-link { position: absolute; bottom: 19px; left: 25px; right: 27px; display: flex; align-items: center; justify-content: space-between; gap: 14px; text-align: left; padding: 15px 16px; border: 1px solid #c8dfac2e; border-radius: 9px; background: #183e32b5; color: #e6efd3; }
+.jp-selected-link:hover { background: #295944; border-color: #c6d19770; }
+.jp-selected-link > span { min-width: 0; }
+.jp-selected-link small { display: block; color: #adc8af; font-size: 8px; letter-spacing: 1.4px; margin-bottom: 6px; }
+.jp-selected-link b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; font-weight: 450; }
+.jp-selected-link > svg { flex-shrink: 0; color: #edd991; }
+.jp-map-legend { padding: 18px 30px; border-top: 1px solid #ffffff12; display: flex; align-items: center; flex-wrap: wrap; gap: 18px; font-size: 11px; color: #b2ccb9; background: #03251c35; }
+.jp-map-legend > span { display: flex; gap: 6px; align-items: center; }
+.jp-map-legend i { width: 6px; height: 6px; border-radius: 50%; background: #6dd5a3; box-shadow: 0 0 9px #7feebd33; }
+.jp-map-legend i.is-complete { background: #e6c67c; }
+.jp-map-legend > small { margin-left: auto; color: #9dbba4; font-size: 10px; }
+.jp-map-empty { position: absolute; top: 35%; left: 13%; right: 13%; text-align: center; color: #adcabc; }
+.jp-map-empty h3 { color: #e7f3df; font-size: 17px; font-weight: 500; margin-top: 18px; }
+.jp-map-empty p { font-size: 12px; line-height: 1.8; margin-top: 12px; }
+.jp-preferences { display: flex; align-items: center; justify-content: space-between; gap: 28px; padding: 22px 25px; margin: 20px 0; border: 1px solid #dde5df; background: #fff; border-radius: 12px; scroll-margin-top: 25px; }
+.jp-target { display: grid; gap: 9px; flex: 1; min-width: 0; max-width: 385px; }
+.jp-target > span { display: flex; align-items: center; gap: 7px; color: #748079; font-size: 12px; }
+.jp-target select { width: 100%; padding: 10px 29px 10px 12px; border: 1px solid #dce4df; border-radius: 6px; color: #34443b; background: #f9fbf9; font-size: 12px; cursor: pointer; }
+.jp-target > b { font-size: 13px; font-weight: 500; }
+.jp-controls { display: grid; gap: 9px; }
+.jp-controls > div:first-child { display: flex; align-items: center; gap: 7px; white-space: nowrap; }
+.jp-controls > div:first-child svg { color: #7c8780; }
+.jp-controls b { font-size: 12px; font-weight: 450; }
+.jp-controls > div:first-child > span { color: #8c958f; font-size: 11px; }
+.jp-pace { display: flex; gap: 4px; padding: 3px; background: #f1f5f2; border-radius: 6px; }
+.jp-pace button { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 12px; color: #707d73; font-size: 12px; border: 1px solid transparent; border-radius: 5px; white-space: nowrap; min-width: 80px; }
+.jp-pace button[aria-pressed="true"] { color: #075c42; background: #fff; border-color: #d5e2d8; box-shadow: 0 1px 2px #11111105; }
+.jp-pace button:hover { color: #075c42; }
+.jp-layout { display: block; }
+.jp-sidebar { display: grid; gap: 18px; min-width: 0; }
+.jp-itinerary, .jp-detail, .jp-skills { padding: 23px; background: #fff; border: 1px solid #e0e3e6; border-radius: 8px; }
+.jp-section-heading { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.jp-section-heading h2 { font-size: 16px; line-height: 1.45; font-weight: 550; letter-spacing: -.25px; }
+.jp-section-heading > span:not(.jp-coverage) { display: grid; place-items: center; height: 23px; min-width: 23px; border-radius: 4px; border: 1px solid #e2e5e7; color: #777e84; font-size: 11px; }
+.jp-subtitle { font-size: 12px; color: #727a82; line-height: 1.7; margin-top: 6px; }
+.jp-step-list { display: grid; margin: 19px -9px 0; }
+.jp-step-list > button { display: flex; align-items: flex-start; gap: 10px; padding: 15px 9px; text-align: left; border-top: 1px solid #eef0f2; width: 100%; color: #32373b; }
+.jp-step-list > button[aria-pressed="true"] { background: #f5f7f6; border-radius: 5px; }
+.jp-step-list > button:hover { background: #f6f7f8; }
+.jp-step-number { min-width: 24px; padding-top: 1px; font-size: 12px; color: #91989e; font-variant-numeric: tabular-nums; }
+.jp-step-list > button[aria-pressed="true"] .jp-step-number { color: #24734f; }
+.jp-step-list > button > span:nth-child(2) { flex: 1; min-width: 0; }
+.jp-step-list small { display: block; font-size: 10px; font-weight: 500; letter-spacing: .7px; color: #747c83; }
+.jp-step-list b { display: block; font-size: 13px; line-height: 1.55; font-weight: 500; margin: 5px 0; overflow-wrap: anywhere; }
+.jp-step-list em { color: #747c83; font-size: 11px; line-height: 1.6; font-style: normal; }
+.jp-step-list > button > svg { color: #9aa1a6; flex-shrink: 0; margin-top: 1px; }
+.jp-note { color: #747b82; font-size: 11px; line-height: 1.8; margin-top: 16px; }
+.jp-detail { scroll-margin-top: 22px; }
+.jp-detail > .jp-kicker { font-size: 10px; letter-spacing: 1.2px; }
+.jp-detail h2 { font-size: 20px; font-weight: 500; letter-spacing: -.5px; line-height: 1.3; margin: 14px 0; overflow-wrap: anywhere; }
+.jp-detail-meta { display: flex; gap: 14px; margin-bottom: 22px; font-size: 12px; color: #727a82; }
+.jp-detail-meta > span { display: flex; gap: 5px; align-items: center; }
+.jp-detail h3 { margin-bottom: 10px; font-size: 13px; font-weight: 500; }
+.jp-detail ul { margin: 0 0 19px; padding-left: 14px; display: grid; gap: 8px; }
+.jp-detail li, .jp-detail > p { font-size: 12px; line-height: 1.85; color: #626b73; }
+.jp-detail li::marker { color: #a0a8ad; }
+.jp-detail > p { margin-bottom: 20px; }
+.jp-detail .button { font-size: 13px; padding: 12px 14px; border-radius: 5px; }
+.jp-empty { margin: 25px 0; }
+.jp-empty h3 { font-size: 14px; font-weight: 500; }
+.jp-empty p { font-size: 12px; color: #8a9197; line-height: 1.8; margin-top: 8px; }
+.jp-bottom { display: grid; grid-template-columns: minmax(0, 1fr) 310px; gap: 20px; margin-top: 20px; }
+.jp-coverage { font-size: 35px; line-height: 1; font-weight: 400; letter-spacing: -1.5px; color: #31383d; }
+.jp-coverage small { font-size: 16px; margin-left: 2px; color: #999fa4; }
+.jp-skill-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 23px 30px; max-height: 380px; overflow: auto; margin-top: 28px; padding-right: 4px; }
+.jp-skill-list > div > span { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; font-size: 12px; line-height: 1.4; color: #656d74; }
+.jp-skill-list b { flex-shrink: 0; font-weight: 500; color: #384148; font-size: 11px; }
+.jp-skill-list em { color: #a0a5aa; font-style: normal; font-weight: 400; }
+.jp-skill-list [role="progressbar"] { margin-top: 9px; height: 3px; background: #edefef; overflow: hidden; }
+.jp-skill-list i { display: block; height: 100%; background: #8b959d; }
+.jp-skill-list i.is-critical { background: #36765b; }
+.jp-reward { display: flex; flex-direction: column; text-align: left; padding: 25px 23px; border: 1px solid #e0e3e6; border-radius: 8px; background: #eeeae2; color: #3b3935; transition: background .2s; }
+.jp-reward:hover { background: #e7e2d8; }
+.jp-reward-top { display: flex; align-items: center; gap: 10px; color: #8f8575; }
+.jp-reward-top > span { font-size: 10px; letter-spacing: 1.3px; }
+.jp-reward-top > svg:last-child { margin-left: auto; }
+.jp-reward h2 { font-size: 20px; font-weight: 500; line-height: 1.35; letter-spacing: -.6px; margin-top: 30px; }
+.jp-reward > p { font-size: 12px; line-height: 1.8; color: #71695e; margin: 10px 0 26px; }
+.jp-reward-meter { height: 3px; background: #d9d2c7; margin-top: auto; }
+.jp-reward-meter i { display: block; height: 100%; background: #777264; }
+.jp-reward-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; font-size: 12px; color: #999080; }
+.jp-reward-bottom b { font-weight: 500; color: #5b564c; }
+
+.jp-sidebar { grid-template-columns: 1fr 1fr; align-items: start; gap: 20px; }
+.jp-itinerary, .jp-detail, .jp-skills { border-color: #e0e5e1; border-radius: 12px; padding: 27px; }
+.jp-detail { background: linear-gradient(155deg, #f5f9f5, #fff 75%); }
+.jp-detail > .jp-kicker { color: #478365; }
+.jp-detail li::marker { color: #379b6d; }
+.jp-step-list > button[aria-pressed="true"] { background: #edf6ef; }
+.jp-step-list > button[aria-pressed="true"] .jp-step-number { color: #087a51; }
+.jp-skill-list [role="progressbar"] { height: 5px; border-radius: 3px; }
+.jp-skill-list i { background: #93b49e; border-radius: 3px; }
+.jp-skill-list i.is-critical { background: linear-gradient(90deg, #0d8862, #76b791); }
+.jp-reward { position: relative; overflow: hidden; isolation: isolate; border-color: #dfcc88; border-radius: 12px; background: linear-gradient(145deg, #fff0bb, #ead089); color: #574a24; }
+.jp-reward::before { content: ''; position: absolute; top: -65px; right: -48px; width: 170px; height: 170px; z-index: -1; border: 1px solid #ab88393d; border-radius: 50%; box-shadow: 0 0 0 25px #af8d3412, 0 0 0 65px #af8d3407; }
+.jp-reward:hover { background: linear-gradient(145deg, #fff2c5, #e6c678); }
+.jp-reward-top { color: #967735; }
+.jp-reward > p { color: #817044; }
+.jp-reward-meter { background: #c1a25042; border-radius: 3px; height: 5px; overflow: hidden; }
+.jp-reward-meter i { background: #2e8058; }
+.jp-reward-bottom { color: #927b43; }
+.jp-reward-bottom b { color: #5d542c; }
+@keyframes jp-aurora-drift { from { transform: translate3d(-3%, -3%, 0) rotate(-28deg) scale(1); } to { transform: translate3d(12%, 9%, 0) rotate(-12deg) scale(1.12); } }
+@keyframes jp-twinkle { from { opacity: .16; } to { opacity: .58; } }
+@keyframes jp-route-travel { to { stroke-dashoffset: -230; } }
+@keyframes jp-node-breathe { from { opacity: .5; transform: scale(.98); } to { opacity: .95; transform: scale(1.06); } }
+@keyframes jp-photo-drift { from { transform: translateY(0); } to { transform: translateY(-6px); } }
+.journey-professional.is-motion-paused *, .journey-professional.is-motion-paused *::before, .journey-professional.is-motion-paused *::after { animation-play-state: paused !important; }
+.journey-professional.is-motion-paused .jp-node-point, .journey-professional.is-motion-paused .jp-hero-cta { transition: none; }
+@media (min-width: 1600px) { .jp-map-intro { padding-left: 55px; padding-top: 70px; } .jp-map-intro h1 { font-size: 64px; } .jp-node { width: 245px; } .jp-node-label b { font-size: 14px; } .jp-node-label em { font-size: 11px; } .jp-photo-cluster { margin-top: 47px; } }
+@media (max-width: 1250px) { .jp-map-intro { padding-left: 29px; } .jp-map-intro h1 { font-size: 44px; letter-spacing: -1.7px; } .jp-hero-description { font-size: 13px; } .jp-node { width: 200px; } .jp-photo-cluster { transform: scale(.92); transform-origin: left center; margin-top: 33px; } .jp-hero-stats { gap: 17px; } .jp-hero-stats strong { font-size: 27px; } .jp-map-legend > small { width: 100%; margin: 0; } }
+@media (max-width: 1100px) { .jp-map-stage { grid-template-columns: 1fr; } .jp-map-intro { position: relative; padding: 39px 35px 29px; min-height: 430px; } .jp-map-intro h1 { font-size: 48px; max-width: 420px; } .jp-hero-description { font-size: 14px; } .jp-hero-actions { margin-top: 23px; } .jp-photo-cluster { position: absolute; right: 15px; top: 59px; width: 290px; margin: 0; transform: scale(.86); transform-origin: right top; } .jp-hero-identity { padding: 26px 0 0; } .jp-hero-stats { position: absolute; right: 31px; bottom: 32px; flex-direction: column; gap: 18px; padding-top: 16px; min-width: 170px; } .jp-map-canvas { height: 990px; border-top: 1px solid #cff4cf14; margin-top: 0; } .jp-map-label { left: 33px; } .jp-node { width: 260px; } .jp-node-label b { font-size: 14px; } .jp-node-label em { font-size: 11px; } .jp-node-point { width: 96px; height: 86px; } .jp-node-halo { width: 113px; height: 103px; } .jp-selected-link { left: 33px; right: 33px; } .jp-bottom { grid-template-columns: minmax(0, 1fr) 260px; } .jp-skill-list { grid-template-columns: 1fr; max-height: 310px; } }
+@media (max-width: 780px) { .jp-map-intro h1 { font-size: 41px; max-width: 310px; } .jp-photo-cluster { opacity: .65; transform: scale(.66); right: 6px; top: 70px; } .jp-hero-stats { right: 25px; min-width: 130px; } .jp-preferences { gap: 20px; padding: 20px; } .jp-pace button { min-width: 69px; padding: 8px; } .jp-sidebar { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { .jp-map { border-radius: 17px; } .jp-map-heading { padding: 16px 17px; gap: 10px; flex-wrap: wrap; } .jp-map-brand { gap: 7px; } .jp-map-brand > span:last-child { font-size: 11px; letter-spacing: 1.1px; } .jp-map-brand b { font-size: 8px; padding-left: 7px; margin-left: 5px; letter-spacing: .6px; } .jp-brand-symbol { width: 28px; height: 28px; border-radius: 8px; } .jp-brand-symbol svg { width: 17px; } .jp-map-tools { gap: 11px; margin-left: auto; } .jp-map-tools > span { font-size: 10px; } .jp-map-tools > span svg { width: 13px; } .jp-motion-button { padding: 6px 8px; min-height: 30px; font-size: 10px; } .jp-map-intro { padding: 33px 24px 27px; min-height: 0; } .jp-hero-kicker { font-size: 9px; letter-spacing: 1.1px; } .jp-map-intro h1 { font-size: clamp(37px, 8.5vw, 47px); letter-spacing: -1.6px; margin-top: 23px; position: relative; z-index: 1; } .jp-hero-description { font-size: 13px; position: relative; z-index: 1; } .jp-hero-actions { position: relative; z-index: 1; } .jp-hero-cta { min-height: 49px; padding: 13px 18px; font-size: 13px; } .jp-hero-link { font-size: 11px; } .jp-photo-cluster { position: relative; right: auto; top: auto; opacity: 1; height: 182px; width: 290px; margin: 28px auto 0; transform: scale(.8); transform-origin: center top; } .jp-photo-caption { bottom: -45px; } .jp-hero-identity { padding: 23px 0 20px; } .jp-hero-identity b { font-size: 12px; } .jp-hero-stats { position: static; flex-direction: row; justify-content: space-between; gap: 17px; padding-top: 22px; max-width: none; margin: 0; } .jp-hero-stats strong { font-size: 30px; } .jp-hero-stats span { font-size: 10px; } .jp-map-canvas { height: 1040px; } .jp-map-label { top: 24px; left: 23px; gap: 13px; flex-wrap: wrap; } .jp-map-label > span { font-size: 9px; letter-spacing: 1px; } .jp-map-label > b { font-size: 11px; } .jp-node { width: 160px; } .jp-node-point { width: 84px; height: 78px; } .jp-node-halo { width: 101px; height: 94px; } .jp-node-label { padding: 6px 6px 8px; } .jp-node-label b { font-size: 12px; } .jp-node-label > small { font-size: 8px; letter-spacing: .8px; } .jp-node-label em { font-size: 10px; } .jp-selected-link { left: 18px; right: 18px; bottom: 21px; } .jp-map-legend { padding: 18px; gap: 11px 14px; font-size: 10px; } .jp-map-legend > small { font-size: 10px; line-height: 1.6; } .jp-preferences { align-items: stretch; flex-direction: column; gap: 20px; padding: 21px; border-radius: 11px; } .jp-target { max-width: none; } .jp-controls { width: 100%; } .jp-pace button { flex: 1; } .jp-itinerary, .jp-detail, .jp-skills { padding: 23px; } .jp-bottom { grid-template-columns: 1fr; } .jp-skill-list { grid-template-columns: 1fr 1fr; gap: 22px 18px; max-height: none; } .jp-reward { min-height: 235px; } }
+@media (max-width: 380px) { .jp-map-brand b { display: none; } .jp-map-intro { padding-left: 20px; padding-right: 20px; } .jp-map-intro h1 { font-size: 35px; } .jp-hero-stats { gap: 10px; } .jp-hero-stats strong { font-size: 27px; } .jp-hero-stats span { font-size: 9px; } .jp-photo-cluster { width: 260px; } .jp-node { width: 138px; } .jp-node-label b { font-size: 11px; } .jp-node-label em { font-size: 9px; } .jp-skill-list { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { .journey-professional *, .journey-professional *::before, .journey-professional *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } .jp-aurora { will-change: auto; } }
+
+/* The app can be shown in a narrow desktop panel with its sidebar still visible. */
+.jp-map { container-type: inline-size; container-name: halyk-map; }
+@container halyk-map (max-width: 670px) {
+  .jp-map-intro { padding: 32px 26px 28px; }
+  .jp-map-intro h1 { font-size: clamp(36px, 8cqw, 48px); max-width: none; position: relative; z-index: 1; }
+  .jp-photo-cluster { position: relative; top: auto; right: auto; width: 290px; height: 215px; margin: 28px 0 0; transform: scale(.86); transform-origin: left top; opacity: 1; }
+  .jp-photo-caption { bottom: -5px; }
+  .jp-hero-identity { padding-top: 16px; }
+  .jp-hero-stats { position: static; flex-direction: row; justify-content: flex-start; gap: 34px; max-width: none; margin-top: 20px; padding-top: 20px; }
+  .jp-node { width: 180px; }
+  .jp-node-label b { font-size: 12px; }
+}
+@container halyk-map (max-width: 380px) {
+  .jp-map-intro { padding: 30px 20px 25px; }
+  .jp-photo-cluster { margin-left: auto; margin-right: auto; width: 270px; height: 195px; transform: scale(.8); transform-origin: center top; }
+  .jp-hero-stats { gap: 16px; justify-content: space-between; }
+  .jp-node { width: 142px; }
+  .jp-map-label { left: 20px; }
+  .jp-node-point { width: 80px; height: 74px; }
+}

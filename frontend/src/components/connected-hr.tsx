@@ -26,11 +26,11 @@ const statusLabels: Record<string, string> = {
 };
 const statusColors: Record<string, string> = {
   completed: "#087f64",
-  in_progress: "#e4bd4f",
-  overdue: "#d68764",
-  dropped: "#8b7ca2",
-  no_show: "#a3af9c",
-  declined: "#647d83",
+  in_progress: "#8a9d94",
+  overdue: "#bb795f",
+  dropped: "#8e939f",
+  no_show: "#c4cbc7",
+  declined: "#596d70",
 };
 const number = new Intl.NumberFormat("ru-RU");
 
@@ -174,7 +174,7 @@ function HRContent({ token, onSelectEmployee, onImported }: Props) {
   return (
     <div className="connected-hr">
       <header className="page-heading">
-        <div><div className="eyebrow">КОМАНДА И ВОЗМОЖНОСТИ</div><h1>Развитие в масштабе команды <span className="chr-flower" aria-hidden="true">✳</span></h1><p>Навыки, участие и доступные следующие шаги — по данным сотрудников.</p></div>
+        <div><div className="eyebrow">HR-ПАНЕЛЬ</div><h1>Развитие команды</h1><p>Навыки сотрудников, участие в событиях и следующие шаги.</p></div>
         <button type="button" className="button secondary" disabled={loading || importing} onClick={() => void load()}>{loading ? "Обновляем…" : "Обновить данные"}</button>
       </header>
 
@@ -185,7 +185,7 @@ function HRContent({ token, onSelectEmployee, onImported }: Props) {
         <>
           <div className="chr-data-stamp">Данные на {dashboard.as_of_date} <span>·</span> Версия {dashboard.revision}{data?.employees.revision !== dashboard.revision && <strong>Данные изменились во время загрузки. Нажмите «Обновить данные».</strong>}</div>
           <div className="chr-metrics">
-            <div className="chr-metric chr-metric-green"><span>Сотрудников</span><strong>{number.format(employees.length)}</strong><small>в доступном наборе данных</small><svg width="65" height="65" viewBox="0 0 65 65" fill="none" aria-hidden="true"><circle cx="23" cy="20" r="9" fill="currentColor"/><circle cx="45" cy="25" r="7" fill="currentColor" opacity=".5"/><path d="M5 54c0-20 36-20 36 0M35 55c0-15 26-15 26 0" fill="currentColor"/></svg></div>
+            <div className="chr-metric chr-metric-green"><span>Сотрудников</span><strong>{number.format(employees.length)}</strong><small>в доступном наборе данных</small></div>
             <div className="chr-metric"><span>Записей участия</span><strong>{number.format(totalParticipations)}</strong><small>по всем мероприятиям и статусам</small></div>
             <div className="chr-metric"><span>Завершённых участий</span><strong>{number.format(completed)}</strong><small>{completionPercent}% от записей участия</small></div>
             <div className="chr-metric chr-metric-yellow"><span>Без подходящих событий</span><strong>{number.format(dashboard.employees_without_candidate.length)}</strong><small>сейчас нет кандидатов в каталоге</small></div>
@@ -193,18 +193,18 @@ function HRContent({ token, onSelectEmployee, onImported }: Props) {
 
           <div className="chr-chart-grid">
             <section className="chr-panel">
-              <div className="chr-section-head"><div><span className="eyebrow">ГДЕ НУЖНА ПОДДЕРЖКА</span><h2>Потребность в навыках</h2><p>Топ-8 разрывов до следующего грейда. Число сотрудников с дефицитом навыка.</p></div><span className="chr-panel-mark" aria-hidden="true">↗</span></div>
-              {gaps.length ? <div className="chr-gap-chart">{gaps.map((gap, index) => <div className="chr-gap-row" key={gap.skill_id}><div><span>{gap.name}</span><strong>{number.format(gap.employee_count)} <small>сотр.</small></strong></div><div className="chr-gap-track"><span style={{ width: `${employees.length ? Math.min(100, gap.employee_count / employees.length * 100) : 0}%`, background: index === 0 ? "#087f64" : index < 3 ? "#84ad82" : "#ccd8ac" }} /></div></div>)}</div> : <div className="chr-empty">В данных нет разрывов навыков до следующего грейда.</div>}
+              <div className="chr-section-head"><div><span className="eyebrow">ГДЕ НУЖНА ПОДДЕРЖКА</span><h2>Потребность в навыках</h2><p>Топ-8 разрывов до следующего грейда. Число сотрудников с дефицитом навыка.</p></div></div>
+              {gaps.length ? <div className="chr-gap-chart">{gaps.map((gap, index) => <div className="chr-gap-row" key={gap.skill_id}><div><span>{gap.name}</span><strong>{number.format(gap.employee_count)} <small>сотр.</small></strong></div><div className="chr-gap-track"><span style={{ width: `${employees.length ? Math.min(100, gap.employee_count / employees.length * 100) : 0}%`, background: index === 0 ? "#087f64" : index < 3 ? "#7a9e8f" : "#b9cac2" }} /></div></div>)}</div> : <div className="chr-empty">В данных нет разрывов навыков до следующего грейда.</div>}
             </section>
             <section className="chr-panel">
               <div className="chr-section-head"><div><span className="eyebrow">ОТ ПЛАНА К ДЕЙСТВИЮ</span><h2>Участие в развитии</h2><p>Распределение записей по текущему статусу.</p></div></div>
-              <div className="chr-donut-wrap"><svg className="chr-donut" viewBox="0 0 180 180" role="img" aria-label={`${completionPercent}% участий завершено, всего записей ${totalParticipations}`}><circle cx="90" cy="90" r="72" fill="none" stroke="#edf0e5" strokeWidth="17" />{(() => { let offset = 0; return orderedStatuses.filter(status => statusTotals[status] > 0).map(status => { const length = statusTotals[status] / totalParticipations * 100; const segment = <circle key={status} cx="90" cy="90" r="72" fill="none" stroke={statusColors[status] ?? "#8c998e"} strokeWidth="17" pathLength="100" strokeDasharray={`${length} ${100 - length}`} strokeDashoffset={-offset} transform="rotate(-90 90 90)" />; offset += length; return segment; }); })()}<text x="90" y="87" textAnchor="middle" className="chr-donut-value">{completionPercent}%</text><text x="90" y="109" textAnchor="middle" className="chr-donut-caption">завершено</text></svg></div>
+              <div className="chr-donut-wrap"><svg className="chr-donut" viewBox="0 0 180 180" role="img" aria-label={`${completionPercent}% участий завершено, всего записей ${totalParticipations}`}><circle cx="90" cy="90" r="72" fill="none" stroke="#edf0ee" strokeWidth="17" />{(() => { let offset = 0; return orderedStatuses.filter(status => statusTotals[status] > 0).map(status => { const length = statusTotals[status] / totalParticipations * 100; const segment = <circle key={status} cx="90" cy="90" r="72" fill="none" stroke={statusColors[status] ?? "#8c998e"} strokeWidth="17" pathLength="100" strokeDasharray={`${length} ${100 - length}`} strokeDashoffset={-offset} transform="rotate(-90 90 90)" />; offset += length; return segment; }); })()}<text x="90" y="87" textAnchor="middle" className="chr-donut-value">{completionPercent}%</text><text x="90" y="109" textAnchor="middle" className="chr-donut-caption">завершено</text></svg></div>
               <div className="chr-status-legend">{orderedStatuses.map(status => <div key={status}><span><i style={{ background: statusColors[status] ?? "#8c998e" }} />{statusLabels[status] ?? status}</span><b>{number.format(statusTotals[status] ?? 0)}</b></div>)}</div>
               <p className="chr-chart-note">У одного сотрудника может быть несколько участий. Это число записей, а не уникальных людей.</p>
             </section>
           </div>
 
-          <section className="chr-recommendation-note"><div className="chr-note-icon" aria-hidden="true">✦</div><div><h2>ИИ-рекомендации: метрика пока недоступна</h2><p>Бэкенд ещё не рассчитывает число сотрудников без ИИ-рекомендаций. Ниже показаны сотрудники, для которых в каталоге нет подходящих мероприятий.</p></div><span>В разработке</span></section>
+          <section className="chr-recommendation-note"><div><h2>ИИ-рекомендации: метрика пока недоступна</h2><p>Показатель отсутствия ИИ-рекомендаций пока недоступен. Ниже — сотрудники без подходящих мероприятий в каталоге.</p></div><span>В разработке</span></section>
 
           <section className="chr-panel">
             <div className="chr-section-head"><div><span className="eyebrow">ТОЧКИ ВНИМАНИЯ</span><h2>Нет подходящего следующего шага <span className="chr-count">{dashboard.employees_without_candidate.length}</span></h2><p>Откройте профиль, чтобы посмотреть цели и дефициты навыков.</p></div></div>
@@ -226,7 +226,7 @@ function HRContent({ token, onSelectEmployee, onImported }: Props) {
       )}
 
       <section className="chr-import chr-panel">
-        <div className="chr-import-copy"><div className="chr-import-mark" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4"><path d="M12 16V3m-5 5 5-5 5 5M4 15v5a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-5" /></svg></div><span className="eyebrow">НОВЫЕ ДАННЫЕ — НОВЫЕ ВОЗМОЖНОСТИ</span><h2>Добавьте сотрудников и историю</h2><p>Загрузите один или оба файла в исходной схеме датасета. Сервер проверит записи и обновит показатели команды.</p><small>JSON для сотрудников · CSV для истории<br />Лимит запроса — 10 МиБ</small></div>
+        <div className="chr-import-copy"><div className="chr-import-mark" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4"><path d="M12 16V3m-5 5 5-5 5 5M4 15v5a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-5" /></svg></div><span className="eyebrow">ИМПОРТ ДАННЫХ</span><h2>Добавьте сотрудников и историю</h2><p>Загрузите сотрудников и историю участия в установленном формате. После проверки записей показатели команды обновятся.</p><small>JSON для сотрудников · CSV для истории<br />Лимит запроса — 10 МиБ</small></div>
         <div className="chr-import-form-wrap"><form ref={formRef} onSubmit={handleImport} className="chr-import-form"><label><span>Сотрудники <small>employees.json</small></span><input type="file" accept=".json,application/json" disabled={importing} onChange={event => { const file = event.target.files?.[0]; setFiles(current => ({ ...current, employees: file })); setImportError(null); setImportResult(null); }} /></label><label><span>История участия <small>activity_history.csv</small></span><input type="file" accept=".csv,text/csv" disabled={importing} onChange={event => { const file = event.target.files?.[0]; setFiles(current => ({ ...current, history: file })); setImportError(null); setImportResult(null); }} /></label><button type="submit" className="button primary" disabled={importing || (!files.employees && !files.history)}>{importing ? "Загружаем и проверяем…" : importError ? "Повторить импорт" : "Импортировать данные"}<Arrow /></button></form>
           {importError && <ErrorNotice title="Импорт не выполнен" error={importError} />}
           {importResult && <div className="chr-import-success" role="status"><strong>Данные импортированы · версия {importResult.revision}</strong><p>Сотрудников добавлено: {importResult.added_employees}, без изменений: {importResult.unchanged_employees}.</p><p>Записей истории добавлено: {importResult.added_history}, без изменений: {importResult.unchanged_history}.</p></div>}

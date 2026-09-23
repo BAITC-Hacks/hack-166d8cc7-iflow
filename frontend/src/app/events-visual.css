@@ -1,0 +1,62 @@
+/* Halyk photography adds real people and places to the learning catalogue. */
+.catalog-heading { position: relative; padding-bottom: 8px; }
+.catalog-heading h1 > span { color: #138261; }
+.catalog-heading .eyebrow { display: flex; align-items: center; gap: 9px; color: #697e75; }
+.catalog-heading .eyebrow::before { content: ''; display: inline-block; width: 20px; height: 3px; border-radius: 3px; background: linear-gradient(90deg, #0b9f72, #e9bd55); }
+.catalog-count { display: flex; align-items: center; gap: 13px; padding: 15px 18px; background: linear-gradient(135deg, #edf7f1, #f9f7e9); border: 1px solid #e0eade; border-radius: 12px; }
+.catalog-count > b { font-size: 30px; font-weight: 500; color: #1b7054; letter-spacing: -1px; }
+.catalog-count > span { font-size: 10px; line-height: 1.6; color: #6e8275; }
+.catalog-filters .filter-tabs button.selected { background: linear-gradient(115deg, #087e60, #149b73); border-color: #087f64; color: #fff; box-shadow: 0 3px 8px #087f6414; }
+.catalog-filters .filter-tabs button:not(.selected):hover { background: #edf3ef; color: #256448; }
+.event-grid.catalog { gap: 22px; }
+.event-grid.catalog .event-card { border-radius: 13px; border-color: #e2e8e3; overflow: hidden; box-shadow: 0 2px 4px #11281f02; transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; animation: event-arrive .55s ease both; }
+.event-grid.catalog .event-card:nth-child(2) { animation-delay: .06s; }
+.event-grid.catalog .event-card:nth-child(3) { animation-delay: .12s; }
+.event-grid.catalog .event-card:nth-child(4) { animation-delay: .18s; }
+.event-grid.catalog .event-card:nth-child(5) { animation-delay: .24s; }
+.event-grid.catalog .event-card:nth-child(6) { animation-delay: .3s; }
+.event-grid.catalog .event-card:hover { transform: translateY(-4px); border-color: #a6c9b6; box-shadow: 0 15px 32px #173d2810; }
+.event-cover { position: relative; width: 100%; height: 190px; overflow: hidden; isolation: isolate; flex-shrink: 0; background: radial-gradient(ellipse at 75% 15%, #57bba0, transparent 60%), linear-gradient(135deg, #0b5344, #123e39 55%, #ba9f53); }
+.event-cover > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .8s cubic-bezier(.2,.6,.2,1); }
+.event-cover-tint { position: absolute; inset: 0; background: linear-gradient(180deg, #06271d54 0%, #082c230a 45%, #061e17b8 100%); }
+.cover-workshop .event-cover-tint { background: linear-gradient(150deg, #8b641733, transparent 50%), linear-gradient(0deg, #092b22cf, transparent 74%); }
+.cover-mentoring .event-cover-tint, .cover-meetup .event-cover-tint { background: linear-gradient(120deg, #08756930, transparent 60%), linear-gradient(0deg, #082b26bd, transparent 75%); }
+.event-cover-brand { position: absolute; z-index: 1; top: 20px; left: 21px; display: grid; gap: 5px; color: #fff; text-align: left; text-shadow: 0 1px 9px #071e2066; }
+.event-cover-brand > span { font-size: 23px; font-weight: 650; line-height: 1; letter-spacing: -.8px; }
+.event-cover-brand small { font-size: 7px; letter-spacing: 1.3px; color: #ffffffba; }
+.event-cover-category { position: absolute; left: 20px; bottom: 20px; z-index: 1; display: inline-block; font-size: 11px; line-height: 1; color: #fff; background: #ffffff17; border: 1px solid #ffffff52; border-radius: 5px; padding: 7px 10px; backdrop-filter: blur(10px); }
+.event-cover-arrow { position: absolute; bottom: 16px; right: 18px; border: 1px solid #ffffff65; border-radius: 50%; color: #fff; width: 34px; height: 34px; display: grid; place-items: center; background: #ffffff0d; transition: transform .25s ease, background .25s ease; }
+.event-cover-line { height: 3px; position: absolute; left: 0; right: 0; bottom: 0; background: linear-gradient(90deg, #119966, #76cca0 55%, #ebc75d); }
+.event-card:hover .event-cover > img { transform: scale(1.055); }
+.event-card:hover .event-cover-arrow { transform: rotate(45deg); background: #ffffff28; }
+.event-grid.catalog .event-content { padding: 23px 22px 20px; }
+.event-grid.catalog .event-eyebrow { font-size: 10px; color: #597f6b; margin-bottom: 11px; }
+.event-grid.catalog .event-content h3 { font-size: 18px; line-height: 1.4; min-height: 51px; color: #26362d; }
+.event-grid.catalog .event-content p { font-size: 12px; color: #86928a; min-height: 43px; }
+.event-grid.catalog .event-meta { border-color: #e9eee8; }
+.event-grid.catalog .event-meta strong { font-size: 11px; color: #937324; }
+.event-cover.is-expanded { height: 260px; }
+.event-cover.is-expanded .event-cover-brand { top: 26px; left: 29px; }
+.event-cover.is-expanded .event-cover-brand > span { font-size: 30px; }
+.event-cover.is-expanded .event-cover-brand small { font-size: 8px; }
+.event-cover.is-expanded .event-cover-category { left: 28px; bottom: 24px; font-size: 12px; }
+.event-photo-credit { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; font-size: 10px; color: #9baba1; line-height: 1.6; margin: 0 0 19px; }
+.event-photo-credit a { display: inline-flex; gap: 3px; align-items: center; text-decoration: none; color: #82998a; }
+.event-photo-credit a:hover { color: #18704c; text-decoration: underline; }
+@keyframes event-arrive { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+@media (min-width: 1500px) { .event-cover { height: 220px; } }
+@media (max-width: 1000px) { .catalog-count { display: none; } }
+@media (max-width: 600px) {
+  .event-cover { height: 210px; }
+  .event-grid.catalog { gap: 20px; }
+  .event-grid.catalog .event-content h3 { min-height: 0; font-size: 19px; }
+  .event-grid.catalog .event-content p { min-height: 0; }
+  .event-cover.is-expanded { height: 215px; }
+  .event-cover.is-expanded .event-cover-brand { left: 23px; top: 22px; }
+  .event-cover.is-expanded .event-cover-category { left: 23px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .event-grid.catalog .event-card { animation: none; }
+  .event-cover > img, .event-cover-arrow, .event-grid.catalog .event-card { transition: none; }
+  .event-grid.catalog .event-card:hover, .event-card:hover .event-cover > img, .event-card:hover .event-cover-arrow { transform: none; }
+}

@@ -20,3 +20,17 @@ class RecommendationCandidate(Model):
     eligibility: EligibilityResult
     factors: list[RecommendationFactor]
     score: float | None = None
+
+from pydantic import Field
+
+class RecommendationItem(Model):
+    event_id: str
+    explanation: str = Field(min_length=1)
+    evidence: list[RecommendationFactor]
+
+class RecommendationResult(Model):
+    status: Literal["success","no_candidates"]
+    employee_id: str
+    recommendations: list[RecommendationItem]
+    revision: int
+    as_of_date: date

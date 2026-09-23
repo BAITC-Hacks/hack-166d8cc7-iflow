@@ -78,3 +78,8 @@ def test_upload_limit_chunked(api_client):
 def test_invalid_request_redacts_input(api_client):
     response=api_client.post('/api/employees/E0001/activities/EV_012/complete',headers=auth(),json={'command_id':'sensitive-invalid-value'})
     assert response.status_code==422 and 'sensitive-invalid-value' not in response.text
+
+def test_recommendation_route_is_honestly_unimplemented(api_client):
+    r=api_client.post('/api/employees/E0001/recommendations',headers=auth())
+    assert r.status_code==501 and r.json()['error']['code']=='recommendations_not_implemented'
+    assert api_client.post('/api/employees/E0002/recommendations',headers=auth()).status_code==403

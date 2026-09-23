@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from pathlib import Path
 import hashlib
 from app.schemas.dataset import SourceBundle, EmployeesDataset, EventsDataset, SkillsDataset
+from app.schemas.state import RuntimeCompletion
 from .employees import EmployeeRepository
 from .events import EventRepository
 from .skills import SkillRepository
@@ -48,6 +49,7 @@ def validate_bundle(b: SourceBundle) -> None:
 class DatasetSnapshot:
     bundle: SourceBundle
     revision: int
+    runtime_completions: tuple[RuntimeCompletion,...]
     employees: EmployeeRepository
     events: EventRepository
     skills: SkillRepository
@@ -56,9 +58,9 @@ class DatasetSnapshot:
     def meta(self):
         return self.bundle.meta
 
-def build_snapshot(bundle: SourceBundle, revision: int = 0) -> DatasetSnapshot:
+def build_snapshot(bundle: SourceBundle, revision: int = 0, runtime_completions: tuple[RuntimeCompletion,...] = ()) -> DatasetSnapshot:
     validate_bundle(bundle)
-    return DatasetSnapshot(bundle.model_copy(deep=True), revision, EmployeeRepository(bundle.employees),
+    return DatasetSnapshot(bundle.model_copy(deep=True), revision, runtime_completions, EmployeeRepository(bundle.employees),
         EventRepository(bundle.events), SkillRepository(bundle.skills,bundle.role_profiles), HistoryRepository(bundle.history))
 
 class DatasetRepository:

@@ -8,6 +8,7 @@ from app.core.config import Settings
 from app.core.errors import DomainError, STATUS
 from app.repositories.dataset import DatasetRepository, build_snapshot
 from app.services.dataset import DatasetService
+from app.repositories.state import StateRepository
 from app.api import employees
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -17,7 +18,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         bundle=DatasetRepository(settings.raw_dir).load()
         clock=date.fromisoformat(str(settings.application_date)) if settings.application_date else bundle.meta.as_of_date
         if clock<bundle.meta.as_of_date: raise ValueError("Application date cannot precede dataset snapshot")
-        app.state.dataset=DatasetService(build_snapshot(bundle))
+        app.state.dataset=DatasetService(build_snapshot(bundle),StateRepository(settings.state_path),DatasetRepository(settings.raw_dir).fingerprint())
         app.state.settings=settings
         app.state.as_of_date=clock
         yield

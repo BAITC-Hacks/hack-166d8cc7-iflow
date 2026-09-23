@@ -47,3 +47,20 @@ class EmployeeDetail(Model):
     history: list[ParticipationView]
     revision: int
     as_of_date: date
+
+from uuid import UUID
+
+class SkillChange(Model):
+    skill_id: str
+    before: int
+    after: int
+    gain: int
+
+class CompletionResult(Model):
+    command_id: UUID
+    employee_id: str
+    event_id: str
+    skill_changes: list[SkillChange]
+    trajectory: Trajectory
+    revision: int
+    as_of_date: date

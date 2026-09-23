@@ -69,3 +69,11 @@ class CompletionCommand(Model):
     command_id: UUID
     source_record_id: str | None = None
     session_date: date | None = None
+
+class ImportResult(Model):
+    added_employees: int
+    unchanged_employees: int
+    added_history: int
+    unchanged_history: int
+    revision: int
+    as_of_date: date

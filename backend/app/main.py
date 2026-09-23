@@ -9,7 +9,7 @@ from app.core.errors import DomainError, STATUS
 from app.repositories.dataset import DatasetRepository, build_snapshot
 from app.services.dataset import DatasetService
 from app.repositories.state import StateRepository
-from app.api import employees, activities
+from app.api import employees, activities, dataset
 
 def create_app(settings: Settings | None = None) -> FastAPI:
     settings=settings or Settings.from_env()
@@ -25,6 +25,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app=FastAPI(title="Career Quest",lifespan=lifespan)
     app.add_middleware(CORSMiddleware,allow_origins=[settings.allowed_origin],allow_methods=["GET","POST"],
                        allow_headers=["Authorization","Content-Type"])
+    app.add_middleware(dataset.ImportGuard,identities=settings.dev_identities)
     @app.middleware("http")
     async def private_responses(request,call_next):
         response=await call_next(request)
@@ -41,6 +42,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     def health(): return {"status":"ok"}
     app.include_router(employees.router)
     app.include_router(activities.router)
+    app.include_router(dataset.router)
     return app
 
 app=create_app()

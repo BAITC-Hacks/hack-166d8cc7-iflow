@@ -63,3 +63,18 @@ def test_bad_source_prevents_startup(api_settings,tmp_path):
     from app.main import create_app
     with pytest.raises((ValueError,FileNotFoundError)):
         with TestClient(create_app(api_settings.model_copy(update={"raw_dir":tmp_path}))): pass
+
+def test_employee_cannot_import(api_client):
+    assert api_client.post('/api/dataset/import',headers=auth()).status_code==403
+
+def test_no_import_payload(api_client):
+    assert api_client.post('/api/dataset/import',headers=auth('test-hr')).status_code==422
+
+def test_upload_limit_chunked(api_client):
+    response=api_client.post('/api/dataset/import',headers={**auth('test-hr'),'Content-Type':'multipart/form-data; boundary=test'},content=iter([b'x'*(1024*1024)]*11))
+    assert response.status_code==413
+    assert api_client.app.state.dataset.state.revision==0
+
+def test_invalid_request_redacts_input(api_client):
+    response=api_client.post('/api/employees/E0001/activities/EV_012/complete',headers=auth(),json={'command_id':'sensitive-invalid-value'})
+    assert response.status_code==422 and 'sensitive-invalid-value' not in response.text

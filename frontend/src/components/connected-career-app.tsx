@@ -44,23 +44,26 @@ function Login({ onLogin }: { onLogin: (session: Session) => void }) {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const active = useRef<AbortController | null>(null);
+  const loginLock = useRef(false);
+  const [loginChoice, setLoginChoice] = useState<'employee' | 'hr' | 'custom' | null>(null);
   useEffect(() => () => active.current?.abort(), []);
-  async function login(value: string) {
-    if (busy || !value.trim()) return;
+  async function login(value: string, choice: 'employee' | 'hr' | 'custom' = 'custom') {
+    if (loginLock.current || !value.trim()) return;
+    loginLock.current = true; setLoginChoice(choice);
     active.current?.abort(); const controller = new AbortController(); active.current = controller;
     setBusy(true); setError('');
     try {
       const [principal, employees] = await Promise.all([getSession(value.trim(), controller.signal), listEmployees(value.trim(), controller.signal)]);
       if (!controller.signal.aborted) onLogin({ token: value.trim(), principal, employees: employees.items });
     } catch (error) { if (!controller.signal.aborted) setError(message(error)); }
-    finally { if (!controller.signal.aborted) setBusy(false); }
+    finally { loginLock.current = false; if (!controller.signal.aborted) { setBusy(false); setLoginChoice(null); } }
   }
-  return <main className="login-page"><section className="login-story"><img src="/halyk-logo.png" alt="Halyk"/><span className="eyebrow">CAREER QUEST</span><h1>Большой путь.<br/><span>Твой следующий шаг.</span></h1><p>Развивай навыки, исследуй возможности<br/>и собирай карьеру, которая вдохновляет.</p><Scene className="login-scene"/><span className="login-caption">У каждого пути есть начало. Твоё — здесь.</span></section><section className="login-panel"><div><span className="eyebrow">ТВОЯ ТЕРРИТОРИЯ РОСТА</span><h2>С возвращением.</h2><p>Выбери профиль для демонстрации или введи токен, выданный для твоего сотрудника.</p><div className="identity-options">{[{ token: 'demo-active', name: 'Сотрудник', text: 'Мой путь и текущие назначения', icon: Flag }, { token: 'demo-hr', name: 'HR-команда', text: 'Навыки, участие и импорт данных', icon: Users }].map(item => <button key={item.token} disabled={busy} onClick={() => login(item.token)}><span><item.icon size={22}/></span><div><b>{item.name}</b><small>{item.text}</small></div><ArrowUpRight size={18}/></button>)}</div><form onSubmit={event => { event.preventDefault(); void login(token); }}><label htmlFor="access-token">Другой профиль</label><div><input id="access-token" type="password" autoComplete="off" value={token} onChange={event => setToken(event.target.value)} placeholder="Токен доступа" disabled={busy}/><button className="button primary" disabled={busy || !token.trim()}>{busy ? 'Входим…' : 'Войти'}<ArrowRight size={16}/></button></div></form>{error && <ErrorBox error={error}/>}<p className="login-note"><ShieldCheck size={16}/>Локальная демонстрация на данных кейса. Роль и доступ проверяются сервером. Токен хранится только в памяти этой страницы.</p></div></section></main>;
+  return <main className="login-page"><section className="login-story"><img src="/halyk-logo.png" alt="Halyk"/><span className="eyebrow">CAREER QUEST</span><h1>Большой путь.<br/><span>Твой следующий шаг.</span></h1><p>Развивай навыки, исследуй возможности<br/>и собирай карьеру, которая вдохновляет.</p><Scene className="login-scene"/><span className="login-caption">У каждого пути есть начало. Твоё — здесь.</span></section><section className="login-panel"><div><span className="eyebrow">ТВОЯ ТЕРРИТОРИЯ РОСТА</span><h2>С возвращением.</h2><p>Выбери профиль для демонстрации или введи токен, выданный для твоего сотрудника.</p><div className="identity-options">{[{ token: 'demo-active', name: 'Сотрудник', text: 'Мой путь и текущие назначения', icon: Flag }, { token: 'demo-hr', name: 'HR-команда', text: 'Навыки, участие и импорт данных', icon: Users }].map(item => <button key={item.token} type="button" aria-busy={busy && loginChoice === (item.token === 'demo-hr' ? 'hr' : 'employee')} disabled={busy} onClick={() => login(item.token, item.token === 'demo-hr' ? 'hr' : 'employee')}><span><item.icon size={22}/></span><div><b>{busy && loginChoice === (item.token === 'demo-hr' ? 'hr' : 'employee') ? 'Входим…' : item.name}</b><small>{item.text}</small></div><ArrowUpRight size={18}/></button>)}</div>{busy && <div className="login-progress" role="status"><RefreshCw size={16}/>{loginChoice === 'hr' ? 'Открываем HR-панель…' : 'Открываем профиль…'}</div>}<form onSubmit={event => { event.preventDefault(); void login(token); }}><label htmlFor="access-token">Другой профиль</label><div><input id="access-token" type="password" autoComplete="off" value={token} onChange={event => setToken(event.target.value)} placeholder="Токен доступа" disabled={busy}/><button className="button primary" disabled={busy || !token.trim()}>{busy ? 'Входим…' : 'Войти'}<ArrowRight size={16}/></button></div></form>{error && <ErrorBox error={error}/>}<p className="login-note"><ShieldCheck size={16}/>Локальная демонстрация на данных кейса. Роль и доступ проверяются сервером. Токен хранится только в памяти этой страницы.</p></div></section></main>;
 }
 
 export default function ConnectedCareerApp({ initialPage = 'roadmap', requestedEmployee }: { initialPage?: Page; requestedEmployee?: string }) {
   const [session, setSession] = useState<Session | null>(null);
-  return session ? <Workspace key={session.token} session={session} initialPage={initialPage} requestedEmployee={requestedEmployee} onLogout={() => setSession(null)}/> : <Login onLogin={setSession}/>;
+  return session ? <Workspace key={session.token} session={session} initialPage={initialPage} requestedEmployee={requestedEmployee} onLogout={() => setSession(null)}/> : <Login onLogin={next => { window.location.hash = requestedEmployee ? 'roadmap' : next.principal.role === 'hr' ? 'hr' : 'roadmap'; setSession(next); }}/>;
 }
 
 function Workspace({ session, initialPage, requestedEmployee, onLogout }: { session: Session; initialPage: Page; requestedEmployee?: string; onLogout: () => void }) {

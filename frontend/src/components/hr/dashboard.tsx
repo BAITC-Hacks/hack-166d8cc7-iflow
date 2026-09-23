@@ -3,14 +3,14 @@ import {useEffect,useRef,useState} from "react";
 import Link from "next/link";
 import {useToken} from "@/components/session-provider";
 import {StatusMessage} from "@/components/ui/status-message";
-import {getHRDashboard,importDataset} from "@/lib/api";
+import {getHRDashboard,importDataset,ApiError} from "@/lib/api";
 import type {HRDashboard} from "@/lib/types";
 export function Dashboard(){
  const token=useToken();const [data,setData]=useState<HRDashboard>();const [error,setError]=useState("");const [notice,setNotice]=useState("");
  const [employees,setEmployees]=useState<File>();const [history,setHistory]=useState<File>();const [busy,setBusy]=useState(false);const [version,setVersion]=useState(0);
  const active=useRef(true);useEffect(()=>{active.current=true;return ()=>{active.current=false;};},[]);
  useEffect(()=>{const c=new AbortController();getHRDashboard(token,c.signal).then(d=>{if(!c.signal.aborted){setData(d);setError("");}}).catch(e=>{if(!c.signal.aborted)setError(e.message);});return ()=>c.abort();},[token,version]);
- async function upload(e:React.FormEvent){e.preventDefault();if(busy)return;setBusy(true);setError("");try{const r=await importDataset({employees,history},token);if(active.current){setNotice(`Imported ${r.added_employees} employees and ${r.added_history} history records; revision ${r.revision}.`);setVersion(v=>v+1);}}catch(e){if(active.current)setError(e instanceof Error?e.message:"Import failed");}finally{if(active.current)setBusy(false);}}
+ async function upload(e:React.FormEvent){e.preventDefault();if(busy)return;setBusy(true);setError("");try{const r=await importDataset({employees,history},token);if(active.current){setNotice(`Imported ${r.added_employees} employees and ${r.added_history} history records; revision ${r.revision}.`);setVersion(v=>v+1);}}catch(e){if(active.current)setError(e instanceof ApiError ? [e.message,...e.error.details.map(d=>{const detail=d as {loc?:unknown[];message?:string};return (detail.loc?.join(" / ")||"Upload")+": "+(detail.message||"Invalid value");})].join("\n") : e instanceof Error?e.message:"Import failed");}finally{if(active.current)setBusy(false);}}
  if(!data)return <><StatusMessage error={error||undefined}/>{error&&<button onClick={()=>setVersion(v=>v+1)}>Retry</button>}</>;
  return <><h2>HR development overview</h2><p>Dataset date: {data.as_of_date} · Revision {data.revision}</p>{error&&<StatusMessage error={error}/>} {notice&&<p role="status">{notice}</p>}
  <h3>Skills below next-grade requirements</h3><table><thead><tr><th>Skill</th><th>Employees with gap</th></tr></thead><tbody>{data.skill_gap_counts.map(g=><tr key={g.skill_id}><td>{g.name}</td><td>{g.employee_count}</td></tr>)}</tbody></table>

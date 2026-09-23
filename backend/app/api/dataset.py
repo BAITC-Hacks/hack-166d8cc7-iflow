@@ -7,6 +7,7 @@ from app.core.errors import DomainError, STATUS
 from app.api.dependencies import hr_context, RequestContext
 from app.repositories.dataset import parse_employees
 from app.repositories.history import parse_history
+from app.repositories.validation import SourceValidationError
 from app.schemas.responses import ImportResult
 from app.services.dataset import import_dataset
 
@@ -53,7 +54,7 @@ async def upload(request: Request,employees: UploadFile | None=File(default=None
         parsed_employees=parse_employees(emp) if emp is not None else None
         parsed_history=parse_history(hist) if hist is not None else None
     except (ValueError,UnicodeError) as err:
-        details=[{"loc":list(e["loc"]),"type":e["type"]} for e in err.errors()] if isinstance(err,ValidationError) else []
+        details=err.details if isinstance(err,SourceValidationError) else [{"loc":["employees.json",*e["loc"]],"type":e["type"],"message":"Invalid value"} for e in err.errors()] if isinstance(err,ValidationError) else []
         raise DomainError("invalid","Uploaded files do not match the dataset schema",details) from err
     finally:
         if employees: await employees.close()

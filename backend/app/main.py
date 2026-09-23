@@ -23,9 +23,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         app.state.as_of_date=clock
         yield
     app=FastAPI(title="Career Quest",lifespan=lifespan)
+    app.add_middleware(dataset.ImportGuard,identities=settings.dev_identities)
     app.add_middleware(CORSMiddleware,allow_origins=[settings.allowed_origin],allow_methods=["GET","POST"],
                        allow_headers=["Authorization","Content-Type"])
-    app.add_middleware(dataset.ImportGuard,identities=settings.dev_identities)
     @app.middleware("http")
     async def private_responses(request,call_next):
         response=await call_next(request)

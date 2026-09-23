@@ -91,3 +91,29 @@ def test_hr_authorization_and_openapi(api_client):
     assert {'/health','/api/employees','/api/employees/{employee_id}','/api/employees/{employee_id}/trajectory',
         '/api/employees/{employee_id}/recommendations','/api/employees/{employee_id}/activities/{event_id}/complete',
         '/api/hr/dashboard','/api/dataset/import'} <= set(paths)
+
+@pytest.mark.parametrize("token,size,status",[("invalid",0,401),("test-self",0,403),("test-hr",11*1024*1024,413)])
+def test_import_rejections_preserve_cors(api_client,token,size,status):
+    response=api_client.post("/api/dataset/import",headers={**auth(token),"Origin":"http://localhost:3000"},content=b"x"*size)
+    assert response.status_code==status
+    assert response.headers.get("access-control-allow-origin")=="http://localhost:3000"
+
+def test_history_schema_error_identifies_csv_line_and_field(api_client,make_history):
+    import csv,io
+    rows=[make_history().model_dump(mode="json"),make_history(record_id="INVALID").model_dump(mode="json")]
+    rows[1]["completion_pct"]=999
+    text=io.StringIO();writer=csv.DictWriter(text,fieldnames=rows[0]);writer.writeheader();writer.writerows(rows)
+    r=api_client.post("/api/dataset/import",headers=auth("test-hr"),files={"history":("history.csv",text.getvalue())})
+    assert r.status_code==422
+    assert r.json()["error"]["details"][0]["loc"]==["activity_history.csv",3,"completion_pct"]
+    assert "999" not in r.text
+    assert api_client.app.state.dataset.capture().revision==0
+
+def test_semantic_import_error_identifies_file_row_field(api_client,real_bundle):
+    import csv,io
+    h=real_bundle.history[0].model_dump(mode="json");h.update(record_id="BAD_REF",event_id="UNKNOWN_EVENT")
+    text=io.StringIO();writer=csv.DictWriter(text,fieldnames=h);writer.writeheader();writer.writerow(h)
+    r=api_client.post("/api/dataset/import",headers=auth("test-hr"),files={"history":("history.csv",text.getvalue())})
+    assert r.status_code==422
+    assert r.json()["error"]["details"][0]["loc"]==["activity_history.csv",2,"event_id"]
+    assert api_client.app.state.dataset.capture().revision==0

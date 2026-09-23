@@ -176,6 +176,7 @@ def test_no_candidates_does_not_call_provider(tiny_bundle, make_event, clock):
 def test_context_route_and_real_recommendation_use_same_private_context(tmp_path, clock):
     settings = Settings(raw_dir=Path(__file__).resolve().parents[2] / "data/raw",
         state_path=tmp_path / "state.json",
+        notifications_worker_enabled=False,
         dev_identities={"self": {"role": "employee", "employee_id": "E0047"}, "hr": {"role": "hr"}})
     captured = []
 

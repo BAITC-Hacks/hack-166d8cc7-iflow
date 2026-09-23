@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { ApiError, getHRDashboard, importDataset, listEmployees } from "../lib/api";
 import type { EmployeeList, HRDashboard, ImportResult } from "../lib/types";
+import { HRNotificationCenter } from './notification-center';
 
 type Props = {
   token: string;
@@ -225,6 +226,7 @@ function HRContent({ token, onSelectEmployee, onImported }: Props) {
         </>
       )}
 
+      <HRNotificationCenter token={token} employees={loaded?.employees.items ?? []}/>
       <section className="chr-import chr-panel">
         <div className="chr-import-copy"><div className="chr-import-mark" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4"><path d="M12 16V3m-5 5 5-5 5 5M4 15v5a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-5" /></svg></div><span className="eyebrow">НОВЫЕ ДАННЫЕ — НОВЫЕ ВОЗМОЖНОСТИ</span><h2>Добавьте сотрудников и историю</h2><p>Загрузите один или оба файла в исходной схеме датасета. Сервер проверит записи и обновит показатели команды.</p><small>JSON для сотрудников · CSV для истории<br />Лимит запроса — 10 МиБ</small></div>
         <div className="chr-import-form-wrap"><form ref={formRef} onSubmit={handleImport} className="chr-import-form"><label><span>Сотрудники <small>employees.json</small></span><input type="file" accept=".json,application/json" disabled={importing} onChange={event => { const file = event.target.files?.[0]; setFiles(current => ({ ...current, employees: file })); setImportError(null); setImportResult(null); }} /></label><label><span>История участия <small>activity_history.csv</small></span><input type="file" accept=".csv,text/csv" disabled={importing} onChange={event => { const file = event.target.files?.[0]; setFiles(current => ({ ...current, history: file })); setImportError(null); setImportResult(null); }} /></label><button type="submit" className="button primary" disabled={importing || (!files.employees && !files.history)}>{importing ? "Загружаем и проверяем…" : importError ? "Повторить импорт" : "Импортировать данные"}<Arrow /></button></form>

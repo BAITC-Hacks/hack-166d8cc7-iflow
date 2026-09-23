@@ -7,6 +7,7 @@ from .employee import Employee
 from .history import ActivityHistory
 from .responses import CompletionResult
 from .market import MarketReceipt
+from .notifications import NotificationState
 
 class RuntimeCompletion(Model):
     command_id: UUID
@@ -29,3 +30,4 @@ class MutableState(Model):
     completions: tuple[RuntimeCompletion,...] = ()
     receipts: dict[str,CompletionReceipt] = Field(default_factory=dict)
     market_receipts: dict[str,MarketReceipt] = Field(default_factory=dict)
+    notifications: NotificationState = Field(default_factory=NotificationState)

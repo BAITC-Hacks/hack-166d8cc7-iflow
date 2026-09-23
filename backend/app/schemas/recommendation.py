@@ -2,7 +2,7 @@ from datetime import date
 from typing import Literal
 from .common import Model
 
-FactorKind = Literal["current_grade","target_grade","skill_levels","critical_skill","attainable_gain","completed_history","participation_outcomes","availability","duration_format"]
+FactorKind = Literal["current_grade","target_grade","skill_levels","critical_skill","attainable_gain","completed_history","participation_outcomes","availability","duration_format","profile_context","history_record"]
 class RecommendationFactor(Model):
     kind: FactorKind
     values: dict[str, str | int | float | bool | None]
@@ -28,9 +28,16 @@ class RecommendationItem(Model):
     explanation: str = Field(min_length=1)
     evidence: list[RecommendationFactor]
 
+class RecommendationHypothesis(Model):
+    statement: str = Field(min_length=1)
+    evidence: list[RecommendationFactor] = Field(min_length=1)
+    needs_confirmation: Literal[True] = True
+
 class RecommendationResult(Model):
     status: Literal["success","no_candidates"]
     employee_id: str
     recommendations: list[RecommendationItem]
     revision: int
     as_of_date: date
+    hypotheses: list[RecommendationHypothesis] = Field(default_factory=list, max_length=3)
+    clarifying_questions: list[str] = Field(default_factory=list, max_length=2)

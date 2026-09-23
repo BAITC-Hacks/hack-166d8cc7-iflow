@@ -2,7 +2,7 @@
 
 Career Quest is an employee-development navigator for HackAlem AI, Case 1. This foundation loads the real starter kit, projects current skills, calculates next-grade gaps, lists eligible development activities, records completions and provides HR aggregates/import.
 
-**AI recommendations are not implemented.** The recommendation endpoint returns HTTP 501. Candidates and structured evidence are ready for the next milestone; this is not yet a complete hackathon submission.
+**Full LLM context and validated recommendation orchestration are implemented; a live provider is not configured.** The default recommendation endpoint returns HTTP 501 when eligible candidates require a model. With no candidates it returns `no_candidates`. See [the LLM context contract](docs/llm-context.md) for provider integration and the authorized context endpoint.
 
 ## Наше решение — Halyk Career Quest
 
@@ -53,13 +53,16 @@ Career Quest is an employee-development navigator for HackAlem AI, Case 1. This 
 4. Формат, продолжительность, расписание и доступное время сотрудника.
 
 Сначала backend определяет допустимых кандидатов и рассчитывает прогресс.
-Затем планируем ранжирование и LLM-уточнение с объяснением минимум по трём
-факторам. Результат проходит проверку: рекомендовать можно только реальные
+Затем в LLM передаётся полный профиль, вся история с карточками мероприятий,
+каталог и требования текущего/следующего грейда и явно заданной цели. Инструкция
+требует объяснения минимум по трём факторам. Результат проходит проверку: рекомендовать можно только реальные
 мероприятия из каталога, соответствующие ограничениям. Уровни навыков и
 начисления рассчитываются по правилам данных, а не генерируются моделью.
 
-**Сейчас вызовы LLM не подключены:** опубликованный endpoint рекомендаций
-возвращает HTTP 501. В отдельном локальном прототипе маршрут подбирается
+**Сейчас внешний провайдер LLM не подключён:** при наличии кандидатов endpoint
+рекомендаций по умолчанию возвращает HTTP 501. Подготовка контекста, инструкции,
+адаптер JSON-ответов и проверки уже работают; [контракт подключения](docs/llm-context.md).
+В отдельном локальном прототипе маршрут подбирается
 правилами по цели, навыкам и времени; объяснения формируются по шаблонам.
 
 ### Halyk Market — награды за развитие
@@ -102,7 +105,7 @@ Career Quest is an employee-development navigator for HackAlem AI, Case 1. This 
 | FastAPI, разграничение employee/HR, импорт и сохранение завершений, HR-агрегаты | Опубликованы; подробнее в технических разделах ниже |
 | Минимальный интерфейс сотрудника и HR, запуск через Docker Compose | Опубликованы |
 | Новая игровая карта, темп обучения, анимации и Halyk Market | Отдельный локальный frontend-прототип на демо-данных; в этот push не включён и с backend ещё не интегрирован |
-| AI-рекомендации с LLM и проверенными объяснениями | Следующий этап разработки |
+| Полный контекст LLM, инструкции, адаптер JSON-ответов и проверка фактов | Реализованы; внешний провайдер и вывод рекомендаций в UI ещё требуют подключения |
 
 Следующие шаги: объединить новый интерфейс с API и исходным каталогом,
 подключить рекомендатель, затем проверить полный сценарий сотрудника и HR.
@@ -145,7 +148,7 @@ backend/
   app/schemas/             source, public, state and evidence models
   app/repositories/        file access and repository views
   app/services/            projection, gaps, eligibility, mutations, aggregates
-  app/ai/                  disabled provider boundary and output validator
+  app/ai/                  full context contract, prompts, JSON adapter and output validator
   app/core/                config, identity and errors
   tests/
   Dockerfile
@@ -206,7 +209,8 @@ All /api endpoints require Authorization: Bearer TOKEN.
 | GET | /api/employees | Own summary for employees; all for HR |
 | GET | /api/employees/{id} | Profile, projected skills and effective history |
 | GET | /api/employees/{id}/trajectory | Next grade, goal, gaps and eligible candidates |
-| POST | /api/employees/{id}/recommendations | Explicit 501, no fake AI result |
+| GET | /api/employees/{id}/recommendations/context | Full linked context; own employee or HR access |
+| POST | /api/employees/{id}/recommendations | Validated injected AI result; no_candidates without a model; 501 if provider missing |
 | POST | /api/employees/{id}/activities/{event_id}/complete | Own activity only; HR cannot complete |
 | GET | /api/hr/dashboard | HR-only gap, candidate-coverage and participation aggregates |
 | POST | /api/dataset/import | HR-only multipart employees/history |
@@ -253,9 +257,9 @@ Tests cover real loading and original hashes, gaps, assessment replay, caps/no-r
 
 ## Current status and next work
 
-Implemented: the deterministic foundation, authorized API, minimal employee/HR UI, import/completion persistence and Docker topology. No provider calls, scoring, fabricated explanations or optional gamification.
+Implemented: the deterministic foundation, authorized API, minimal employee/HR UI, import/completion persistence, Docker topology, complete linked LLM context, provider-independent prompt/JSON adapter and validated recommendation orchestration. No live provider calls or optional gamification.
 
-Next: multi-factor scoring -> LLM refinement -> validated 1–3 recommendations with evidence-backed explanations; then populate HR recommendation coverage. Current employees_without_recommendation is null, not a misleading zero; employees_without_candidate is a separate deterministic measure. Enforce the ten-second recommendation budget in that next milestone.
+Next: configure a live provider with the ten-second request budget, display its recommendations/questions/hypotheses in the UI, evaluate recommendation quality, and populate HR recommendation coverage. Current employees_without_recommendation is null; employees_without_candidate is a separate deterministic measure. The provider integration must set transport timeouts; the injected synchronous callable has no deadline enforcement by itself.
 
 Verification results, known limits, final tree and next-agent instructions: [docs/handoff.md](docs/handoff.md).
 

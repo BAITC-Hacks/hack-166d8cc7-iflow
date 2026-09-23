@@ -10,8 +10,10 @@ from app.repositories.dataset import DatasetRepository, build_snapshot
 from app.services.dataset import DatasetService
 from app.repositories.state import StateRepository
 from app.api import employees, activities, dataset, recommendations, hr
+from app.ai.client import AIClient
+from app.ai.recommender import DisabledRecommender
 
-def create_app(settings: Settings | None = None) -> FastAPI:
+def create_app(settings: Settings | None = None, *, ai_client: AIClient | None = None) -> FastAPI:
     settings=settings or Settings.from_env()
     @asynccontextmanager
     async def lifespan(app):
@@ -21,6 +23,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         app.state.dataset=DatasetService(build_snapshot(bundle),StateRepository(settings.state_path),DatasetRepository(settings.raw_dir).fingerprint())
         app.state.settings=settings
         app.state.as_of_date=clock
+        app.state.ai_client=ai_client or DisabledRecommender()
         yield
     app=FastAPI(title="Career Quest",lifespan=lifespan)
     app.add_middleware(dataset.ImportGuard,identities=settings.dev_identities)

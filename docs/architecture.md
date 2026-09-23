@@ -24,26 +24,25 @@ Raw skills remain the last assessment. Current skills are projected from post-as
 - repositories: decoding, source fingerprints, indexed lookup, atomic file replacement.
 - services: progress/gaps/trajectory/eligibility, command policy, import validation and HR aggregates.
 - api: authorization, request/response adaptation and bounded upload handling.
-- ai: disabled provider protocol and validation of future selected events/evidence.
+- ai: complete context contract, provider-independent messages, JSON completion adapter and selected-event/evidence validation; external provider disabled by default.
 - frontend/lib: single API client and DTO types; components never own backend URLs.
 
 Private frontend state is keyed by the in-memory token. Changing identity unmounts private screens; requests abort on unmount and late mutation responses are discarded. No credentials are stored in localStorage.
 
-## Future recommendation flow
+## Recommendation flow
 
 ```text
-current employee state
- -> next-grade / career-goal analyses
- -> eligible activities
- -> deterministic evidence
- -> multi-factor scoring (next milestone)
- -> LLM refinement (next milestone)
+one employee's complete profile + effective history + event cards + skill catalog
+ -> labeled current-role / next-grade benchmark / explicit-goal requirements
+ -> eligible activities + exclusion reasons + deterministic evidence + unknown preferences
+ -> full-context instructions and JSON output contract
+ -> injected AIClient (external provider not configured by default)
  -> validated 1–3 recommendations + evidence-backed explanation
 ```
 
 RecommendationCandidate retains current/target grades, current/required skill levels, critical flags, capped attainable gains, completed-history references, no-show/decline/drop counts and references, availability and duration/format. score is null. Output validation requires eligible unique IDs and at least three distinct supported evidence kinds. It also checks employee, snapshot revision and date. Numeric state remains deterministic; structured validation alone does not prove free-form model prose truthful.
 
-There are no model calls or SDK dependencies in the foundation. The recommendation endpoint returns 501. HR candidate coverage is available; actual recommendation coverage remains null until recommendations exist.
+There are no live model calls or provider SDK dependencies. `create_app(ai_client=...)` connects a provider through the existing protocol; `JSONRecommender` adapts a callable returning JSON text. Without a provider the recommendation endpoint returns 501 when candidates exist, or `no_candidates` when none exist. An authorized GET context endpoint exposes the same snapshot used for generation. HR recommendation coverage remains null. See [llm-context.md](llm-context.md).
 
 ## Reproducibility
 

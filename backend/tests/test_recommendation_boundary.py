@@ -1,16 +1,9 @@
 import pytest
 from app.repositories.dataset import build_snapshot
-from app.services.trajectory import build_trajectory
 
 def context_for(tiny_bundle,clock):
-    from app.ai.client import AIRefinementInput
-    from app.services.trajectory import targets_for
-    from app.services.progress_engine import current_skills
-    snap=build_snapshot(tiny_bundle)
-    employee=snap.employees.get("TEST_EMP")
-    targets=targets_for(employee,current_skills(snap,"TEST_EMP",clock),snap)
-    return AIRefinementInput(employee_id="TEST_EMP",current_grade="Middle",targets=[t for t in targets if t],
-        candidates=build_trajectory("TEST_EMP",snap,clock).candidates,revision=0,as_of_date=clock)
+    from app.services.recommendation_context import build_recommendation_context
+    return build_recommendation_context("TEST_EMP",build_snapshot(tiny_bundle),clock)
 
 @pytest.mark.parametrize("case",["invented","duplicate","empty","four","two_factors","changed_fact","wrong_revision","false_no_candidates"])
 def test_output_validation(case,tiny_bundle,clock):

@@ -1,5 +1,11 @@
 # Career Quest foundation handoff
 
+Subsequent context implementation: the full linked recommendation payload, prompts,
+JSON adapter and authorized context route are now implemented. The default external
+provider remains disabled. Current behavior and integration details are documented
+in [llm-context.md](llm-context.md); the foundation verification record below describes
+the earlier implementation and is preserved as historical evidence.
+
 Verified 2026-09-23 on branch `codex/career-quest-foundation`, based on `main` at `59399d0`. Product implementation is in the managed worktree:
 `C:/Users/zhasy/.codex/worktrees/career-quest-foundation/hack-166d8cc7-iflow`.
 The original checkout has not been merged. All 14 implementation tasks have deliverables; the explicit browser race-test limitation is recorded below.

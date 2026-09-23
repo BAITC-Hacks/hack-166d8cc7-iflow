@@ -3,7 +3,7 @@ Hackathon team repository for IFlow
 
 ## Выбранный трек и кейс
 - Трек: Halyk Bank
-- Кейс 1: Career Quest — AI-навигатор развития сотрудника
+- Case 1: Career Quest — AI-навигатор развития сотрудника
 
 ## Authors
 - [Zhassyn Zhalynuly](https://github.com/zzhassyn) (Backend Developer)

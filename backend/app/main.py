@@ -9,7 +9,7 @@ from app.core.errors import DomainError, STATUS
 from app.repositories.dataset import DatasetRepository, build_snapshot
 from app.services.dataset import DatasetService
 from app.repositories.state import StateRepository
-from app.api import employees
+from app.api import employees, activities
 
 def create_app(settings: Settings | None = None) -> FastAPI:
     settings=settings or Settings.from_env()
@@ -40,6 +40,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.get("/health")
     def health(): return {"status":"ok"}
     app.include_router(employees.router)
+    app.include_router(activities.router)
     return app
 
 app=create_app()

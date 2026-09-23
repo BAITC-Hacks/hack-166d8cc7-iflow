@@ -17,7 +17,10 @@ class DatasetService:
         bundle=self.raw_bundle.model_copy(update={
             "employees":self.raw_bundle.employees+state.imported_employees,
             "history":self.raw_bundle.history+state.imported_history})
-        return build_snapshot(bundle,state.revision,state.completions)
+        from .progress_engine import validate_runtime
+        snapshot=build_snapshot(bundle,state.revision,state.completions)
+        validate_runtime(snapshot)
+        return snapshot
     def commit(self,next_state: MutableState) -> DatasetSnapshot:
         # Caller holds the single mutation lock from read through publication.
         if next_state==self.state: return self._snapshot

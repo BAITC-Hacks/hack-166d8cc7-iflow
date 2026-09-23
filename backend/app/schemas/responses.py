@@ -64,3 +64,8 @@ class CompletionResult(Model):
     trajectory: Trajectory
     revision: int
     as_of_date: date
+
+class CompletionCommand(Model):
+    command_id: UUID
+    source_record_id: str | None = None
+    session_date: date | None = None

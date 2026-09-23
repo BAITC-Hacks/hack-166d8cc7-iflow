@@ -27,3 +27,23 @@ class Trajectory(Model):
     candidates: list[RecommendationCandidate]
     revision: int
     as_of_date: date
+
+from .employee import Employee
+
+class EmployeeSummary(Model):
+    employee_id: str
+    full_name: str
+    role: str
+    grade: str
+
+class EmployeeList(Model):
+    items: list[EmployeeSummary]
+    revision: int
+    as_of_date: date
+
+class EmployeeDetail(Model):
+    profile: Employee
+    current_skills: dict[str,int]
+    history: list[ParticipationView]
+    revision: int
+    as_of_date: date

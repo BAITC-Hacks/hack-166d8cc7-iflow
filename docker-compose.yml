@@ -1,0 +1,32 @@
+name: career-quest-foundation
+services:
+  backend:
+    build: ./backend
+    environment:
+      DATA_RAW_DIR: /app/data/raw
+      STATE_PATH: /app/data/state/state.json
+      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:-http://localhost:3000}
+      APPLICATION_DATE: ${APPLICATION_DATE:-}
+      DEV_IDENTITIES_JSON: '${DEV_IDENTITIES_JSON:-{"demo-employee":{"role":"employee","employee_id":"E0001"},"demo-active":{"role":"employee","employee_id":"E0004"},"demo-hr":{"role":"hr"}}}'
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - ./data/raw:/app/data/raw:ro
+      - career_quest_state:/app/data/state
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 5s
+      timeout: 4s
+      retries: 10
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+volumes:
+  career_quest_state:

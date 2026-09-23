@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Any
+from .recommendation import RecommendationCandidate
 from .common import Model
 from .history import ParticipationView
 
@@ -24,6 +24,6 @@ class Trajectory(Model):
     career_goal_analysis: TargetAnalysis | None
     requirement_coverage: float | None
     completed_activities: list[ParticipationView]
-    candidates: list[Any]
+    candidates: list[RecommendationCandidate]
     revision: int
     as_of_date: date

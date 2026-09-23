@@ -7,6 +7,10 @@ services:
       STATE_PATH: /app/data/state/state.json
       FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:-http://localhost:3000}
       APPLICATION_DATE: ${APPLICATION_DATE:-}
+      MAIL_ENCRYPTION_KEY: ${MAIL_ENCRYPTION_KEY:-}
+      PUBLIC_APP_URL: ${PUBLIC_APP_URL:-http://localhost:3000}
+      NOTIFICATION_WORKER_ENABLED: ${NOTIFICATION_WORKER_ENABLED:-true}
+      NOTIFICATION_POLL_SECONDS: ${NOTIFICATION_POLL_SECONDS:-2}
       DEV_IDENTITIES_JSON: '${DEV_IDENTITIES_JSON:-{"demo-employee":{"role":"employee","employee_id":"E0001"},"demo-active":{"role":"employee","employee_id":"E0004"},"demo-hr":{"role":"hr"}}}'
     ports:
       - "127.0.0.1:8000:8000"

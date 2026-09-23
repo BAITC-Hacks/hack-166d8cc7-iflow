@@ -58,8 +58,8 @@ AI-навигатор должен помогать подобрать марш�
 1. Дефицит и критичность навыков для следующего грейда или карьерной цели.
 2. Текущую роль, грейд и предварительные требования мероприятия.
 3. Историю участия: завершения, отказы, пропуски и обратную связь.
-4. Формат, продолжительность и расписание. Доступное время сотрудника сейчас
-   учитывает только подбор шагов на фронтенде.
+4. Формат, продолжительность и расписание. Выбранный в интерфейсе темп сейчас
+   меняет только оценку длительности; в LLM он пока не передаётся.
 
 Сначала backend определяет допустимых кандидатов и рассчитывает прогресс.
 Затем в LLM передаётся полный профиль, вся история с карточками мероприятий,
@@ -71,9 +71,11 @@ AI-навигатор должен помогать подобрать марш�
 **Сейчас внешний провайдер LLM не подключён:** при наличии кандидатов endpoint
 рекомендаций по умолчанию возвращает HTTP 501. Подготовка контекста, инструкции,
 адаптер JSON-ответов и проверки уже работают; [контракт подключения](docs/llm-context.md).
-Карта работает и без провайдера: фронтенд выбирает до трёх шагов из проверенных
-сервером кандидатов с учётом дефицитов навыков и времени. Объяснения этого
-подбора формируются правилами и обозначены отдельно от ответа ИИ.
+Карта показывает только сохранённую AI-подборку: один основной шаг и до двух
+дополнительных при высокой уверенности и отдельном обосновании пользы.
+При сомнении в дополнительных вариантах остаётся один шаг. Без провайдера
+карта показывает статус недоступности AI; полный каталог и профиль доступны.
+Темп обучения меняет оценку длительности, но не состав и порядок рекомендаций.
 
 ### Halyk Market — награды за развитие
 
@@ -121,10 +123,11 @@ AI-навигатор должен помогать подобрать марш�
 | Игровая карта, обзор, каталог событий и адаптивный интерфейс Halyk | Основной frontend проекта; локальные фильтры работают поверх серверных данных |
 | Halyk Market | Серверный каталог, баланс и сохраняемые обмены; демонстрационные награды |
 | Полный контекст LLM, инструкции, адаптер JSON и проверка фактов | Реализованы; UI поддерживает ответы и ошибки, внешний провайдер ещё не настроен |
+| Предложения и почтовые уведомления | Сохраняемая очередь, SMTP HR, расписание, паузы, реакции сотрудников и журнал; требуется настройка отправителя и LLM |
 | Docker Compose и native-запуск | Один origin для браузера через Next.js-прокси `/backend` |
 
 Следующие шаги: подключить LLM-провайдера, оценить качество рекомендаций и
-добавить API редактирования цели и записи на мероприятия. Подробности текущей
+добавить API редактирования цели и интеграцию записи с организатором. Запись на предложенный курс уже сохраняется в системе уведомлений. Подробности текущей
 связи интерфейса с сервером: [frontend integration](docs/frontend-integration.md).
 
 ## Launch
@@ -197,6 +200,9 @@ Copy .env.example to .env only if changing Compose defaults. Compose reads .env;
 | STATE_PATH | Native backend state file override |
 | APPLICATION_DATE | Demo clock override, never before the 2026-10-01 snapshot |
 | AI_PROVIDER, OPENAI_API_KEY, NVIDIA_API_KEY | Reserved, currently unused; keys must never be public variables |
+| MAIL_ENCRYPTION_KEY | Server-only Fernet key for saved SMTP credentials; preserve across restarts |
+| PUBLIC_APP_URL | Employee-facing cabinet URL used in emails |
+| NOTIFICATION_WORKER_ENABLED, NOTIFICATION_POLL_SECONDS | Background preparation/delivery worker; default true / 2 seconds |
 
 The default clock is the dataset snapshot, not the host date. Future scheduled sessions cannot be completed. Move APPLICATION_DATE forward to demonstrate later sessions, rebuild/restart the backend, and never move it backwards over recorded completions. Self-paced and existing assignments work immediately.
 
@@ -224,6 +230,8 @@ npm run dev
 Open [the native frontend](http://127.0.0.1:3000). The default Next.js proxy reaches `http://127.0.0.1:8000`; no frontend environment file is required. Native default tokens are demo-employee, demo-active and demo-hr. To add imported employee identities, set DEV_IDENTITIES_JSON as shown in .env.example before starting Python. Application logic is independent of known employee IDs. Next.js reads frontend/.env.local when a URL override is needed.
 
 ## API
+
+Email setup, workflow, recovery guarantees and notification endpoints: [notifications](docs/notifications.md). Delivery starts disabled. HR must connect a mailbox, configure employee addresses and enable it; automatic recommendations also require a configured AI client. Test emails are explicit HR actions.
 
 All /api endpoints require Authorization: Bearer TOKEN.
 
@@ -278,7 +286,7 @@ For an intentional **disposable demo reset**, first stop the backend and back up
 
 ## Tests and checks
 
-For this integration, `npm --prefix frontend run build` completed successfully, including the Next.js webpack build, TypeScript checks and static-page generation. Backend startup with the dataset also completed. Unit tests and browser tests were not run. Commands for further verification are listed below.
+Notification integration verification: all 175 backend tests passed, including fake SMTP, authorization, restart recovery and disk failure after mail acceptance. Frontend verification uses `npm run typecheck` and `npm run build`. Browser interaction and real mailbox delivery have not been verified. Commands are listed below.
 
 ```sh
 # From repository root, with .venv activated:
@@ -296,7 +304,7 @@ Tests cover real loading and original hashes, gaps, assessment replay, caps/no-r
 
 Implemented: the deterministic foundation, authorized session/API, connected Halyk map and employee/HR UI, import/completion persistence, server-backed demonstration Market, same-origin Docker/native topology, complete linked LLM context, provider-independent prompt/JSON adapter and validated recommendation orchestration. The UI handles recommendation responses, evidence, hypotheses, questions and missing-provider errors.
 
-Next: configure a live provider with the ten-second request budget, evaluate recommendation quality, and populate HR recommendation coverage. Current employees_without_recommendation is null; employees_without_candidate is a separate deterministic measure. The provider integration must set transport timeouts; the injected synchronous callable has no deadline enforcement by itself. Weekly pace is a local route filter and is not sent to the LLM. Enrollment, profile/goal editing and answers to AI clarification questions have no write endpoints yet.
+Next: configure a live provider with the ten-second request budget, evaluate recommendation quality, and populate HR recommendation coverage. Current employees_without_recommendation is null; employees_without_candidate is a separate deterministic measure. The provider integration must set transport timeouts; the injected synchronous callable has no deadline enforcement by itself. Weekly pace is a local route filter and is not sent to the LLM. Offer enrollment and email preferences now have persisted write endpoints; external LMS registration, profile/goal editing and answers to AI clarification questions remain unimplemented. See [notification workflow and API handoff](docs/notifications.md).
 
 Foundation handoff: [docs/handoff.md](docs/handoff.md). Current frontend/API mapping and integration limits: [docs/frontend-integration.md](docs/frontend-integration.md).
 
@@ -308,5 +316,5 @@ Foundation handoff: [docs/handoff.md](docs/handoff.md). Current frontend/API map
 ## Authors
 
 - [Zhassyn Zhalynuly](https://github.com/zzhassyn)
-- [Danial Amangeldi](https://github.com/danial41-design) (Backend/ML Developer)
+- [Danial Amangeldi](https://github.com/danial41-design)
 - Nurislam Aldabergenuly

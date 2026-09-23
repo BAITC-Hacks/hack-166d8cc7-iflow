@@ -27,6 +27,8 @@ class RecommendationItem(Model):
     event_id: str
     explanation: str = Field(min_length=1)
     evidence: list[RecommendationFactor]
+    confidence: Literal["high", "uncertain"] = "high"
+    additional_value: str | None = Field(default=None, max_length=1500)
 
 class RecommendationHypothesis(Model):
     statement: str = Field(min_length=1)
@@ -34,7 +36,7 @@ class RecommendationHypothesis(Model):
     needs_confirmation: Literal[True] = True
 
 class RecommendationResult(Model):
-    status: Literal["success","no_candidates"]
+    status: Literal["success","no_candidates","needs_clarification"]
     employee_id: str
     recommendations: list[RecommendationItem]
     revision: int

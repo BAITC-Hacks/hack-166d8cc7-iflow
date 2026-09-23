@@ -31,6 +31,10 @@ def validate_recommendation_result(context: AIRefinementInput,result: Recommenda
     if result.status=="no_candidates":
         if allowed or result.recommendations: raise ValueError("Candidates exist")
         return result
+    if result.status == "needs_clarification":
+        if result.recommendations or not result.clarifying_questions:
+            raise ValueError("Uncertain primary choice requires questions and no recommendations")
+        return result
     if not 1<=len(result.recommendations)<=3: raise ValueError("Expected one to three recommendations")
     seen=set()
     for item in result.recommendations:
@@ -42,4 +46,13 @@ def validate_recommendation_result(context: AIRefinementInput,result: Recommenda
             raise ValueError("Evidence is not supported by deterministic facts")
         if not any(f in candidate_facts and f.kind in {"skill_levels","critical_skill","attainable_gain"} for f in item.evidence):
             raise ValueError("Recommendation must explain a candidate's skill relevance")
+    if result.recommendations[0].confidence == "uncertain":
+        if not result.clarifying_questions:
+            raise ValueError("Uncertain primary choice requires clarifying questions")
+        return result.model_copy(update={"status": "needs_clarification", "recommendations": []})
+    # Conservative server gate: uncertainty or missing marginal benefit never
+    # turns into extra nodes on the map or extra offers in the mail queue.
+    if any(item.confidence != "high" or not (item.additional_value or "").strip()
+           for item in result.recommendations[1:]):
+        return result.model_copy(update={"recommendations": result.recommendations[:1]})
     return result

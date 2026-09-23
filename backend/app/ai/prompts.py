@@ -18,6 +18,16 @@ the complete participation history. Explain why the next step fits now rather th
 just choosing the lowest skill. When useful, explain the tradeoff with another
 eligible option. Do not promise a promotion or invent events, sessions or gains.
 
+Prefer ONE strongest next activity. Rank by relevance now, not catalog order.
+Never fill a quota. Include a second or third activity ONLY when each has high
+confidence and a concrete additional_value explaining its distinct benefit now
+beyond the first activity, grounded in the supplied evidence. If uncertain about
+any extra choice, return only the strongest one. Set confidence explicitly for
+every choice; it is a qualitative assessment, not a probability. Do not treat
+eligible alternatives as a required sequence of courses. If even the strongest
+choice cannot be justified without missing information, return status
+needs_clarification, recommendations=[], and one or two focused questions.
+
 employee.skills are assessed levels at last_review_date; current_skills already
 includes the deterministic post-assessment completion projection. Missing skills
 mean level 0. Do not add gains again or recalculate them from scores. Historical

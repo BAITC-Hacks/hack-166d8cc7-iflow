@@ -32,7 +32,7 @@ export function createQuestNodes(context: RecommendationContext, planned: Catalo
       nodes.push({ event, point: points[i++], sector });
     }
   };
-  add([...planned, ...catalog.filter(event => eligible.has(event.event_id))], ROUTE_POINTS, 'route');
+  add(planned, ROUTE_POINTS, 'route');
   add(catalog.filter(event => ['course', 'compliance', 'onboarding'].includes(event.type)), CAMPUS_POINTS, 'campus');
   add(catalog.filter(event => ['workshop', 'mentoring', 'meetup'].includes(event.type)), PEOPLE_POINTS, 'people');
   add(catalog, HORIZON_POINTS, 'horizon');
@@ -80,7 +80,7 @@ export function QuestGame({ context, nodes, selected, market, entered, motionSto
   const isAvailable = !!selected && available.has(selected.event_id);
   const exclusions = context.excluded_events.find(item => item.event_id === selected?.event_id)?.reasons ?? [];
   const sectors = [
-    { id: 'route' as const, name: 'Мой маршрут', icon: Route, point: initial },
+    { id: 'route' as const, name: 'ИИ-маршрут', icon: Route, point: initial },
     { id: 'campus' as const, name: 'Кампус знаний', icon: GraduationCap, point: { x: 580, y: 790 } },
     { id: 'people' as const, name: 'Люди и идеи', icon: Users, point: { x: 1760, y: 900 } },
     { id: 'horizon' as const, name: 'Горизонты', icon: Compass, point: { x: 1260, y: 400 } },
@@ -139,7 +139,7 @@ export function QuestGame({ context, nodes, selected, market, entered, motionSto
               {sectors.map(item => <path key={item.id} className={item.id === 'route' ? 'gq-path-main' : 'gq-path-side'} d={pathThrough(nodes.filter(node => node.sector === item.id).map(node => node.point))} fill="none"/>)}
               <path className="gq-path-side" d="M 680 1000 Q 900 850 1090 690 M 1380 1020 Q 1510 1140 1630 1260 M 1090 690 Q 1180 530 1130 300 M 1160 1360 Q 1240 1600 1390 1710" fill="none"/>
             </svg>
-            <div className="gq-zone" style={{ left: 900, top: 1080 }}><span><Route size={23}/></span><small>01 / ЛИЧНЫЙ МАРШРУТ</small><h2>Начни с себя</h2><p>Твои ближайшие шаги</p></div>
+            <div className="gq-zone" style={{ left: 900, top: 1080 }}><span><Route size={23}/></span><small>01 / ИИ-МАРШРУТ</small><h2>Начни с себя</h2><p>Персональные рекомендации</p></div>
             <div className="gq-zone" style={{ left: 490, top: 170 }}><span><GraduationCap size={23}/></span><small>02 / ЗНАНИЯ</small><h2>Кампус Halyk</h2><p>Осваивай. Пробуй. Расти.</p></div>
             <div className="gq-zone" style={{ left: 1800, top: 220 }}><span><Users size={23}/></span><small>03 / КОМЬЮНИТИ</small><h2>Люди и идеи</h2><p>Сильнее вместе</p></div>
             <div className="gq-zone" style={{ left: 1190, top: 1820 }}><span><Trophy size={23}/></span><small>04 / НОВЫЕ ГОРИЗОНТЫ</small><h2>Дальше — больше</h2></div>
@@ -152,7 +152,7 @@ export function QuestGame({ context, nodes, selected, market, entered, motionSto
               return <button key={event.event_id} type="button" className={`gq-quest ${done ? 'is-complete' : ready ? 'is-available' : 'is-locked'} ${selected?.event_id === event.event_id ? 'is-selected' : ''}`} style={{ left: node.point.x, top: node.point.y }} onClick={() => { choose(node); setExpanded(false); onOpen(node.event); }} onFocus={event => { if (event.currentTarget.matches(':focus-visible')) { choose(node); focusAt(node.point); } }} aria-pressed={selected?.event_id === event.event_id} aria-label={`${event.title}. ${done ? 'Пройдено' : ready ? 'Подходит профилю' : 'Посмотреть требования'}`}>
                 <span className="gq-quest-aura"/><span className="gq-quest-orbit"/><span className="gq-quest-hex"><Icon size={29}/><small>{String(i + 1).padStart(2, '0')}</small></span>
                 {ready && !event.mandatory && market && <span className="gq-quest-coins"><Coins size={12}/>+{market.coins_per_completion}</span>}
-                <span className="gq-quest-label"><small>{done ? 'ПРОЙДЕНО' : ready ? node.sector === 'route' ? 'ТВОЙ СЛЕДУЮЩИЙ ШАГ' : 'ДОСТУПНО ТЕБЕ' : 'ТРЕБОВАНИЯ'}</small><b>{event.title}</b><em>{categories[event.type]} · {hours(event.duration_hours)}</em></span>
+                <span className="gq-quest-label"><small>{done ? 'ПРОЙДЕНО' : ready ? node.sector === 'route' ? 'ВЫБОР ИИ' : 'ДОСТУПНО ТЕБЕ' : 'ТРЕБОВАНИЯ'}</small><b>{event.title}</b><em>{categories[event.type]} · {hours(event.duration_hours)}</em></span>
               </button>;
             })}
           </div>
@@ -167,7 +167,7 @@ export function QuestGame({ context, nodes, selected, market, entered, motionSto
         {help && <aside className="gq-help"><div className="gq-help-card"><button type="button" className="gq-icon-button" aria-label="Закрыть подсказку" onClick={() => { setHelp(false); helpRef.current?.focus(); }}><X size={17}/></button><h3>Это твоя карта</h3><p>Здесь можно двигаться в любом направлении.</p><ul><li>Перетаскивай мышью или пальцем.</li><li>Трекпад и стрелки двигают камеру.</li><li>Кнопки + / − и жест двумя пальцами меняют масштаб.</li><li>Нажми на узел — откроется карточка задания.</li><li>Tab переключает задания. Escape сворачивает большой экран.</li></ul></div></aside>}
       </div>
       {selected && photo ? <div className="gq-mission" aria-live="polite"><div className="gq-mission-photo"><img src={photo.src} alt="" style={{ objectPosition: photo.objectPosition }}/></div><div className="gq-mission-content"><small>{isDone ? 'ЗАДАНИЕ ПРОЙДЕНО' : isAvailable ? 'ТВОЁ СЛЕДУЮЩЕЕ ПРИКЛЮЧЕНИЕ' : 'ОТКРОЙ НОВЫЕ ВОЗМОЖНОСТИ'}</small><h2>{selected.title}</h2><p><Clock3 size={13}/>{hours(selected.duration_hours)} · {formats[selected.format]} · {categories[selected.type]}</p><div className="gq-mission-skills">{selected.develops_skills.slice(0, 3).map(item => <span key={item.skill_id}>{skillName(context, item.skill_id)}</span>)}</div>{!isAvailable && !isDone && <p className="gq-mission-status">{exclusions.length ? exclusions.map(reason => reasonNames[reason] ?? reason).join(' · ') : 'Условия участия — в карточке события'}</p>}</div><div className="gq-mission-action">{isAvailable && !selected.mandatory && market ? <span className="gq-mission-reward"><Coins size={17}/>+{market.coins_per_completion}<small>за завершение</small></span> : isDone ? <span className="gq-mission-reward"><CheckCheck size={17}/>В твоей коллекции</span> : null}<button type="button" onClick={open}>{isDone ? 'Посмотреть результат' : isAvailable ? 'Открыть задание' : 'Узнать условия'}<ArrowUpRight size={17}/></button></div></div> : <div className="gq-mission is-empty"><Flag size={23}/><p>События появятся, когда будет доступен каталог развития.</p><button type="button" onClick={onCatalog}>Открыть каталог</button></div>}
-      <footer className="gq-game-footer"><span><i/>Подходит профилю</span><span><i className="is-complete"/>Пройдено</span><span><LockKeyhole size={11}/>Есть условия</span><small>Золотая тропа — рекомендуемые шаги</small></footer>
+      <footer className="gq-game-footer"><span><i/>Подходит профилю</span><span><i className="is-complete"/>Пройдено</span><span><LockKeyhole size={11}/>Есть условия</span><small>Золотая тропа — рекомендации ИИ</small></footer>
     </>}
   </section>;
 }

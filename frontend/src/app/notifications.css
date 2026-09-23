@@ -1,0 +1,17 @@
+.notification-center { margin-block: 24px; }
+.notification-center fieldset { border: 1px solid #dce6df; border-radius: 12px; padding: 18px; margin: 16px 0; }
+.notification-center legend { padding: 0 8px; font-weight: 650; }
+.notification-center label { display: grid; gap: 7px; font-size: 14px; margin: 10px 0; }
+.notification-center input:not([type=checkbox]), .notification-center select, .notification-center textarea { width: 100%; border: 1px solid #c8d8ce; border-radius: 8px; padding: 10px 12px; background: #fff; color: #173c32; font: inherit; }
+.notification-center input:focus-visible, .notification-center textarea:focus-visible, .notification-center select:focus-visible { outline: 2px solid #16866a; outline-offset: 2px; }
+.notification-center .mail-check { display: flex; align-items: center; gap: 10px; }
+.notification-center input[type=checkbox] { width: 18px; height: 18px; accent-color: #16866a; }
+.mail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 22px; align-items: end; }
+.mail-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0; }
+.notification-center details { padding: 14px 0; border-top: 1px solid #e3e9e3; margin-top: 16px; }
+.notification-center summary { cursor: pointer; font-weight: 600; }
+.mail-notice { border-left: 3px solid #16866a; padding: 12px; background: #eff6ec; overflow-wrap: anywhere; }
+.mail-preview, .mail-offer { margin: 16px 0; padding: 18px; border: 1px solid #dce6df; border-radius: 12px; }
+.mail-preview pre { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; }
+.notification-center td { max-width: 300px; overflow-wrap: anywhere; }
+@media (max-width: 680px) { .mail-grid { grid-template-columns: 1fr; } .notification-center .section-title { flex-wrap: wrap; gap: 12px; } }

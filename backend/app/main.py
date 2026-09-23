@@ -1,5 +1,6 @@
 from contextlib import asynccontextmanager
 from datetime import date
+import asyncio
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
@@ -13,8 +14,12 @@ from app.api import employees, activities, dataset, recommendations, hr, market,
 from app.services.market import MarketService
 from app.ai.client import AIClient
 from app.ai.recommender import DisabledRecommender
+from app.api import notifications
+from app.services.notifications import NotificationService
+from app.services.mail_transport import SMTPTransport
+from app.services.notification_worker import run_worker
 
-def create_app(settings: Settings | None = None, *, ai_client: AIClient | None = None) -> FastAPI:
+def create_app(settings: Settings | None = None, *, ai_client: AIClient | None = None, mailer=None, notification_clock=None) -> FastAPI:
     settings=settings or Settings.from_env()
     @asynccontextmanager
     async def lifespan(app):
@@ -26,7 +31,18 @@ def create_app(settings: Settings | None = None, *, ai_client: AIClient | None =
         app.state.settings=settings
         app.state.as_of_date=clock
         app.state.ai_client=ai_client or DisabledRecommender()
-        yield
+        transport = mailer or SMTPTransport(settings.mail_encryption_key.get_secret_value() if settings.mail_encryption_key else None)
+        app.state.notifications = NotificationService(app.state.dataset, app.state.ai_client, transport,
+            lambda: app.state.as_of_date, settings.public_app_url, now=notification_clock)
+        app.state.notifications.recover()
+        stop = asyncio.Event()
+        task = asyncio.create_task(run_worker(app.state.notifications, stop, settings.notification_poll_seconds)) if settings.notifications_worker_enabled else None
+        try:
+            yield
+        finally:
+            stop.set()
+            if task:
+                await task
     app=FastAPI(title="Career Quest",lifespan=lifespan)
     app.add_middleware(dataset.ImportGuard,identities=settings.dev_identities)
     app.add_middleware(CORSMiddleware,allow_origins=[settings.allowed_origin],allow_methods=["GET","POST"],
@@ -52,6 +68,7 @@ def create_app(settings: Settings | None = None, *, ai_client: AIClient | None =
     app.include_router(hr.router)
     app.include_router(session.router)
     app.include_router(market.router)
+    app.include_router(notifications.router)
     return app
 
 app=create_app()

@@ -1,13 +1,17 @@
 'use client';
 
 import { ArrowRight, ArrowUpRight, Check, Clock3, Gift, Target } from 'lucide-react';
-import type { Event as CatalogEvent, RecommendationContext, MarketState } from '@/lib/types';
+import type { Event as CatalogEvent, RecommendationContext, MarketState, RecommendationResult } from '@/lib/types';
 import { formats, hours, planSteps } from '@/lib/career-data';
 import { useEffect, useState } from 'react';
 import { QuestGame, createQuestNodes } from './quest-game';
 
 interface Props {
   context: RecommendationContext;
+  recommendation: RecommendationResult | null;
+  aiBusy: boolean;
+  aiStatus: string;
+  onRecommend: () => void;
   pace: number;
   targetIndex: number;
   market?: MarketState;
@@ -20,7 +24,7 @@ interface Props {
   onEnteredChange: (entered: boolean) => void;
 }
 
-export function ConnectedJourney({ context, pace, targetIndex, market, onPace, onTarget, onOpen, onMarket, onCatalog, entered, onEnteredChange }: Props) {
+export function ConnectedJourney({ context, recommendation, aiBusy, aiStatus, onRecommend, pace, targetIndex, market, onPace, onTarget, onOpen, onMarket, onCatalog, entered, onEnteredChange }: Props) {
   const [chosen, setChosen] = useState<string | null>(null);
   const [motionPaused, setMotionPaused] = useState(false);
   const [systemReducedMotion, setSystemReducedMotion] = useState(false);
@@ -35,7 +39,8 @@ export function ConnectedJourney({ context, pace, targetIndex, market, onPace, o
   const targets = context.role_requirements.filter(item => item.purpose !== 'current_role');
   const target = targets[targetIndex] ?? targets[0];
   const gaps = target?.analysis.gaps ?? [];
-  const plan = planSteps(context, gaps, pace);
+  const plan = planSteps(context, recommendation?.recommendations ?? [], pace);
+  const emptyMessage = aiBusy ? 'Подбираем самый подходящий шаг…' : aiStatus || (recommendation?.status === 'needs_clarification' ? 'Для выбора нужно уточнение. Ответьте на вопросы ниже.' : recommendation?.status === 'no_candidates' ? 'В каталоге пока нет подходящих активностей.' : 'Активных ИИ-предложений пока нет.');
   const questNodes = createQuestNodes(context, plan.map(item => item.event));
   const selected = questNodes.find(node => node.event.event_id === chosen)?.event ?? questNodes[0]?.event;
   const step = plan.find(item => item.event.event_id === selected?.event_id);
@@ -52,11 +57,11 @@ export function ConnectedJourney({ context, pace, targetIndex, market, onPace, o
     <div className="jp-layout">
       <aside className="jp-sidebar">
         <section className="jp-itinerary">
-          <div className="jp-section-heading"><h2>Ближайшие шаги</h2><span>{plan.length}</span></div>
-          <p className="jp-subtitle">{pace} ч в неделю · индивидуальный план</p>
-          <div className="jp-step-list" key={`${pace}-${targetIndex}-${context.revision}`} aria-live="polite">{plan.map((item, index) => <button type="button" key={item.event.event_id} aria-pressed={item.event.event_id === selected?.event_id} onClick={() => setChosen(item.event.event_id)}><span className="jp-step-number">{String(index + 1).padStart(2, '0')}</span><span><small>{item.start === item.end ? `НЕДЕЛЯ ${item.start}` : `НЕДЕЛИ ${item.start}–${item.end}`}</small><b>{item.event.title}</b><em>{hours(item.event.duration_hours)} · {formats[item.event.format]}</em></span><ArrowUpRight size={15}/></button>)}</div>
-          {!plan.length && <div className="jp-empty"><h3>Нет подходящих шагов</h3><p>Попробуйте изменить время на обучение или карьерную цель.</p></div>}
-          <p className="jp-note">Недели обозначают нагрузку. Даты встреч — в карточках событий.</p>
+          <div className="jp-section-heading"><h2>Лучшее для тебя сейчас</h2><span>{plan.length}</span></div>
+          <p className="jp-subtitle">{pace} ч в неделю · ИИ-подборка</p>
+          <div className="jp-step-list" key={`${pace}-${targetIndex}-${context.revision}`} aria-live="polite">{plan.map((item, index) => <button type="button" key={item.event.event_id} aria-pressed={item.event.event_id === selected?.event_id} onClick={() => setChosen(item.event.event_id)}><span className="jp-step-number">{String(index + 1).padStart(2, '0')}</span><span><small>{index === 0 ? 'ОСНОВНОЙ ШАГ' : 'ДОПОЛНИТЕЛЬНО'} · около {item.end} нед.</small><b>{item.event.title}</b><em>{hours(item.event.duration_hours)} · {formats[item.event.format]}</em></span><ArrowUpRight size={15}/></button>)}</div>
+          {!plan.length && <div className="jp-empty"><h3>Нет подходящих шагов</h3><p>{emptyMessage}</p></div>}
+          <p className="jp-note">Первый шаг — основной. Темп меняет оценку длительности, а не подбор. Даты встреч — в карточках событий.</p><button type="button" className="text-button" disabled={aiBusy} onClick={onRecommend}>{aiBusy ? 'Подбираем…' : 'Проверить рекомендации'}</button>
         </section>
 
         {selected && <section className="jp-detail" id="journey-detail">

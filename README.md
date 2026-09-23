@@ -115,7 +115,7 @@ Completion body:
 
 Generate a UUID per intentional action and reuse the exact body after an uncertain response. The persisted receipt returns the original result on retry. Reusing a command ID with different content is 409. Completing the same non-recurring activity under another UUID is also rejected. Use source_record_id for an existing in_progress/overdue assignment; use session_date for a scheduled session.
 
-Errors use {error: {code, message, details}}. Statuses include 401, 403, 404, 409, 413, 422, 501 and 503. Private API responses are not cacheable.
+Errors use {error: {code, message, details}}. Statuses include 401, 403, 404, 409, 413, 422, 501 and 503. Private API responses are not cacheable. Import details include sanitized file/row/field locations (CSV header is row 1; employee array indices are zero-based), without echoing uploaded values.
 
 ## Dataset and imports
 
@@ -152,6 +152,8 @@ Tests cover real loading and original hashes, gaps, assessment replay, caps/no-r
 Implemented: the deterministic foundation, authorized API, minimal employee/HR UI, import/completion persistence and Docker topology. No provider calls, scoring, fabricated explanations or optional gamification.
 
 Next: multi-factor scoring -> LLM refinement -> validated 1–3 recommendations with evidence-backed explanations; then populate HR recommendation coverage. Current employees_without_recommendation is null, not a misleading zero; employees_without_candidate is a separate deterministic measure. Enforce the ten-second recommendation budget in that next milestone.
+
+Verification results, known limits, final tree and next-agent instructions: [docs/handoff.md](docs/handoff.md).
 
 ## Authors
 

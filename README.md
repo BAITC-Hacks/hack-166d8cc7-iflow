@@ -308,5 +308,5 @@ Foundation handoff: [docs/handoff.md](docs/handoff.md). Current frontend/API map
 ## Authors
 
 - [Zhassyn Zhalynuly](https://github.com/zzhassyn)
-- [Danial Amangeldi](https://github.com/danial41-design) (Backend/ML Developer)
+- [Danial Amangeldi](https://github.com/danial41-design)
 - Nurislam Aldabergenuly

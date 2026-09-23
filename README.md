@@ -2,7 +2,7 @@
 
 Career Quest is an employee-development navigator for HackAlem AI, Case 1. The Halyk visual frontend is connected to FastAPI: it loads the starter kit, projects current skills, calculates next-grade gaps, shows a development map, records completions, provides HR aggregates/import and persists a demonstration rewards ledger.
 
-**Full LLM context and validated recommendation orchestration are implemented; a live provider is not configured.** The default recommendation endpoint returns HTTP 501 when eligible candidates require a model. With no candidates it returns `no_candidates`. See [the LLM context contract](docs/llm-context.md) for provider integration and the authorized context endpoint.
+**OpenAI Responses integration, full LLM context and validated recommendation orchestration are implemented.** Configure `AI_PROVIDER=openai` and `OPENAI_API_KEY` in the root `.env`; native backend loads it automatically. Default model: `gpt-4.1-mini`. NVIDIA remains unused. See [provider setup and checks](docs/openai-provider.md).
 
 ## Наше решение — Halyk Career Quest
 
@@ -68,9 +68,7 @@ AI-навигатор должен помогать подобрать марш�
 мероприятия из каталога, соответствующие ограничениям. Уровни навыков и
 начисления рассчитываются по правилам данных, а не генерируются моделью.
 
-**Сейчас внешний провайдер LLM не подключён:** при наличии кандидатов endpoint
-рекомендаций по умолчанию возвращает HTTP 501. Подготовка контекста, инструкции,
-адаптер JSON-ответов и проверки уже работают; [контракт подключения](docs/llm-context.md).
+**OpenAI подключается из корневого `.env`:** `AI_PROVIDER=openai`, `OPENAI_API_KEY`, при необходимости `OPENAI_MODEL`. Без ключа endpoint возвращает 501 при наличии кандидатов. Контекст, структурированный ответ и факты проверяются сервером; [настройка и проверки](docs/openai-provider.md).
 Карта показывает только сохранённую AI-подборку: один основной шаг и до двух
 дополнительных при высокой уверенности и отдельном обосновании пользы.
 При сомнении в дополнительных вариантах остаётся один шаг. Без провайдера
@@ -122,11 +120,11 @@ AI-навигатор должен помогать подобрать марш�
 | FastAPI, разграничение employee/HR, импорт, завершения и HR-агрегаты | Подключены к основному интерфейсу |
 | Игровая карта, обзор, каталог событий и адаптивный интерфейс Halyk | Основной frontend проекта; локальные фильтры работают поверх серверных данных |
 | Halyk Market | Серверный каталог, баланс и сохраняемые обмены; демонстрационные награды |
-| Полный контекст LLM, инструкции, адаптер JSON и проверка фактов | Реализованы; UI поддерживает ответы и ошибки, внешний провайдер ещё не настроен |
+| Полный контекст LLM, инструкции, адаптер JSON и проверка фактов | Реализованы; OpenAI Responses подключается через серверный `.env` |
 | Предложения и почтовые уведомления | Сохраняемая очередь, SMTP HR, расписание, паузы, реакции сотрудников и журнал; требуется настройка отправителя и LLM |
 | Docker Compose и native-запуск | Один origin для браузера через Next.js-прокси `/backend` |
 
-Следующие шаги: подключить LLM-провайдера, оценить качество рекомендаций и
+Следующие шаги: расширить оценку качества рекомендаций и
 добавить API редактирования цели и интеграцию записи с организатором. Запись на предложенный курс уже сохраняется в системе уведомлений. Подробности текущей
 связи интерфейса с сервером: [frontend integration](docs/frontend-integration.md).
 
@@ -188,7 +186,7 @@ See [architecture](docs/architecture.md), [data model](docs/data-model.md), and 
 
 ## Configuration
 
-Copy .env.example to .env only if changing Compose defaults. Compose reads .env; native Python reads the process environment (it does not automatically load .env).
+Copy .env.example to the root .env when configuring credentials. Compose and native backend read it; existing process variables override file values. Restart the backend after changing settings.
 
 | Variable | Purpose |
 | --- | --- |
@@ -199,7 +197,10 @@ Copy .env.example to .env only if changing Compose defaults. Compose reads .env;
 | DATA_RAW_DIR | Native backend raw directory override |
 | STATE_PATH | Native backend state file override |
 | APPLICATION_DATE | Demo clock override, never before the 2026-10-01 snapshot |
-| AI_PROVIDER, OPENAI_API_KEY, NVIDIA_API_KEY | Reserved, currently unused; keys must never be public variables |
+| AI_PROVIDER, OPENAI_API_KEY, OPENAI_MODEL | `openai` or `none`; server-only API key; default `gpt-4.1-mini` |
+| AI_TIMEOUT_SECONDS, AI_MAX_OUTPUT_TOKENS | Network timeout (10s default), output cap (1400 default); no SDK retries |
+| AI_AUTO_PREPARE | false by default: prepare opened profiles; true additionally prepares all in background |
+| NVIDIA_API_KEY | Reserved; no NVIDIA adapter or automatic fallback |
 | MAIL_ENCRYPTION_KEY | Server-only Fernet key for saved SMTP credentials; preserve across restarts |
 | PUBLIC_APP_URL | Employee-facing cabinet URL used in emails |
 | NOTIFICATION_WORKER_ENABLED, NOTIFICATION_POLL_SECONDS | Background preparation/delivery worker; default true / 2 seconds |
@@ -304,7 +305,7 @@ Tests cover real loading and original hashes, gaps, assessment replay, caps/no-r
 
 Implemented: the deterministic foundation, authorized session/API, connected Halyk map and employee/HR UI, import/completion persistence, server-backed demonstration Market, same-origin Docker/native topology, complete linked LLM context, provider-independent prompt/JSON adapter and validated recommendation orchestration. The UI handles recommendation responses, evidence, hypotheses, questions and missing-provider errors.
 
-Next: configure a live provider with the ten-second request budget, evaluate recommendation quality, and populate HR recommendation coverage. Current employees_without_recommendation is null; employees_without_candidate is a separate deterministic measure. The provider integration must set transport timeouts; the injected synchronous callable has no deadline enforcement by itself. Weekly pace is a local route filter and is not sent to the LLM. Offer enrollment and email preferences now have persisted write endpoints; external LMS registration, profile/goal editing and answers to AI clarification questions remain unimplemented. See [notification workflow and API handoff](docs/notifications.md).
+Next: improve live recommendation quality/latency and populate HR recommendation coverage. Current employees_without_recommendation is null; employees_without_candidate is a separate deterministic measure. OpenAI uses an explicit network timeout and no automatic retries; the end-to-end ten-second target still needs latency work. Weekly pace estimates duration and is not sent to the LLM. Offer enrollment and email preferences now have persisted write endpoints; external LMS registration, profile/goal editing and answers to AI clarification questions remain unimplemented. See [notification workflow and API handoff](docs/notifications.md).
 
 Foundation handoff: [docs/handoff.md](docs/handoff.md). Current frontend/API mapping and integration limits: [docs/frontend-integration.md](docs/frontend-integration.md).
 

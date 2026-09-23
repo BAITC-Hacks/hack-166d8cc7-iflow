@@ -67,6 +67,13 @@ def first_offer(service): return next(iter(service.state.offers.values()))
 def accepted(service): return [d for d in service.state.deliveries.values() if d.status == "accepted"]
 
 
+def test_background_preparation_can_be_disabled_without_disabling_delivery(workflow):
+    service, now, ai, mail = workflow
+    service.auto_prepare = False
+    service.tick()
+    assert len(mail.sent) == 1 and ai.calls == ["TEST_EMP"]
+
+
 def test_uncertain_refresh_removes_old_offers_and_sends_nothing(workflow):
     service, now, ai, mail = workflow
     service.state.generations.clear()  # Force a new model response in this fixture.
@@ -332,7 +339,13 @@ def test_notification_routes_enforce_roles_and_employee_scope(tmp_path):
     settings = Settings(raw_dir=Path(__file__).resolve().parents[2] / "data/raw", state_path=tmp_path / "state.json",
         notifications_worker_enabled=False,
         dev_identities={"self": {"role": "employee", "employee_id": "E0047"}, "hr": {"role": "hr"}})
-    mail, ai = FakeMail(), FakeAI()
+    class RouteAI(FakeAI):
+        def refine(self, context):
+            result = super().refine(context)
+            # Exercise offer authorization with Symbat's other eligible activity;
+            # her repeated Architecture Review attempts now require clarification.
+            return result.model_copy(update={"recommendations": result.recommendations[-1:]})
+    mail, ai = FakeMail(), RouteAI()
     with TestClient(create_app(settings, ai_client=ai, mailer=mail, notification_clock=Clock())) as client:
         own, hr = {"Authorization": "Bearer self"}, {"Authorization": "Bearer hr"}
         assert client.get("/api/hr/notifications/settings", headers=own).status_code == 403

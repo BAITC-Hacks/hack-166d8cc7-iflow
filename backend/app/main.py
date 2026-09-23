@@ -13,7 +13,7 @@ from app.repositories.state import StateRepository
 from app.api import employees, activities, dataset, recommendations, hr, market, session
 from app.services.market import MarketService
 from app.ai.client import AIClient
-from app.ai.recommender import DisabledRecommender
+from app.ai.openai_provider import create_recommender
 from app.api import notifications
 from app.services.notifications import NotificationService
 from app.services.mail_transport import SMTPTransport
@@ -30,10 +30,11 @@ def create_app(settings: Settings | None = None, *, ai_client: AIClient | None =
         app.state.market=MarketService(app.state.dataset)
         app.state.settings=settings
         app.state.as_of_date=clock
-        app.state.ai_client=ai_client or DisabledRecommender()
+        app.state.ai_client=ai_client if ai_client is not None else create_recommender(settings)
         transport = mailer or SMTPTransport(settings.mail_encryption_key.get_secret_value() if settings.mail_encryption_key else None)
         app.state.notifications = NotificationService(app.state.dataset, app.state.ai_client, transport,
-            lambda: app.state.as_of_date, settings.public_app_url, now=notification_clock)
+            lambda: app.state.as_of_date, settings.public_app_url, now=notification_clock,
+            auto_prepare=settings.ai_auto_prepare)
         app.state.notifications.recover()
         stop = asyncio.Event()
         task = asyncio.create_task(run_worker(app.state.notifications, stop, settings.notification_poll_seconds)) if settings.notifications_worker_enabled else None
@@ -43,6 +44,8 @@ def create_app(settings: Settings | None = None, *, ai_client: AIClient | None =
             stop.set()
             if task:
                 await task
+            if ai_client is None and hasattr(app.state.ai_client, "close"):
+                app.state.ai_client.close()
     app=FastAPI(title="Career Quest",lifespan=lifespan)
     app.add_middleware(dataset.ImportGuard,identities=settings.dev_identities)
     app.add_middleware(CORSMiddleware,allow_origins=[settings.allowed_origin],allow_methods=["GET","POST"],

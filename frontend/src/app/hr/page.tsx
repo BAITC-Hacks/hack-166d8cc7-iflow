@@ -1,3 +1,2 @@
-"use client";
-import {Dashboard} from "@/components/hr/dashboard";
-export default function HRPage(){return <Dashboard/>;}
+import ConnectedCareerApp from '@/components/connected-career-app';
+export default function HRPage() { return <ConnectedCareerApp initialPage="hr"/>; }

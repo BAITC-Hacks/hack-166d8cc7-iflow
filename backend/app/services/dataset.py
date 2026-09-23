@@ -18,8 +18,10 @@ class DatasetService:
             "employees":self.raw_bundle.employees+state.imported_employees,
             "history":self.raw_bundle.history+state.imported_history})
         from .progress_engine import validate_runtime
+        from .market import validate_market_state
         snapshot=build_snapshot(bundle,state.revision,state.completions)
         validate_runtime(snapshot)
+        validate_market_state(snapshot,state)
         return snapshot
     def commit(self,next_state: MutableState) -> DatasetSnapshot:
         # Caller holds the single mutation lock from read through publication.

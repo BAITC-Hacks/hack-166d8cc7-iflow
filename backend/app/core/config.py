@@ -7,7 +7,11 @@ from app.schemas.common import Model
 from .auth import Principal
 
 ROOT = Path(__file__).resolve().parents[3]
-DEMO_IDENTITIES={"demo-employee":{"role":"employee","employee_id":"E0001"},"demo-hr":{"role":"hr"}}
+DEMO_IDENTITIES={
+    "demo-employee":{"role":"employee","employee_id":"E0001"},
+    "demo-active":{"role":"employee","employee_id":"E0004"},
+    "demo-hr":{"role":"hr"},
+}
 
 class Settings(Model):
     raw_dir: Path = ROOT/"data/raw"

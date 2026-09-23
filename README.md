@@ -1,6 +1,6 @@
 # Career Quest
 
-Career Quest is an employee-development navigator for HackAlem AI, Case 1. This foundation loads the real starter kit, projects current skills, calculates next-grade gaps, lists eligible development activities, records completions and provides HR aggregates/import.
+Career Quest is an employee-development navigator for HackAlem AI, Case 1. The Halyk visual frontend is connected to FastAPI: it loads the starter kit, projects current skills, calculates next-grade gaps, shows a development map, records completions, provides HR aggregates/import and persists a demonstration rewards ledger.
 
 **Full LLM context and validated recommendation orchestration are implemented; a live provider is not configured.** The default recommendation endpoint returns HTTP 501 when eligible candidates require a model. With no candidates it returns `no_candidates`. See [the LLM context contract](docs/llm-context.md) for provider integration and the authorized context endpoint.
 
@@ -8,7 +8,8 @@ Career Quest is an employee-development navigator for HackAlem AI, Case 1. This 
 
 **Трек: Halyk Bank. Кейс №1: Career Quest — AI-навигатор развития сотрудника.**
 Команда IFlow создаёт персональную карту карьерного развития: сотрудник выбирает
-цель, видит ближайшие полезные шаги и понимает, как каждый из них развивает навыки.
+ориентир из требований следующего грейда и заданной в профиле цели, видит ближайшие
+полезные шаги и понимает, как каждый из них развивает навыки.
 В одной истории соединяются обучение, практика, менторство и приятные награды.
 
 ### Какую задачу решаем
@@ -23,17 +24,22 @@ Career Quest is an employee-development navigator for HackAlem AI, Case 1. This 
 
 ### Карта развития как главное пространство
 
-Главный экран — игровая карта с районами навыков, которую исследует сотрудник. В локальном прототипе есть четыре района: **Холмы архитектуры, Долина
-кода, Площадь диалога и Сад лидерства**. Для других ролей состав районов должен
-формироваться по их профилю навыков.
+Главный экран — игровая карта в зелёно-золотой стилистике Halyk с собственной
+SVG-иллюстрацией ландшафта, узлами событий и анимациями. Названия районов и
+показатели навыков берутся из реального профиля сотрудника. На карте отображается
+до пяти событий; полный каталог доступен в разделе «События».
 
-- **Карьерная цель:** ориентир следующего грейда или выбранной роли.
-- **Развилки:** выбор между обучением, практикой и встречами с менторами.
-- **Доступные и будущие этапы:** например, практика проектирования сервиса
-  открывается после архитектурного воркшопа.
+- **Карьерный ориентир:** следующий грейд или уже заданная в профиле цель.
+  Переключение меняет представление маршрута; редактирование профиля API пока
+  не поддерживает.
+- **Развилки:** доступные обучение, практика и менторство из исходного каталога.
+- **Доступные и будущие этапы:** сервер проверяет роль, грейд, навыки, историю и
+  расписание. Карточка объясняет ограничения недоступного события.
 - **Свой темп:** 1, 3 или 5 часов в неделю. Самостоятельные задания можно
   распределять по неделям, живые встречи должны помещаться в доступное время.
-- **Прогресс:** завершённые активности меняют уровни навыков и дальнейший маршрут.
+  Это локальный фильтр ближайших шагов; выбранный темп не отправляется LLM.
+- **Прогресс:** подтверждение завершения отправляется на сервер. После записи
+  интерфейс загружает обновлённые навыки, историю, маршрут и баланс наград.
 
 Игровой путь и обмен внутренних монет на полезные предложения вдохновлены
 механикой Astana Hub. Мы адаптируем их под карьерные цели сотрудников Halyk
@@ -41,16 +47,19 @@ Career Quest is an employee-development navigator for HackAlem AI, Case 1. This 
 
 ### Где нужен ИИ
 
-Планируем AI-навигатор, который помогает подобрать маршрут и объяснить его
-человеческим языком. Сценарий: **«Хочу стать Senior, но на обучение есть только
-час в неделю»** — система предлагает посильные шаги и объясняет компромиссы.
+AI-навигатор должен помогать подобрать маршрут и объяснить его человеческим
+языком. В интерфейсе уже есть запрос рекомендаций через backend и отображение
+ответов, факторов выбора, гипотез и уточняющих вопросов. Сценарий
+**«Хочу стать Senior, но на обучение есть только час в неделю»** пока разделён
+на серверные требования к цели и локальный фильтр нагрузки на карте.
 
 Рекомендации должны учитывать несколько факторов одновременно:
 
 1. Дефицит и критичность навыков для следующего грейда или карьерной цели.
 2. Текущую роль, грейд и предварительные требования мероприятия.
 3. Историю участия: завершения, отказы, пропуски и обратную связь.
-4. Формат, продолжительность, расписание и доступное время сотрудника.
+4. Формат, продолжительность и расписание. Доступное время сотрудника сейчас
+   учитывает только подбор шагов на фронтенде.
 
 Сначала backend определяет допустимых кандидатов и рассчитывает прогресс.
 Затем в LLM передаётся полный профиль, вся история с карточками мероприятий,
@@ -62,28 +71,34 @@ Career Quest is an employee-development navigator for HackAlem AI, Case 1. This 
 **Сейчас внешний провайдер LLM не подключён:** при наличии кандидатов endpoint
 рекомендаций по умолчанию возвращает HTTP 501. Подготовка контекста, инструкции,
 адаптер JSON-ответов и проверки уже работают; [контракт подключения](docs/llm-context.md).
-В отдельном локальном прототипе маршрут подбирается
-правилами по цели, навыкам и времени; объяснения формируются по шаблонам.
+Карта работает и без провайдера: фронтенд выбирает до трёх шагов из проверенных
+сервером кандидатов с учётом дефицитов навыков и времени. Объяснения этого
+подбора формируются правилами и обозначены отдельно от ответа ИИ.
 
 ### Halyk Market — награды за развитие
 
-За добровольные активности сотрудник получает внутренние монеты и выбирает
-награды: книги, мерч или билеты на профессиональные мероприятия. На карте видно,
-сколько ещё монет нужно до следующей награды.
+За каждое новое добровольное завершение через API сотрудник получает
+**80 внутренних монет** и выбирает награды: книги, мерч или билеты на
+профессиональные мероприятия. Начальный баланс — **0**. Исходная и
+импортированная история завершений монет не начисляет. На карте видно, сколько
+ещё монет нужно до ближайшей награды.
 
 Монеты не повышают уровни навыков и не влияют на решение о повышении.
 Обучение и менторство остаются бесплатными. За обязательные процессы награды
-не начисляются. В прототипе Market — демонстрационный каталог; реальные
-покупки, доставка и интеграция с коммерческим Halyk Market не подключены.
+не начисляются. Каталог, баланс и обмены загружаются через API; списание монет и
+квитанции обмена сохраняются в серверном состоянии. Сервер проверяет баланс,
+повтор запроса и повторный обмен одной награды. Market остаётся демонстрацией:
+реальные покупки, доставка и интеграция с коммерческим Halyk Market не подключены.
 
 ### Пример пользовательского пути
 
-**Middle Backend Engineer → цель Senior → выбор темпа → ближайшие события →
-завершение воркшопа → обновление навыка → открытие практики → награда в Market.**
+**Вход сотрудником → выбор доступного карьерного ориентира → темп → ближайшие
+события → подтверждение пройденной активности → обновление навыков и маршрута →
+награда в Market.**
 
 Покрытие требований к навыкам показывает продвижение к цели, но не является
-гарантией повышения. Сотрудник может изменить цель или темп и пересобрать
-ближайший маршрут.
+гарантией повышения. Сотрудник может переключить отображаемый ориентир и темп;
+новую карьерную цель пока нельзя сохранить через интерфейс.
 
 ### Что получает HR
 
@@ -101,15 +116,16 @@ Career Quest is an employee-development navigator for HackAlem AI, Case 1. This 
 
 | Часть решения | Статус |
 | --- | --- |
-| Данные стартового набора, расчёт навыков и траектории, допустимые мероприятия | Опубликованы в текущей технической основе |
-| FastAPI, разграничение employee/HR, импорт и сохранение завершений, HR-агрегаты | Опубликованы; подробнее в технических разделах ниже |
-| Минимальный интерфейс сотрудника и HR, запуск через Docker Compose | Опубликованы |
-| Новая игровая карта, темп обучения, анимации и Halyk Market | Отдельный локальный frontend-прототип на демо-данных; в этот push не включён и с backend ещё не интегрирован |
-| Полный контекст LLM, инструкции, адаптер JSON-ответов и проверка фактов | Реализованы; внешний провайдер и вывод рекомендаций в UI ещё требуют подключения |
+| Данные стартового набора, расчёт навыков и траектории, допустимые мероприятия | Реализованы; интерфейс использует ответы backend |
+| FastAPI, разграничение employee/HR, импорт, завершения и HR-агрегаты | Подключены к основному интерфейсу |
+| Игровая карта, обзор, каталог событий и адаптивный интерфейс Halyk | Основной frontend проекта; локальные фильтры работают поверх серверных данных |
+| Halyk Market | Серверный каталог, баланс и сохраняемые обмены; демонстрационные награды |
+| Полный контекст LLM, инструкции, адаптер JSON и проверка фактов | Реализованы; UI поддерживает ответы и ошибки, внешний провайдер ещё не настроен |
+| Docker Compose и native-запуск | Один origin для браузера через Next.js-прокси `/backend` |
 
-Следующие шаги: объединить новый интерфейс с API и исходным каталогом,
-подключить рекомендатель, затем проверить полный сценарий сотрудника и HR.
-Инструкции ниже относятся к **уже опубликованной технической основе**.
+Следующие шаги: подключить LLM-провайдера, оценить качество рекомендаций и
+добавить API редактирования цели и записи на мероприятия. Подробности текущей
+связи интерфейса с сервером: [frontend integration](docs/frontend-integration.md).
 
 ## Launch
 
@@ -129,19 +145,25 @@ Enter one of the **public local-demo tokens**:
 | demo-active | E0004 | Own development, including an unfinished assignment |
 | demo-hr | HR | Employee inspection, aggregates and jury imports |
 
-For an immediate demo, use demo-active, open the employee, and complete Applied Statistics for Analysts or an existing assignment. Watch the skills and trajectory update. Switch to demo-hr and open HR view for aggregates/import.
+On the login screen, choose **Сотрудник** (`demo-active`, E0004) or **HR-команда** (`demo-hr`), or enter another configured token. The frontend obtains the role from `/api/session`; it does not infer permissions from the token text. Tokens stay in page memory, so reloading requires login again.
+
+For an immediate demo, open the employee's events and confirm a completed self-paced activity or an existing assignment. The server updates skills and trajectory; new voluntary completions earn Market coins. Switch to HR for aggregates and imports. HR can inspect employee routes and the reward catalog, but cannot complete activities or redeem rewards on an employee's behalf.
+
+The browser calls `/backend/api/...` on the frontend origin. Next.js forwards requests to `http://backend:8000` inside Compose; the browser does not need to resolve the Docker service name.
 
 Production authentication is outside this MVP. Backend authorization is enforced on every protected endpoint; entering a role header cannot grant access. Demo tokens are deliberately public and unsuitable for deployment. Replace core/auth.py identity verification before exposing this app to untrusted users. Compose binds host ports to loopback.
 
 ## Architecture and technology
 
-Next.js App Router + TypeScript + Tailwind -> FastAPI + Pydantic -> deterministic services -> repositories -> immutable JSON/CSV and one mutable JSON overlay. One Uvicorn worker, one mutation lock, one atomic state replacement. No database, queue, cache service or LLM framework.
+Next.js App Router + TypeScript + custom CSS/SVG -> same-origin Next.js proxy -> FastAPI + Pydantic -> deterministic services -> repositories -> immutable JSON/CSV and one mutable JSON overlay. One Uvicorn worker, one mutation lock, one atomic state replacement. No database, queue, cache service or LLM framework.
 
 ```text
 frontend/
-  src/app/                 home, employee/[id], hr
-  src/components/          session, employee, HR and status UI
-  src/lib/                 API client and public types
+  src/app/                 visual app, employee/[id], hr, responsive styles
+  src/components/          connected shell, map, HR, illustrations
+  src/lib/                 API client, public types and local route planner
+  public/                  Halyk logo
+  next.config.ts           /backend rewrite
   Dockerfile
 backend/
   app/api/                 HTTP routes and authorization dependencies
@@ -168,8 +190,9 @@ Copy .env.example to .env only if changing Compose defaults. Compose reads .env;
 | Variable | Purpose |
 | --- | --- |
 | DEV_IDENTITIES_JSON | Server-only token-to-principal mapping, employee or hr |
-| NEXT_PUBLIC_API_URL | Browser-facing backend URL; embedded during frontend build |
-| FRONTEND_ORIGIN | Allowed frontend CORS origin |
+| NEXT_PUBLIC_API_URL | Browser API prefix, default `/backend`; embedded during frontend build |
+| BACKEND_INTERNAL_URL | Next.js proxy destination: native default `http://127.0.0.1:8000`, Compose build `http://backend:8000` |
+| FRONTEND_ORIGIN | Allowed frontend CORS origin when using a direct browser API URL |
 | DATA_RAW_DIR | Native backend raw directory override |
 | STATE_PATH | Native backend state file override |
 | APPLICATION_DATE | Demo clock override, never before the 2026-10-01 snapshot |
@@ -177,19 +200,20 @@ Copy .env.example to .env only if changing Compose defaults. Compose reads .env;
 
 The default clock is the dataset snapshot, not the host date. Future scheduled sessions cannot be completed. Move APPLICATION_DATE forward to demonstrate later sessions, rebuild/restart the backend, and never move it backwards over recorded completions. Self-paced and existing assignments work immediately.
 
+Keep provider keys and the identity mapping on the server. Do not put them in `NEXT_PUBLIC_*`, frontend source or committed environment files. The default proxy removes the need for a public backend URL; an explicit direct URL requires matching CORS configuration. Rebuild the production frontend after changing its URL configuration.
+
 ## Local development
 
 Python 3.12+ and Node.js 22+:
 
 ```sh
-python -m venv .venv
-# Activate .venv using your shell.
+python3.12 -m venv .venv
+source .venv/bin/activate
 python -m pip install -r backend/requirements-dev.txt
-cd backend
-python -m uvicorn app.main:app --reload --port 8000
+python -m uvicorn app.main:app --app-dir backend --reload --host 127.0.0.1 --port 8000
 ```
 
-In another terminal:
+In another terminal, from the repository root:
 
 ```sh
 cd frontend
@@ -197,7 +221,7 @@ npm ci
 npm run dev
 ```
 
-Native default tokens are demo-employee and demo-hr. To use demo-active or imported identities, set DEV_IDENTITIES_JSON as shown in .env.example before starting Python. Configure any imported employee ID there; application logic is independent of known IDs. Next.js reads frontend/.env.local if a browser API URL override is needed.
+Open [the native frontend](http://127.0.0.1:3000). The default Next.js proxy reaches `http://127.0.0.1:8000`; no frontend environment file is required. Native default tokens are demo-employee, demo-active and demo-hr. To add imported employee identities, set DEV_IDENTITIES_JSON as shown in .env.example before starting Python. Application logic is independent of known employee IDs. Next.js reads frontend/.env.local when a URL override is needed.
 
 ## API
 
@@ -206,6 +230,7 @@ All /api endpoints require Authorization: Bearer TOKEN.
 | Method | Path | Behavior |
 | --- | --- | --- |
 | GET | /health | Public readiness |
+| GET | /api/session | Server-resolved role and employee ID for the current token |
 | GET | /api/employees | Own summary for employees; all for HR |
 | GET | /api/employees/{id} | Profile, projected skills and effective history |
 | GET | /api/employees/{id}/trajectory | Next grade, goal, gaps and eligible candidates |
@@ -214,6 +239,8 @@ All /api endpoints require Authorization: Bearer TOKEN.
 | POST | /api/employees/{id}/activities/{event_id}/complete | Own activity only; HR cannot complete |
 | GET | /api/hr/dashboard | HR-only gap, candidate-coverage and participation aggregates |
 | POST | /api/dataset/import | HR-only multipart employees/history |
+| GET | /api/market | Reward catalog; own ledger for employees, catalog-only access for HR |
+| POST | /api/market/redeem | Employee-only persisted reward redemption with balance and retry checks |
 
 Completion body:
 
@@ -222,6 +249,14 @@ Completion body:
 ```
 
 Generate a UUID per intentional action and reuse the exact body after an uncertain response. The persisted receipt returns the original result on retry. Reusing a command ID with different content is 409. Completing the same non-recurring activity under another UUID is also rejected. Use source_record_id for an existing in_progress/overdue assignment; use session_date for a scheduled session.
+
+Market redemption body:
+
+```json
+{"command_id":"00000000-0000-4000-8000-000000000002","reward_id":"book"}
+```
+
+Market applies the same retry principle. Each employee can redeem each reward once; insufficient balance and duplicate rewards return 409. Completion and redemption receipts persist in the same mutable overlay. The frontend retains operation IDs for retries during the current page session.
 
 Errors use {error: {code, message, details}}. Statuses include 401, 403, 404, 409, 413, 422, 501 and 503. Private API responses are not cacheable. Import details include sanitized file/row/field locations (CSV header is row 1; employee array indices are zero-based), without echoing uploaded values.
 
@@ -239,9 +274,11 @@ The dataset README's no-repeat rule conflicts with real repeated annual mandator
 
 Native state lives in data/state/state.json. Compose state lives in its named career_quest_state volume. Normal docker compose down preserves it. Startup validates state and its raw-data fingerprint; invalid/mismatched state fails visibly rather than resetting.
 
-For an intentional **disposable demo reset**, first stop the backend and back up the state file or Docker volume. Then remove only that demo state file (native), or explicitly remove this project's named state volume. This deletes imports/completions, not data/raw. Do not use volume deletion for normal restarts. Multiple backend workers/processes sharing the file are unsupported.
+For an intentional **disposable demo reset**, first stop the backend and back up the state file or Docker volume. Then remove only that demo state file (native), or explicitly remove this project's named state volume. This deletes imports, completions and Market redemptions, not data/raw. Do not use volume deletion for normal restarts. Multiple backend workers/processes sharing the file are unsupported.
 
 ## Tests and checks
+
+For this integration, `npm --prefix frontend run build` completed successfully, including the Next.js webpack build, TypeScript checks and static-page generation. Backend startup with the dataset also completed. Unit tests and browser tests were not run. Commands for further verification are listed below.
 
 ```sh
 # From repository root, with .venv activated:
@@ -257,13 +294,14 @@ Tests cover real loading and original hashes, gaps, assessment replay, caps/no-r
 
 ## Current status and next work
 
-Implemented: the deterministic foundation, authorized API, minimal employee/HR UI, import/completion persistence, Docker topology, complete linked LLM context, provider-independent prompt/JSON adapter and validated recommendation orchestration. No live provider calls or optional gamification.
+Implemented: the deterministic foundation, authorized session/API, connected Halyk map and employee/HR UI, import/completion persistence, server-backed demonstration Market, same-origin Docker/native topology, complete linked LLM context, provider-independent prompt/JSON adapter and validated recommendation orchestration. The UI handles recommendation responses, evidence, hypotheses, questions and missing-provider errors.
 
-Next: configure a live provider with the ten-second request budget, display its recommendations/questions/hypotheses in the UI, evaluate recommendation quality, and populate HR recommendation coverage. Current employees_without_recommendation is null; employees_without_candidate is a separate deterministic measure. The provider integration must set transport timeouts; the injected synchronous callable has no deadline enforcement by itself.
+Next: configure a live provider with the ten-second request budget, evaluate recommendation quality, and populate HR recommendation coverage. Current employees_without_recommendation is null; employees_without_candidate is a separate deterministic measure. The provider integration must set transport timeouts; the injected synchronous callable has no deadline enforcement by itself. Weekly pace is a local route filter and is not sent to the LLM. Enrollment, profile/goal editing and answers to AI clarification questions have no write endpoints yet.
 
-Verification results, known limits, final tree and next-agent instructions: [docs/handoff.md](docs/handoff.md).
+Foundation handoff: [docs/handoff.md](docs/handoff.md). Current frontend/API mapping and integration limits: [docs/frontend-integration.md](docs/frontend-integration.md).
 
 ## Выбранный трек и кейс
+
 - Трек: Halyk Bank
 - Case 1: Career Quest — AI-навигатор развития сотрудника
 

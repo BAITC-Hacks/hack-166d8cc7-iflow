@@ -9,7 +9,8 @@ from app.core.errors import DomainError, STATUS
 from app.repositories.dataset import DatasetRepository, build_snapshot
 from app.services.dataset import DatasetService
 from app.repositories.state import StateRepository
-from app.api import employees, activities, dataset, recommendations, hr
+from app.api import employees, activities, dataset, recommendations, hr, market, session
+from app.services.market import MarketService
 from app.ai.client import AIClient
 from app.ai.recommender import DisabledRecommender
 
@@ -21,6 +22,7 @@ def create_app(settings: Settings | None = None, *, ai_client: AIClient | None =
         clock=date.fromisoformat(str(settings.application_date)) if settings.application_date else bundle.meta.as_of_date
         if clock<bundle.meta.as_of_date: raise ValueError("Application date cannot precede dataset snapshot")
         app.state.dataset=DatasetService(build_snapshot(bundle),StateRepository(settings.state_path),DatasetRepository(settings.raw_dir).fingerprint())
+        app.state.market=MarketService(app.state.dataset)
         app.state.settings=settings
         app.state.as_of_date=clock
         app.state.ai_client=ai_client or DisabledRecommender()
@@ -48,6 +50,8 @@ def create_app(settings: Settings | None = None, *, ai_client: AIClient | None =
     app.include_router(dataset.router)
     app.include_router(recommendations.router)
     app.include_router(hr.router)
+    app.include_router(session.router)
+    app.include_router(market.router)
     return app
 
 app=create_app()

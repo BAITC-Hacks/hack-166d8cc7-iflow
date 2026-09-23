@@ -1,7 +1,8 @@
-import Link from "next/link";
-import "./globals.css";
-import {SessionProvider} from "@/components/session-provider";
-export const metadata={title:"Career Quest",description:"Employee development navigator"};
-export default function Layout({children}:{children:React.ReactNode}) {
- return <html lang="en"><body><main><header><h1>Career Quest</h1><nav><Link href="/">Employees</Link><Link href="/hr">HR view</Link></nav></header><SessionProvider>{children}</SessionProvider></main></body></html>;
+import '@fontsource-variable/golos-text';
+import './globals.css';
+import './connected.css';
+import './hr-connected.css';
+export const metadata = { title: 'Career Quest — твой путь в Halyk', description: 'Персональная карта развития сотрудника Halyk' };
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return <html lang="ru"><body>{children}</body></html>;
 }

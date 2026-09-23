@@ -17,4 +17,4 @@ class HistoryRepository:
         row = self._rows.get(record_id)
         return row.model_copy(deep=True) if row else None
     def for_employee(self, employee_id: str) -> tuple[ActivityHistory, ...]:
-        return tuple(row for row in self.list() if row.employee_id == employee_id)
+        return tuple(row.model_copy(deep=True) for row in self._rows.values() if row.employee_id == employee_id)

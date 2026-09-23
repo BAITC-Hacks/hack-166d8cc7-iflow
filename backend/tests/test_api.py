@@ -83,3 +83,11 @@ def test_recommendation_route_is_honestly_unimplemented(api_client):
     r=api_client.post('/api/employees/E0001/recommendations',headers=auth())
     assert r.status_code==501 and r.json()['error']['code']=='recommendations_not_implemented'
     assert api_client.post('/api/employees/E0002/recommendations',headers=auth()).status_code==403
+
+def test_hr_authorization_and_openapi(api_client):
+    assert api_client.get('/api/hr/dashboard',headers=auth()).status_code==403
+    assert api_client.get('/api/hr/dashboard',headers=auth('test-hr')).status_code==200
+    paths=api_client.get('/openapi.json').json()['paths']
+    assert {'/health','/api/employees','/api/employees/{employee_id}','/api/employees/{employee_id}/trajectory',
+        '/api/employees/{employee_id}/recommendations','/api/employees/{employee_id}/activities/{event_id}/complete',
+        '/api/hr/dashboard','/api/dataset/import'} <= set(paths)

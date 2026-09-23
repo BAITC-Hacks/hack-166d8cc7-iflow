@@ -77,3 +77,24 @@ class ImportResult(Model):
     unchanged_history: int
     revision: int
     as_of_date: date
+
+from typing import Literal
+
+class SkillGapCount(Model):
+    skill_id: str
+    name: str
+    employee_count: int
+
+class ParticipationCount(Model):
+    event_id: str
+    title: str
+    status_counts: dict[str,int]
+
+class HRDashboard(Model):
+    skill_gap_counts: list[SkillGapCount]
+    participation_by_event: list[ParticipationCount]
+    employees_without_candidate: list[str]
+    recommendation_status: Literal["not_implemented"]
+    employees_without_recommendation: None
+    revision: int
+    as_of_date: date

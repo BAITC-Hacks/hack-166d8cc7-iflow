@@ -9,7 +9,7 @@ from app.core.errors import DomainError, STATUS
 from app.repositories.dataset import DatasetRepository, build_snapshot
 from app.services.dataset import DatasetService
 from app.repositories.state import StateRepository
-from app.api import employees, activities, dataset, recommendations
+from app.api import employees, activities, dataset, recommendations, hr
 
 def create_app(settings: Settings | None = None) -> FastAPI:
     settings=settings or Settings.from_env()
@@ -44,6 +44,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(activities.router)
     app.include_router(dataset.router)
     app.include_router(recommendations.router)
+    app.include_router(hr.router)
     return app
 
 app=create_app()

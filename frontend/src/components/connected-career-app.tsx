@@ -61,10 +61,6 @@ function Login({ onLogin }: { onLogin: (session: Session) => void }) {
     } catch (error) { if (!controller.signal.aborted) setError(message(error)); }
     finally { loginLock.current = false; if (!controller.signal.aborted) { setBusy(false); setLoginChoice(null); } }
   }
-  const identities = [
-    { token: 'demo-active', choice: 'employee' as const, name: 'Сотрудник', text: 'Личный маршрут, события и награды', icon: Flag },
-    { token: 'demo-hr', choice: 'hr' as const, name: 'HR-команда', text: 'Аналитика навыков и управление данными', icon: Users },
-  ];
   return <main className="login-page">
     <section className="login-story">
       <div className="login-brand"><img src="/halyk-logo.png" alt="Halyk"/><span>Career Quest</span></div>
@@ -72,8 +68,7 @@ function Login({ onLogin }: { onLogin: (session: Session) => void }) {
       <div className="login-path" aria-label="Профиль, маршрут, развитие">{[['01', 'Ваш профиль', 'Опыт и текущие навыки'], ['02', 'Личный маршрут', 'Обучение под карьерную цель'], ['03', 'Измеримый прогресс', 'Результат каждого шага']].map(([n, title, description]) => <div key={n}><span>{n}</span><div><b>{title}</b><small>{description}</small></div></div>)}</div>
       <span className="login-caption">HALYK / CAREER QUEST</span>
     </section>
-    <section className="login-panel"><div><span className="eyebrow">ДОБРО ПОЖАЛОВАТЬ</span><h2>Вход в пространство</h2><p>Выберите роль для демонстрации или войдите с персональным токеном.</p>
-      <div className="identity-options">{identities.map(item => <button key={item.token} type="button" aria-busy={busy && loginChoice === item.choice} disabled={busy} onClick={() => login(item.token, item.choice)}><span><item.icon size={22}/></span><div><b>{busy && loginChoice === item.choice ? 'Входим…' : item.name}</b><small>{item.text}</small></div><ArrowUpRight size={18}/></button>)}</div>
+    <section className="login-panel"><div><span className="eyebrow">ДОБРО ПОЖАЛОВАТЬ</span><h2>Вход в пространство</h2><p>Введите персональный токен, выданный администратором. Роль определяется вашим доступом.</p>
       {busy && <div className="login-progress" role="status"><RefreshCw size={16}/>{loginChoice === 'hr' ? 'Открываем HR-панель…' : 'Открываем профиль…'}</div>}
       <form onSubmit={event => { event.preventDefault(); void login(token); }}><label htmlFor="access-token">Персональный доступ</label><div><input id="access-token" type="password" autoComplete="off" value={token} onChange={event => setToken(event.target.value)} placeholder="Токен доступа" disabled={busy}/><button className="button primary" disabled={busy || !token.trim()}>{busy ? 'Входим…' : 'Войти'}<ArrowRight size={16}/></button></div></form>
       {error && <ErrorBox error={error}/>}<p className="login-note"><ShieldCheck size={16}/>Демонстрационная среда. Доступ определяется ролью, токен действует в пределах текущей сессии.</p>

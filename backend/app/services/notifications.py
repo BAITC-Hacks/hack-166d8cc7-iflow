@@ -62,7 +62,7 @@ class NotificationService:
 
     def _input_fingerprint(self, employee_id, snapshot):
         return fingerprint({
-            "selection_policy": "one-strongest-v3-history-check",
+            "selection_policy": "grounded-explanations-v4",
             "ai_config": getattr(self.ai_client, "cache_key", type(self.ai_client).__name__),
             "employee": snapshot.employees.get(employee_id).model_dump(mode="json"),
             "history": [r.model_dump(mode="json") for r in effective_history(snapshot, employee_id)],

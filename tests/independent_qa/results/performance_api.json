@@ -1,0 +1,458 @@
+{
+  "responses": {
+    "5": {
+      "http": 200,
+      "body": {
+        "status": "success",
+        "employee_id": "JQA005",
+        "recommendations": [
+          {
+            "event_id": "EV_006",
+            "explanation": "The employee is already at expert level in most Backend Engineer critical skills except for System Design, where there's a critical gap of one proficiency level needed for the Senior grade. The 'Designing High-Load Systems' workshop directly addresses this gap by providing a one-level boost in System Design skill, meeting the Senior requirement. It also fits well given the employee's current System Design proficiency and prerequisite fulfillment. This event is offline, 12 hours long, and scheduled soon, offering timely advancement towards the stated career goal.",
+            "evidence": [
+              {
+                "kind": "profile_context",
+                "values": {
+                  "role": "Backend Engineer",
+                  "grade": "Middle",
+                  "has_explicit_career_goal": true,
+                  "target_role": "Backend Engineer",
+                  "target_grade": "Senior",
+                  "work_format": "hybrid",
+                  "interface_language": "en",
+                  "tenure_months": 24
+                },
+                "source_ids": [
+                  "JQA005"
+                ]
+              },
+              {
+                "kind": "target_grade",
+                "values": {
+                  "role": "Backend Engineer",
+                  "grade": "Senior"
+                },
+                "source_ids": [
+                  "Backend Engineer:Senior"
+                ]
+              },
+              {
+                "kind": "skill_levels",
+                "values": {
+                  "role": "Backend Engineer",
+                  "grade": "Senior",
+                  "skill_id": "SK_SYSTEM_DESIGN",
+                  "current": 3,
+                  "required": 4
+                },
+                "source_ids": [
+                  "SK_SYSTEM_DESIGN"
+                ]
+              },
+              {
+                "kind": "critical_skill",
+                "values": {
+                  "role": "Backend Engineer",
+                  "grade": "Senior",
+                  "skill_id": "SK_SYSTEM_DESIGN",
+                  "critical": true
+                },
+                "source_ids": [
+                  "SK_SYSTEM_DESIGN"
+                ]
+              },
+              {
+                "kind": "attainable_gain",
+                "values": {
+                  "skill_id": "SK_SYSTEM_DESIGN",
+                  "gain": 1
+                },
+                "source_ids": [
+                  "EV_006",
+                  "SK_SYSTEM_DESIGN"
+                ]
+              },
+              {
+                "kind": "availability",
+                "values": {
+                  "format": "offline",
+                  "next_session": "2026-10-07",
+                  "as_of_date": "2026-10-01"
+                },
+                "source_ids": [
+                  "EV_006"
+                ]
+              },
+              {
+                "kind": "duration_format",
+                "values": {
+                  "hours": 12.0,
+                  "format": "offline"
+                },
+                "source_ids": [
+                  "EV_006"
+                ]
+              }
+            ],
+            "confidence": "high",
+            "additional_value": null
+          }
+        ],
+        "revision": 1,
+        "as_of_date": "2026-10-01",
+        "hypotheses": [],
+        "clarifying_questions": [
+          "What topics are you currently most interested in developing?",
+          "How many hours per week can you comfortably dedicate to learning?"
+        ]
+      }
+    },
+    "12": {
+      "http": 200,
+      "body": {
+        "status": "success",
+        "employee_id": "JQA012",
+        "recommendations": [
+          {
+            "event_id": "EV_025",
+            "explanation": "The highest priority current skill gap relevant to the employee's explicit career goal of becoming a Senior Data Analyst is in Data Modeling, with a gap of 2 levels (current 1 vs required 3). The 'Dimensional Data Modeling' course directly addresses this gap and is eligible and available soon. This course complements already strong skills in SQL, Statistics, and A/B Testing, supporting a solid transition to the target role. Other candidates focus on System Design, which is more relevant for Backend Engineer senior level, but does not directly support the data analyst goal as much as improving data modeling skills.",
+            "evidence": [
+              {
+                "kind": "skill_levels",
+                "values": {
+                  "role": "Data Analyst",
+                  "grade": "Senior",
+                  "skill_id": "SK_DATA_MODELING",
+                  "current": 1,
+                  "required": 3
+                },
+                "source_ids": [
+                  "SK_DATA_MODELING"
+                ]
+              },
+              {
+                "kind": "critical_skill",
+                "values": {
+                  "role": "Data Analyst",
+                  "grade": "Senior",
+                  "skill_id": "SK_DATA_MODELING",
+                  "critical": false
+                },
+                "source_ids": [
+                  "SK_DATA_MODELING"
+                ]
+              },
+              {
+                "kind": "attainable_gain",
+                "values": {
+                  "skill_id": "SK_DATA_MODELING",
+                  "gain": 1
+                },
+                "source_ids": [
+                  "EV_025",
+                  "SK_DATA_MODELING"
+                ]
+              },
+              {
+                "kind": "target_grade",
+                "values": {
+                  "role": "Data Analyst",
+                  "grade": "Senior"
+                },
+                "source_ids": [
+                  "Data Analyst:Senior"
+                ]
+              },
+              {
+                "kind": "current_grade",
+                "values": {
+                  "role": "Backend Engineer",
+                  "grade": "Middle"
+                },
+                "source_ids": [
+                  "JQA012"
+                ]
+              },
+              {
+                "kind": "target_grade",
+                "values": {
+                  "role": "Backend Engineer",
+                  "grade": "Senior"
+                },
+                "source_ids": [
+                  "Backend Engineer:Senior"
+                ]
+              },
+              {
+                "kind": "availability",
+                "values": {
+                  "format": "online",
+                  "next_session": "2026-10-13",
+                  "as_of_date": "2026-10-01"
+                },
+                "source_ids": [
+                  "EV_025"
+                ]
+              },
+              {
+                "kind": "duration_format",
+                "values": {
+                  "hours": 10.0,
+                  "format": "online"
+                },
+                "source_ids": [
+                  "EV_025"
+                ]
+              }
+            ],
+            "confidence": "high",
+            "additional_value": null
+          }
+        ],
+        "revision": 1,
+        "as_of_date": "2026-10-01",
+        "hypotheses": [
+          {
+            "statement": "The employee is interested in developing skills aligned with the Data Analyst Senior role, implied by the career goal and skill gaps.",
+            "evidence": [
+              {
+                "kind": "profile_context",
+                "values": {
+                  "role": "Backend Engineer",
+                  "grade": "Middle",
+                  "has_explicit_career_goal": true,
+                  "target_role": "Data Analyst",
+                  "target_grade": "Senior",
+                  "work_format": "hybrid",
+                  "interface_language": "en",
+                  "tenure_months": 24
+                },
+                "source_ids": [
+                  "JQA012"
+                ]
+              },
+              {
+                "kind": "target_grade",
+                "values": {
+                  "role": "Data Analyst",
+                  "grade": "Senior"
+                },
+                "source_ids": [
+                  "Data Analyst:Senior"
+                ]
+              },
+              {
+                "kind": "skill_levels",
+                "values": {
+                  "role": "Data Analyst",
+                  "grade": "Senior",
+                  "skill_id": "SK_DATA_MODELING",
+                  "current": 1,
+                  "required": 3
+                },
+                "source_ids": [
+                  "SK_DATA_MODELING"
+                ]
+              }
+            ],
+            "needs_confirmation": true
+          }
+        ],
+        "clarifying_questions": [
+          "What topics or skills are you currently most interested in developing?",
+          "How many hours per week can you dedicate to learning?"
+        ]
+      }
+    },
+    "24": {
+      "http": 200,
+      "body": {
+        "status": "success",
+        "employee_id": "JQA024",
+        "recommendations": [
+          {
+            "event_id": "EV_009",
+            "explanation": "The employee already meets or exceeds all critical and required skill levels for their current Middle Backend Engineer role and their Senior-level career goal, except for a gap of 1 level in Cloud Platforms (current 2 vs required 3) at Senior grade. The 'Cloud Certification Prep' event is eligible and directly addresses this gap, offering an attainable skill gain in Cloud, crucial for progressing to Senior. It has no prerequisites beyond current skills and fits well now as it fills the only remaining gap for the target grade with a manageable self-paced 40-hour commitment. Other events do not offer relevant skill gains or are not suitable due to no skill gaps or role mismatch.",
+            "evidence": [
+              {
+                "kind": "current_grade",
+                "values": {
+                  "role": "Backend Engineer",
+                  "grade": "Middle"
+                },
+                "source_ids": [
+                  "JQA024"
+                ]
+              },
+              {
+                "kind": "target_grade",
+                "values": {
+                  "role": "Backend Engineer",
+                  "grade": "Senior"
+                },
+                "source_ids": [
+                  "Backend Engineer:Senior"
+                ]
+              },
+              {
+                "kind": "skill_levels",
+                "values": {
+                  "role": "Backend Engineer",
+                  "grade": "Senior",
+                  "skill_id": "SK_CLOUD",
+                  "current": 2,
+                  "required": 3
+                },
+                "source_ids": [
+                  "SK_CLOUD"
+                ]
+              },
+              {
+                "kind": "critical_skill",
+                "values": {
+                  "role": "Backend Engineer",
+                  "grade": "Senior",
+                  "skill_id": "SK_CLOUD",
+                  "critical": false
+                },
+                "source_ids": [
+                  "SK_CLOUD"
+                ]
+              },
+              {
+                "kind": "attainable_gain",
+                "values": {
+                  "skill_id": "SK_CLOUD",
+                  "gain": 1
+                },
+                "source_ids": [
+                  "EV_009",
+                  "SK_CLOUD"
+                ]
+              },
+              {
+                "kind": "skill_levels",
+                "values": {
+                  "role": "Backend Engineer",
+                  "grade": "Senior",
+                  "skill_id": "SK_CICD",
+                  "current": 5,
+                  "required": 3
+                },
+                "source_ids": [
+                  "SK_CICD"
+                ]
+              },
+              {
+                "kind": "critical_skill",
+                "values": {
+                  "role": "Backend Engineer",
+                  "grade": "Senior",
+                  "skill_id": "SK_CICD",
+                  "critical": false
+                },
+                "source_ids": [
+                  "SK_CICD"
+                ]
+              }
+            ],
+            "confidence": "high",
+            "additional_value": null
+          }
+        ],
+        "revision": 1,
+        "as_of_date": "2026-10-01",
+        "hypotheses": [
+          {
+            "statement": "The employee is motivated to pursue certification to advance their career, as evidenced by their explicit goal of progressing to Senior Backend Engineer and the single recommended Cloud Certification Prep course focusing on their specific skill gap in Cloud Platforms.",
+            "evidence": [
+              {
+                "kind": "target_grade",
+                "values": {
+                  "role": "Backend Engineer",
+                  "grade": "Senior"
+                },
+                "source_ids": [
+                  "Backend Engineer:Senior"
+                ]
+              },
+              {
+                "kind": "skill_levels",
+                "values": {
+                  "role": "Backend Engineer",
+                  "grade": "Senior",
+                  "skill_id": "SK_CLOUD",
+                  "current": 2,
+                  "required": 3
+                },
+                "source_ids": [
+                  "SK_CLOUD"
+                ]
+              },
+              {
+                "kind": "attainable_gain",
+                "values": {
+                  "skill_id": "SK_CLOUD",
+                  "gain": 1
+                },
+                "source_ids": [
+                  "EV_009",
+                  "SK_CLOUD"
+                ]
+              }
+            ],
+            "needs_confirmation": true
+          }
+        ],
+        "clarifying_questions": [
+          "What topics are you currently most interested in developing further?",
+          "How much time per week can you comfortably dedicate to learning?"
+        ]
+      }
+    }
+  },
+  "timings": [
+    9.910036400018726,
+    7.159149699960835,
+    3.8519383000093512
+  ],
+  "live_calls": 3,
+  "live_errors": [],
+  "registry": [
+    {
+      "id": "SEC08",
+      "title": "Public demo HR credential does not grant privileged data",
+      "status": "FAILED",
+      "detail": "Public login/source credential demo-hr returned 200; UI exposes HR role button",
+      "severity": "HIGH"
+    },
+    {
+      "id": "PERF5",
+      "title": "Fresh recommendation API response under 10 seconds",
+      "status": "PASSED",
+      "detail": "9.910036 seconds, HTTP 200",
+      "severity": null
+    },
+    {
+      "id": "PERF12",
+      "title": "Fresh recommendation API response under 10 seconds",
+      "status": "PASSED",
+      "detail": "7.159150 seconds, HTTP 200",
+      "severity": null
+    },
+    {
+      "id": "PERF24",
+      "title": "Fresh recommendation API response under 10 seconds",
+      "status": "PASSED",
+      "detail": "3.851938 seconds, HTTP 200",
+      "severity": null
+    }
+  ],
+  "statistics": {
+    "n": 3,
+    "min": 3.8519383000093512,
+    "avg": 6.973708133329637,
+    "p95": 9.910036400018726,
+    "max": 9.910036400018726
+  }
+}

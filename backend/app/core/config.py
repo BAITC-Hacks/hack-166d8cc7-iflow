@@ -19,7 +19,7 @@ class Settings(Model):
     raw_dir: Path = ROOT/"data/raw"
     state_path: Path = ROOT/"data/state/state.json"
     allowed_origin: str = "http://localhost:3000"
-    dev_identities: dict[str,Principal] = Field(default_factory=lambda:{k:Principal(**v) for k,v in DEMO_IDENTITIES.items()})
+    dev_identities: dict[str,Principal] = Field(default_factory=dict)
     application_date: date | None = None
     notifications_worker_enabled: bool = True
     notification_poll_seconds: float = Field(default=2, ge=0.1, le=3600)
@@ -42,7 +42,8 @@ class Settings(Model):
         return cls(raw_dir=get("DATA_RAW_DIR",str(ROOT/"data/raw")),
             state_path=get("STATE_PATH",str(ROOT/"data/state/state.json")),
             allowed_origin=get("FRONTEND_ORIGIN","http://localhost:3000"),
-            dev_identities=json.loads(get("DEV_IDENTITIES_JSON",json.dumps(DEMO_IDENTITIES))),
+            # Public historical demo credentials are never accepted by env startup.
+            dev_identities={k:v for k,v in json.loads(get("DEV_IDENTITIES_JSON", "{}")).items() if k not in DEMO_IDENTITIES},
             application_date=get("APPLICATION_DATE") or None,
             notifications_worker_enabled=get("NOTIFICATION_WORKER_ENABLED", "true"),
             notification_poll_seconds=get("NOTIFICATION_POLL_SECONDS", "2"),

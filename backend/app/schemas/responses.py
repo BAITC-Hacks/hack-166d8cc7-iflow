@@ -94,7 +94,9 @@ class HRDashboard(Model):
     skill_gap_counts: list[SkillGapCount]
     participation_by_event: list[ParticipationCount]
     employees_without_candidate: list[str]
-    recommendation_status: Literal["not_implemented"]
-    employees_without_recommendation: None
+    recommendation_status: Literal["available"]
+    employees_without_recommendation: list[str]
+    recommendation_states: dict[str,str] = {}
+    critical_catalog_gaps: list[dict[str, str | int]] = []
     revision: int
     as_of_date: date

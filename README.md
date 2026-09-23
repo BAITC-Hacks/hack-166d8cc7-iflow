@@ -1,226 +1,357 @@
-# Career Quest
+# Halyk Career Quest
 
-Career Quest is an employee-development navigator for HackAlem AI, Case 1. The Halyk visual frontend is connected to FastAPI: it loads the starter kit, projects current skills, calculates next-grade gaps, shows a development map, records completions, provides HR aggregates/import and persists a demonstration rewards ledger.
+**HackAlem AI · Halyk Bank · Case 1 — Career Quest**
 
-**OpenAI Responses integration, full LLM context and validated recommendation orchestration are implemented.** Configure `AI_PROVIDER=openai` and `OPENAI_API_KEY` in the root `.env`; native backend loads it automatically. Default model: `gpt-4.1-mini`. NVIDIA remains unused. See [provider setup and checks](docs/openai-provider.md).
+AI-powered career navigation and employee development platform — платформа, которая связывает навыки сотрудника с карьерной целью и помогает выбрать следующий полезный шаг развития.
 
-## Наше решение — Halyk Career Quest
+**Сегодня работает:** персональная карта, расчёт навыков и дефицитов, каталог событий, сохранение завершений, кабинет HR, импорт данных и демонстрационный Halyk Market.
 
-**Трек: Halyk Bank. Кейс №1: Career Quest — AI-навигатор развития сотрудника.**
-Команда IFlow создаёт персональную карту карьерного развития: сотрудник выбирает
-ориентир из требований следующего грейда и заданной в профиле цели, видит ближайшие
-полезные шаги и понимает, как каждый из них развивает навыки.
-В одной истории соединяются обучение, практика, менторство и приятные награды.
+> **OpenAI подключён.** Модель выбирает 1–3 подходящих активности по полному контексту; сервер строит объяснения из проверенных фактов. Настройте `AI_PROVIDER=openai` и `OPENAI_API_KEY` в корневом `.env`. NVIDIA пока не используется.
 
-### Какую задачу решаем
+[Статус](#4-current-feature-status) · [Быстрый запуск](#25-running-with-docker) · [Демо-доступ](#27-demo-credentials) · [API](#29-api) · [Проверки](#30-testing) · [Демо-сценарий](#31-demo-day-flow)
 
-Каталог курсов сам по себе не объясняет сотруднику, с чего начать и что поможет
-приблизиться к следующему грейду. HR нужны данные о дефицитах навыков и о том,
-каким сотрудникам пока не удаётся предложить подходящее развитие.
+README обновлено после независимого аудита 23.09.2026. Исходные наблюдения сохранены в [TEST_AUDIT.md](TEST_AUDIT.md); исправления описаны в [QA_FIXES.md](QA_FIXES.md).
 
-Наш подход — связать профиль сотрудника, требования роли и доступные мероприятия
-в понятный маршрут из **1–3 ближайших шагов**. Для каждого шага показываем,
-почему он подходит, сколько времени займёт и какой навык поможет развить.
+## 1. Problem
 
-### Карта развития как главное пространство
+Сотрудник получает множество предложений обучения, но не всегда понимает, почему конкретная активность полезна, какой дефицит она закрывает, к чему ведёт и что изменится после завершения. Каталога курсов недостаточно для выбора следующего шага.
 
-Главный экран — игровая карта в зелёно-золотой стилистике Halyk с собственной
-SVG-иллюстрацией ландшафта, узлами событий и анимациями. Названия районов и
-показатели навыков берутся из реального профиля сотрудника. На карте отображается
-до пяти событий; полный каталог доступен в разделе «События».
+HR нужны три практических ответа: какие дефициты встречаются чаще всего, как сотрудники участвуют в активностях и кому сейчас нельзя предложить подходящее мероприятие. Career Quest связывает эти задачи в один цикл развития, выходящий за рамки каталога LMS.
 
-- **Карьерный ориентир:** следующий грейд или уже заданная в профиле цель.
-  Переключение меняет представление маршрута; редактирование профиля API пока
-  не поддерживает.
-- **Развилки:** доступные обучение, практика и менторство из исходного каталога.
-- **Доступные и будущие этапы:** сервер проверяет роль, грейд, навыки, историю и
-  расписание. Карточка объясняет ограничения недоступного события.
-- **Свой темп:** 1, 3 или 5 часов в неделю. Самостоятельные задания можно
-  распределять по неделям, живые встречи должны помещаться в доступное время.
-  Это локальный фильтр ближайших шагов; выбранный темп не отправляется LLM.
-- **Прогресс:** подтверждение завершения отправляется на сервер. После записи
-  интерфейс загружает обновлённые навыки, историю, маршрут и баланс наград.
+## 2. Solution
 
-Игровой путь и обмен внутренних монет на полезные предложения вдохновлены
-механикой Astana Hub. Мы адаптируем их под карьерные цели сотрудников Halyk
-и зелёно-золотую визуальную стилистику банка.
+```text
+Профиль → текущие навыки → требования цели → дефициты → карьерный маршрут
+   → подходящие события → рекомендация → завершение → новый прогресс
+   → вовлечение и награды → следующий шаг
+```
 
-### Где нужен ИИ
+Backend рассчитывает факты и допустимые события. Карта объясняет ближайшие шаги и обновляется после сохранённого завершения. AI-слой вызывает OpenAI для выбора 1–3 рекомендаций; числовые объяснения строятся сервером.
 
-AI-навигатор должен помогать подобрать маршрут и объяснить его человеческим
-языком. В интерфейсе уже есть запрос рекомендаций через backend и отображение
-ответов, факторов выбора, гипотез и уточняющих вопросов. Сценарий
-**«Хочу стать Senior, но на обучение есть только час в неделю»** пока разделён
-на серверные требования к цели и локальный фильтр нагрузки на карте.
+## 3. Product Vision
 
-Рекомендации должны учитывать несколько факторов одновременно:
-
-1. Дефицит и критичность навыков для следующего грейда или карьерной цели.
-2. Текущую роль, грейд и предварительные требования мероприятия.
-3. Историю участия: завершения, отказы, пропуски и обратную связь.
-4. Формат, продолжительность и расписание. Выбранный в интерфейсе темп сейчас
-   меняет только оценку длительности; в LLM он пока не передаётся.
-
-Сначала backend определяет допустимых кандидатов и рассчитывает прогресс.
-Затем в LLM передаётся полный профиль, вся история с карточками мероприятий,
-каталог и требования текущего/следующего грейда и явно заданной цели. Инструкция
-требует объяснения минимум по трём факторам. Результат проходит проверку: рекомендовать можно только реальные
-мероприятия из каталога, соответствующие ограничениям. Уровни навыков и
-начисления рассчитываются по правилам данных, а не генерируются моделью.
-
-**OpenAI подключается из корневого `.env`:** `AI_PROVIDER=openai`, `OPENAI_API_KEY`, при необходимости `OPENAI_MODEL`. Без ключа endpoint возвращает 501 при наличии кандидатов. Контекст, структурированный ответ и факты проверяются сервером; [настройка и проверки](docs/openai-provider.md).
-Карта показывает только сохранённую AI-подборку: один основной шаг и до двух
-дополнительных при высокой уверенности и отдельном обосновании пользы.
-При сомнении в дополнительных вариантах остаётся один шаг. Без провайдера
-карта показывает статус недоступности AI; полный каталог и профиль доступны.
-Темп обучения меняет оценку длительности, но не состав и порядок рекомендаций.
-
-### Halyk Market — награды за развитие
-
-За каждое новое добровольное завершение через API сотрудник получает
-**80 внутренних монет** и выбирает награды: книги, мерч или билеты на
-профессиональные мероприятия. Начальный баланс — **0**. Исходная и
-импортированная история завершений монет не начисляет. На карте видно, сколько
-ещё монет нужно до ближайшей награды.
-
-Монеты не повышают уровни навыков и не влияют на решение о повышении.
-Обучение и менторство остаются бесплатными. За обязательные процессы награды
-не начисляются. Каталог, баланс и обмены загружаются через API; списание монет и
-квитанции обмена сохраняются в серверном состоянии. Сервер проверяет баланс,
-повтор запроса и повторный обмен одной награды. Market остаётся демонстрацией:
-реальные покупки, доставка и интеграция с коммерческим Halyk Market не подключены.
-
-### Пример пользовательского пути
-
-**Вход сотрудником → выбор доступного карьерного ориентира → темп → ближайшие
-события → подтверждение пройденной активности → обновление навыков и маршрута →
-награда в Market.**
-
-Покрытие требований к навыкам показывает продвижение к цели, но не является
-гарантией повышения. Сотрудник может переключить отображаемый ориентир и темп;
-новую карьерную цель пока нельзя сохранить через интерфейс.
-
-### Что получает HR
-
-Общую картину дефицитов навыков, участия в мероприятиях и доступности подходящих
-шагов. Это помогает планировать обучение и расширять каталог там, где
-возможностей не хватает. Данные сотрудника защищены разграничением доступа;
-публичный рейтинг эффективности сотрудников не предусмотрен.
-
-Для проверки кейса сохраняется поддержка исходного JSON/CSV-формата и импорта
-дополнительных профилей и истории жюри. В текущем API отсутствие допустимых
-кандидатов уже рассчитывается; показатель отсутствия AI-рекомендаций появится
-после реализации рекомендателя.
-
-### Текущий статус
-
-| Часть решения | Статус |
+| Направление | Польза и стадия |
 | --- | --- |
-| Данные стартового набора, расчёт навыков и траектории, допустимые мероприятия | Реализованы; интерфейс использует ответы backend |
-| FastAPI, разграничение employee/HR, импорт, завершения и HR-агрегаты | Подключены к основному интерфейсу |
-| Игровая карта, обзор, каталог событий и адаптивный интерфейс Halyk | Основной frontend проекта; локальные фильтры работают поверх серверных данных |
-| Halyk Market | Серверный каталог, баланс и сохраняемые обмены; демонстрационные награды |
-| Полный контекст LLM, инструкции, адаптер JSON и проверка фактов | Реализованы; OpenAI Responses подключается через серверный `.env` |
-| Предложения и почтовые уведомления | Сохраняемая очередь, SMTP HR, расписание, паузы, реакции сотрудников и журнал; требуется настройка отправителя и LLM |
-| Docker Compose и native-запуск | Один origin для браузера через Next.js-прокси `/backend` |
+| Career Intelligence | ✅ Профиль, требования, дефициты и достижимый прирост навыков |
+| Career Map / Events | ✅ Маршрут и каталог с проверкой ограничений |
+| AI Recommendations | ✅ Live OpenAI, проверка выбора и объяснения из фактов |
+| HR Analytics | ✅ Дефициты, участие, сотрудники без подходящих событий |
+| Gamification / Rewards | ✅ Карта и монеты; 🧭 личные XP, уровни и серии |
+| Social Discovery | 🟡 Career Stories: подготовлены спецификация и план, рабочего модуля нет |
 
-Следующие шаги: расширить оценку качества рекомендаций и
-добавить API редактирования цели и интеграцию записи с организатором. Запись на предложенный курс уже сохраняется в системе уведомлений. Подробности текущей
-связи интерфейса с сервером: [frontend integration](docs/frontend-integration.md).
+Обозначения: **✅ IMPLEMENTED** — есть реализация; **🟡 IN PROGRESS** — подготовка ведётся, стадия указана явно; **🧭 PLANNED** — запланировано, реализации нет; **💡 CONCEPT / FUTURE IDEA** — идея для дальнейшей оценки.
 
-## Launch
+## 4. Current Feature Status
 
-Prerequisites: Docker Desktop with Linux containers. From the repository root:
+| Feature | Status |
+| --- | --- |
+| Career Map | ✅ IMPLEMENTED — серверные данные, локальный маршрут и темп |
+| Employee / HR roles | ✅ IMPLEMENTED — разграничение API с приватными токенами |
+| Skill projection | ✅ IMPLEMENTED — переигрывание завершений после оценки |
+| Next-grade gaps / career goal | ✅ IMPLEMENTED — отдельные расчёты; редактирования цели нет |
+| Event eligibility | ✅ IMPLEMENTED — аудитория, prerequisites, расписание, история, прирост |
+| Activity completion | ✅ IMPLEMENTED — собственные завершения, сохранение и повторы команд |
+| HR dashboard | ✅ IMPLEMENTED — дефициты, участие, отсутствие кандидатов |
+| Dataset import | ✅ IMPLEMENTED — HR-импорт профилей и истории |
+| Coins | ✅ IMPLEMENTED — 80 за новое добровольное завершение через API |
+| Halyk Market | ✅ IMPLEMENTED — demo-каталог и сохраняемые обмены |
+| Notifications / course offers | ✅ IMPLEMENTED — SMTP, предложения, напоминания, паузы и журнал |
+| AI context / validation | ✅ IMPLEMENTED — `AIRefinementInput`, JSON, проверяемые факты |
+| Live OpenAI/NVIDIA provider | ✅ IMPLEMENTED — OpenAI; NVIDIA не подключён |
+| HR AI-recommendation coverage | ✅ IMPLEMENTED — ready/failed/stale/not_generated, критичные пробелы каталога |
+| Career Stories | 🟡 IN PROGRESS — спецификация и план; backend/frontend ещё не реализованы |
+| Personal Progress / XP | 🧭 PLANNED — нет XP, уровней или streak-механики |
+| Calendar | 🧭 PLANNED — даты сессий есть, календарного экрана/интеграции нет |
+| Career Copilot | 🧭 PLANNED — диалогового помощника нет |
+| Team Quests / Duels | 💡 CONCEPT / FUTURE IDEA |
+| Career Simulator / AI Quest Master / AI video / Manager View | 💡 CONCEPT / FUTURE IDEA |
+
+## 5. Employee Experience
+
+В кабинете доступны **«Карта развития»**, **«Мой обзор»**, **«События»** и **Halyk Market**. Навыки, история и требования показаны в карте и обзоре; отдельного экрана XP или Stories нет.
+
+Сотрудник видит свои данные, открывает карточку события, проверяет ограничения и подтверждает уже выполненную активность. После ответа сервера обновляются навыки, маршрут, история и баланс. Это самоотчёт о завершении, без подтверждения LMS или руководителем.
+
+AI Navigator — отдельная панель запроса рекомендаций: интерфейс умеет показать объяснения, доказательства, гипотезы, уточняющие вопросы и ошибку отсутствующего провайдера. Сохранение ответов на вопросы пока не реализовано.
+
+## 6. Career Map
+
+Карта показывает 1–3 сохранённые AI-рекомендации без заполнения случайными курсами. Сначала предлагается один самый подходящий шаг; дополнительные требуют высокой уверенности и отдельной пользы. Неактуальные и отклонённые предложения скрываются. Полный каталог доступен в «Событиях».
+
+Темп 1, 3 или 5 часов в неделю меняет локальную оценку длительности; он пока не передаётся LLM. Переключатель цели меняет показ дефицитов, но не редактирует профиль и не меняет серверную цель. У Lead нет следующего грейда. Завершение обновляет навыки и маршрут; покрытие требований не гарантирует повышение.
+
+## 7. Recommendation Engine
+
+`AIRefinementInput` содержит полный профиль, рассчитанные текущие навыки, связанную историю с карточками мероприятий, каталог, требования ролей, карьерную цель, кандидатов, исключения и неизвестные предпочтения.
+
+OpenAI выбирает 1–3 активности и ссылки на факты. Backend проверяет доступность, ID, ревизию, минимум три категории evidence и повторные неуспешные попытки. Ошибочные ссылки evidence у реального допустимого курса заменяются проверенными фактами кандидата; неизвестный курс отклоняется. Выбор курса при этом не заменяется локальным рейтингом.
+
+Текст объяснения строится из current skills, реального gain и max_level, требований грейда и истории. Неподтверждённый свободный текст модели и гипотезы не показываются. При отсутствии карьерной цели явно обозначается ориентир по умолчанию. Сохраняются видимые оставшиеся критичные пробелы, даже если рекомендован другой полезный курс.
+
+`AI_PROVIDER=openai` и `OPENAI_API_KEY` включают live-провайдер; `none` отключает его. Есть одна повторная попытка при таймауте в пределах общего сетевого бюджета `AI_TIMEOUT_SECONDS` (10 секунд по умолчанию). Внешняя задержка не гарантируется. Ошибки авторизации/квоты не повторяются; фиктивная рекомендация при сбое не создаётся. `no_candidates` не вызывает модель. Ключи остаются на backend.
+
+См. [provider setup](docs/openai-provider.md), [исходный аудит](TEST_AUDIT.md), [исправления](QA_FIXES.md).
+
+## 8. Events
+
+Каталог содержит курсы, практические занятия, менторство, сертификации, встречи, onboarding и compliance. Карточки задают целевые роли/грейды, prerequisites, формат, длительность, обязательность, приросты и пределы навыков, даты сессий.
+
+```text
+Каталог → проверка условий → просмотр → фактическое прохождение вне приложения
+   → подтверждение завершения → атомарная запись → пересчёт навыков и наград
+```
+
+Самостоятельные события не требуют сессии; для планируемого живого события нужна текущая/будущая дата. При завершении нельзя указать будущую сессию. Существующие назначения `in_progress`/`overdue` завершаются по `source_record_id` и заменяют эффективный статус исходной записи, без двойного начисления.
+
+Обязательные активности исключены из рекомендаций и не дают монет. Интерфейс предлагает их завершение через назначения; backend пока не требует назначение во всех mandatory-сценариях — это известное ограничение, а не строгая серверная гарантия.
+
+Добровольные события обычно неповторяемы; исключение — клуб `EV_036`. Исходная история также содержит ежегодные повторения обязательного compliance: они сохраняются, а отдельные существующие назначения могут завершаться повторно. Запись на мероприятие, резервирование места и внешняя LMS-интеграция отсутствуют.
+
+## 9. Career Stories
+
+**🟡 IN PROGRESS — стадия спецификации и плана, не рабочая функция.** См. [дизайн](docs/superpowers/specs/2026-09-23-career-stories-design.md) и [план](docs/superpowers/plans/2026-09-23-career-stories.md).
+
+Идея — внутренний слой знакомства с возможностями развития:
+
+```text
+Завершение → добровольное Share Achievement → история
+   → коллега узнаёт о событии → приватно проверяет пользу для своего маршрута
+```
+
+Предусмотрены **Employee Achievement** и **Halyk Official**: HR рассказывает о существующем событии, курсе, сроке, напоминании или возможности. **Career Quest System Story** — будущая идея. Реакции MVP: 🔥 ❤️ 🚀 💪; комментарии, личные сообщения и подписчики не требуются.
+
+Публикация достижения только по явному согласию. План не допускает автоматического раскрытия дефицитов, готовности к повышению, пропусков, отказов, частных карьерных целей или performance-данных. Ни лента, ни публикации, ни реакции сейчас не реализованы.
+
+## 10. Personal Progress
+
+**🧭 PLANNED — Personal Progress Rating («Личный прогресс»).** Сотрудник сравнивает развитие со своим предыдущим состоянием; это не публичный рейтинг эффективности сотрудников.
+
+Пример будущих уровней: **Explorer → Bronze → Silver → Gold → Sapphire → Diamond**. Иллюстрация будущего интерфейса, не реальные данные приложения:
+
+```text
+Diamond · 5700 / 10000 XP
+Активная серия: 2 недели · Личный рекорд: 36 недель
+```
+
+Формула XP, пороги и серии пока не реализованы. Публичные места среди коллег и сравнительные performance-процентили не предусмотрены: такая механика противоречит ограничению кейса на публичные рейтинги эффективности.
+
+## 11. XP vs Coins
+
+| | XP — 🧭 PLANNED | Coins — ✅ IMPLEMENTED |
+| --- | --- | --- |
+| Назначение | Личные уровни, развитие и серии | Валюта демонстрационных наград |
+| Можно потратить | Нет | Да, в Halyk Market |
+| Начисление | Правила предстоит определить | 80 за новое добровольное runtime-завершение |
+| Связь с навыками | Не заменяет расчёт навыков | Не повышает навыки, грейд или доступ к обучению |
+
+## 12. Halyk Market
+
+**✅ IMPLEMENTED — внутренний demo-каталог, без коммерческих транзакций Halyk Market.** Начальный баланс — **0**. Исходная и импортированная история монет не приносит; новое завершение добровольного назначения через API приносит 80. Обязательные активности — 0.
+
+| Награда | Монеты |
+| --- | ---: |
+| Книга для следующего шага | 80 |
+| Термокружка Halyk | 160 |
+| Шоппер Halyk | 240 |
+| Билет на конференцию | 400 |
+
+Баланс равен заработанным монетам минус сохранённые обмены. Каждую награду сотрудник может получить один раз; сервер проверяет остаток и повтор команды. Квитанции сохраняются после перезапуска. HR видит каталог без персонального кошелька и не выполняет обмены. Реальных платежей, доставки и выдачи товаров нет. Источник правил: [market.py](backend/app/services/market.py).
+
+## 13. Calendar
+
+**🧭 PLANNED.** Будущий календарь объединит сессии, сроки, принятые задания, рекомендации, напоминания и завершённые события. Сейчас есть только даты сессий и локальное распределение нагрузки по неделям; календарного экрана, синхронизации и бронирования нет.
+
+## 14. Employee Engagement Loop
+
+```text
+AI находит событие [planned] → объясняет пользу [правила уже работают]
+ → сотрудник смотрит [работает] / принимает [planned] → напоминание [planned]
+ → завершение → прогресс навыков → монеты [работает] / XP [planned]
+ → добровольная Story [in progress: дизайн] → коллеги узнают о событии [planned]
+ → следующий шаг
+```
+
+Геймификация делает пользу небольших действий заметной и поддерживает регулярность. Награды дополняют развитие; они не оценивают производительность и не определяют повышение.
+
+## 15. HR Cabinet
+
+HR видит агрегаты дефицитов и участия, импортирует профили и историю, открывает сотрудников. `employees_without_candidate` — отсутствие доступных событий. `employees_without_recommendation` — отсутствие актуального готового ответа AI; `recommendation_states` различает ещё не созданные, ошибочные, устаревшие ответы и необходимость уточнения.
+
+`critical_catalog_gaps` показывает сотрудника, роль/грейд, критичный навык, текущий/требуемый уровень и достижимый уровень после доступных сейчас событий. Альтернативный необязательный курс не скрывает незакрываемый критичный пробел. Аналитика и детали доступны только HR.
+
+## 16. Notifications
+
+Реализованы предложения курсов, SMTP-аккаунт HR с шифрованием пароля, время и частота уведомлений, паузы, действия enroll/later/decline и журнал доставки. Повторные запросы и действия защищены от дублирования. После неизвестного результата SMTP автоматическая повторная отправка не выполняется. Внешнего зачисления в LMS нет.
+
+Настройки: `MAIL_ENCRYPTION_KEY`, `PUBLIC_APP_URL`, `NOTIFICATION_WORKER_ENABLED`, `NOTIFICATION_POLL_SECONDS`. `AI_AUTO_PREPARE=false` готовит рекомендации при открытии профиля; `true` также включает фоновую подготовку. См. [уведомления](docs/notifications.md).
+
+## 17. Future AI Features
+
+| Идея | Сценарий | Статус |
+| --- | --- | --- |
+| AI Career Copilot | «Что нужно для Senior?», «Почему это событие?», «Есть только час в неделю», «Есть другой формат?» | 🧭 PLANNED |
+| Career Simulator | «Что изменится, если выбрать другую карьерную траекторию?» | 💡 CONCEPT |
+| AI Adaptive Recommendations | Адаптация к ответам и поведению; история уже входит в контекст, адаптивного диалога нет | 💡 CONCEPT |
+| AI Quest Master | Единый образ карьерного навигатора | 💡 CONCEPT |
+| AI Future Me / Video | Короткая мотивационная визуализация будущего пути | 💡 CONCEPT |
+
+## 18. Team Quests / Duels
+
+**💡 CONCEPT / FUTURE IDEA.** Solo Challenge, Skill Duel и Team Quest могут поддерживать личную регулярность, взаимопомощь и общую учебную цель. Предпочтение — сотрудничеству и добровольным заданиям, без публичного ранжирования эффективности или соревнования за карьерные решения. Рабочих механик пока нет.
+
+## 19. Privacy
+
+Backend ограничивает сотрудника собственными данными, HR получает разрешённый доступ к просмотру и импорту. Токен хранится в памяти страницы; выход или перезагрузка очищает сессию. Приватные API-ответы используют `Cache-Control: no-store`.
+
+Публичного performance-leaderboard и автоматической публикации дефицитов нет. Для будущих Stories предусмотрен opt-in и отдельный безопасный состав публичных полей. Приватные bearer-токены выдаёт администратор; production IAM/SSO пока не реализован.
+
+## 20. Dataset
+
+Числа проверены по исходным файлам, без добавлений runtime-состояния:
+
+| Файл | Содержание |
+| --- | --- |
+| [employees.json](data/raw/employees.json) | 200 профилей с assessment-навыками и датой оценки |
+| [events.json](data/raw/events.json) | 40 событий |
+| [skills.json](data/raw/skills.json) | 60 навыков и 32 профиля требований роль/грейд |
+| [activity_history.csv](data/raw/activity_history.csv) | 2 743 записи участия |
+
+Снимок — **2026-10-01**, история — **2024-10-01—2026-09-30**. Исходные файлы `data/raw` неизменяемы; их хеши хранятся в [manifest](data/fixtures/raw-sha256.json). Синтетический starter kit предназначен для хакатона; условия использования — в [README данных](data/raw/README.ru.md).
+
+HR-импорт принимает `employees.json` в исходной оболочке `meta/employees` и/или CSV со всеми исходными столбцами. Multipart-поля — `employees` и `history`; лимит всего запроса — **10 MiB**. ZIP и замена каталога не поддерживаются. Идентичные записи — no-op, конфликтующие ID/участия отклоняют весь импорт. Сначала проверяется полный будущий набор, затем выполняется запись.
+
+Изменяемое состояние хранит импорт, завершения, квитанции команд и Market отдельно от raw. Native-путь — `data/state/state.json`, Compose — named volume `career_quest_state`. Обычный `docker compose down` сохраняет данные. Несовместимый fingerprint или повреждённое состояние вызывают ошибку запуска, а не тихий сброс.
+
+Для намеренного сброса одноразового демо сначала остановите backend и сохраните копию состояния; удаляйте только выбранный demo-state или volume этого проекта. Это уничтожает runtime-прогресс, импорт и обмены, сохраняя raw.
+
+## 21. Skill Projection
+
+Навыки профиля — **снимок оценки**, а не актуальный баланс. [progress_engine.py](backend/app/services/progress_engine.py) повторно применяет завершения строго после `last_review_date` и не позднее даты приложения, в порядке даты и стабильного ID. Отсутствующий навык имеет уровень 0.
+
+```text
+last_review_date < completed_on <= as_of_date
+new_level = max(current, min(current + gain, max_level))
+gap = max(required - current, 0)
+```
+
+`gain` увеличивает уровень, `max_level` ограничивает эффект события; событие с низким пределом не уменьшает уже развитый навык. Шкала — 0–5. Незавершение, пропуск, отказ и прерывание не дают прироста.
+
+CSV не содержит точного времени завершения: его `date` используется как приближение. Runtime-завершение имеет явную `completed_on`; переход существующего назначения учитывается один раз. LLM в этом расчёте не участвует.
+
+## 22. Architecture
+
+```text
+Browser → Next.js / React → same-origin proxy /backend → FastAPI
+                                                         ├─ Session / Auth
+                                                         ├─ Employee / Trajectory
+                                                         ├─ Eligibility / Completion
+                                                         ├─ Recommendations / Context
+                                                         ├─ HR / Dataset import
+                                                         └─ Market
+                                                               ↓
+                                                            Services
+                                                               ↓
+                                                          Repositories
+                                                        ↙              ↘
+                                               Raw JSON/CSV       Mutable state.json
+
+Отдельная AI-граница:
+Recommendation context → AIClient → JSON adapter → output validation
+                            └─ по умолчанию DisabledRecommender
+                               OpenAI подключён; NVIDIA не используется
+```
+
+Один backend-процесс, один lock изменений. Запись выполняется через временный файл, `flush/fsync` и атомарную замену; snapshot публикуется после сохранения. Работает файловая очередь уведомлений и фоновый worker; несколько процессов с общим state-файлом не поддерживаются. Stories и Personal Progress пока не входят в runtime-архитектуру.
+
+Подробности: [architecture](docs/architecture.md), [data model](docs/data-model.md), [frontend integration](docs/frontend-integration.md). Старые проверки в [handoff](docs/handoff.md) и [аудите](docs/current-state-audit.md) относятся к указанным там ревизиям; текущий код имеет приоритет.
+
+## 23. Tech Stack
+
+| Слой | Зависимости из package/requirements-файлов |
+| --- | --- |
+| Frontend | Next.js 16.3.6, React / React DOM 19.3.0, TypeScript 5, Tailwind CSS / PostCSS 4.3.3, Lucide React, Golos Text; собственные CSS/SVG |
+| Backend | Python 3.12 в Docker, FastAPI 0.141.1, Pydantic 2.13.5, Uvicorn 0.53.0, python-multipart 0.0.32 |
+| Tests | pytest 9.1.1, httpx 0.28.1 |
+| Runtime | Node.js 22 в Docker, Docker Compose, файловый JSON overlay |
+
+Используется официальный OpenAI SDK; отдельного LLM-фреймворка нет. Версии: [frontend/package.json](frontend/package.json), [requirements](backend/requirements.txt), [dev requirements](backend/requirements-dev.txt).
+
+## 24. Repository Structure
+
+```text
+backend/
+  app/
+    api/            session, employees, activities, recommendations, hr, dataset, market
+    ai/             client.py, prompts.py, recommender.py
+    core/           config, auth, errors
+    schemas/        исходные, API- и state-модели
+    services/       projection, gaps, eligibility, completion, HR, Market, AI context
+    repositories/   чтение файлов, snapshot, валидация, сохранение
+  tests/            pytest-набор
+  Dockerfile
+  requirements.txt
+  requirements-dev.txt
+frontend/
+  src/app/          /, /employee/[id], /hr, стили
+  src/components/   connected shell, journey, HR, иллюстрации
+  src/lib/          api.ts, types.ts, career-data.ts
+  public/           изображения и логотип
+  next.config.ts    same-origin rewrite
+  package.json
+  Dockerfile
+data/
+  raw/              неизменяемый starter kit
+  fixtures/         manifest исходных хешей
+  state/            игнорируемое Git runtime-состояние
+docs/               архитектура, данные, AI-контракт, аудит, handoff
+  superpowers/      спецификации и планы, включая будущие Stories
+.env.example
+docker-compose.yml
+```
+
+## 25. Running with Docker
+
+Требуется Docker Desktop с Linux containers. Из корня репозитория:
 
 ```sh
 docker compose up --build
 ```
 
-Open [Career Quest](http://localhost:3000), [API documentation](http://localhost:8000/docs), or [health](http://localhost:8000/health). No API keys are needed. The original files already live in data/raw; if distributing without restricted data, copy the four source files and README translations from case_1/career_quest_dataset in the supplied archive before starting.
+| Адрес | Назначение |
+| --- | --- |
+| [localhost:3000](http://localhost:3000) | Frontend |
+| [localhost:8000](http://localhost:8000) | Базовый адрес backend; отдельной главной страницы нет |
+| [localhost:8000/docs](http://localhost:8000/docs) | Swagger / OpenAPI |
+| [localhost:8000/health](http://localhost:8000/health) | Публичная проверка здоровья |
 
-Enter one of the **public local-demo tokens**:
+Для AI-рекомендаций нужен OpenAI API key; перед запуском выдайте приватные токены по разделу 27. Raw монтируется read-only, состояние — в named volume. Frontend ждёт backend healthcheck. Порты привязаны к loopback. Браузер обращается к `/backend/api/...`, Next.js направляет запросы на `http://backend:8000`; браузеру не нужно разрешать Docker hostname.
 
-| Token | Identity | Access |
-| --- | --- | --- |
-| demo-employee | E0001 | Own development information |
-| demo-active | E0004 | Own development, including an unfinished assignment |
-| demo-hr | HR | Employee inspection, aggregates and jury imports |
+## 26. Local Development
 
-On the login screen, choose **Сотрудник** (`demo-active`, E0004) or **HR-команда** (`demo-hr`), or enter another configured token. The frontend obtains the role from `/api/session`; it does not infer permissions from the token text. Tokens stay in page memory, so reloading requires login again.
+Python **3.12+**, Node.js **22+**. Создайте окружение в корне.
 
-For an immediate demo, open the employee's events and confirm a completed self-paced activity or an existing assignment. The server updates skills and trajectory; new voluntary completions earn Market coins. Switch to HR for aggregates and imports. HR can inspect employee routes and the reward catalog, but cannot complete activities or redeem rewards on an employee's behalf.
+Windows PowerShell:
 
-The browser calls `/backend/api/...` on the frontend origin. Next.js forwards requests to `http://backend:8000` inside Compose; the browser does not need to resolve the Docker service name.
-
-Production authentication is outside this MVP. Backend authorization is enforced on every protected endpoint; entering a role header cannot grant access. Demo tokens are deliberately public and unsuitable for deployment. Replace core/auth.py identity verification before exposing this app to untrusted users. Compose binds host ports to loopback.
-
-## Architecture and technology
-
-Next.js App Router + TypeScript + custom CSS/SVG -> same-origin Next.js proxy -> FastAPI + Pydantic -> deterministic services -> repositories -> immutable JSON/CSV and one mutable JSON overlay. One Uvicorn worker, one mutation lock, one atomic state replacement. No database, queue, cache service or LLM framework.
-
-```text
-frontend/
-  src/app/                 visual app, employee/[id], hr, responsive styles
-  src/components/          connected shell, map, HR, illustrations
-  src/lib/                 API client, public types and local route planner
-  public/                  Halyk logo
-  next.config.ts           /backend rewrite
-  Dockerfile
-backend/
-  app/api/                 HTTP routes and authorization dependencies
-  app/schemas/             source, public, state and evidence models
-  app/repositories/        file access and repository views
-  app/services/            projection, gaps, eligibility, mutations, aggregates
-  app/ai/                  full context contract, prompts, JSON adapter and output validator
-  app/core/                config, identity and errors
-  tests/
-  Dockerfile
-data/raw/                  original starter kit, read-only
-data/fixtures/             original SHA-256 manifest
-data/state/                ignored native-runtime state
-docs/                      architecture, data model, plan and handoff
-docker-compose.yml
+```powershell
+py -3.12 -m venv .venv
+.\.venv\Scripts\Activate.ps1
 ```
 
-See [architecture](docs/architecture.md), [data model](docs/data-model.md), and [implementation plan](docs/superpowers/plans/2026-09-23-career-quest-foundation.md).
-
-## Configuration
-
-Copy .env.example to the root .env when configuring credentials. Compose and native backend read it; existing process variables override file values. Restart the backend after changing settings.
-
-| Variable | Purpose |
-| --- | --- |
-| DEV_IDENTITIES_JSON | Server-only token-to-principal mapping, employee or hr |
-| NEXT_PUBLIC_API_URL | Browser API prefix, default `/backend`; embedded during frontend build |
-| BACKEND_INTERNAL_URL | Next.js proxy destination: native default `http://127.0.0.1:8000`, Compose build `http://backend:8000` |
-| FRONTEND_ORIGIN | Allowed frontend CORS origin when using a direct browser API URL |
-| DATA_RAW_DIR | Native backend raw directory override |
-| STATE_PATH | Native backend state file override |
-| APPLICATION_DATE | Demo clock override, never before the 2026-10-01 snapshot |
-| AI_PROVIDER, OPENAI_API_KEY, OPENAI_MODEL | `openai` or `none`; server-only API key; default `gpt-4.1-mini` |
-| AI_TIMEOUT_SECONDS, AI_MAX_OUTPUT_TOKENS | Network timeout (10s default), output cap (1400 default); no SDK retries |
-| AI_AUTO_PREPARE | false by default: prepare opened profiles; true additionally prepares all in background |
-| NVIDIA_API_KEY | Reserved; no NVIDIA adapter or automatic fallback |
-| MAIL_ENCRYPTION_KEY | Server-only Fernet key for saved SMTP credentials; preserve across restarts |
-| PUBLIC_APP_URL | Employee-facing cabinet URL used in emails |
-| NOTIFICATION_WORKER_ENABLED, NOTIFICATION_POLL_SECONDS | Background preparation/delivery worker; default true / 2 seconds |
-
-The default clock is the dataset snapshot, not the host date. Future scheduled sessions cannot be completed. Move APPLICATION_DATE forward to demonstrate later sessions, rebuild/restart the backend, and never move it backwards over recorded completions. Self-paced and existing assignments work immediately.
-
-Keep provider keys and the identity mapping on the server. Do not put them in `NEXT_PUBLIC_*`, frontend source or committed environment files. The default proxy removes the need for a public backend URL; an explicit direct URL requires matching CORS configuration. Rebuild the production frontend after changing its URL configuration.
-
-## Local development
-
-Python 3.12+ and Node.js 22+:
+macOS/Linux:
 
 ```sh
 python3.12 -m venv .venv
 source .venv/bin/activate
+```
+
+Далее в активированном окружении:
+
+```sh
 python -m pip install -r backend/requirements-dev.txt
 python -m uvicorn app.main:app --app-dir backend --reload --host 127.0.0.1 --port 8000
 ```
 
-In another terminal, from the repository root:
+Во втором терминале из корня:
 
 ```sh
 cd frontend
@@ -228,69 +359,82 @@ npm ci
 npm run dev
 ```
 
-Open [the native frontend](http://127.0.0.1:3000). The default Next.js proxy reaches `http://127.0.0.1:8000`; no frontend environment file is required. Native default tokens are demo-employee, demo-active and demo-hr. To add imported employee identities, set DEV_IDENTITIES_JSON as shown in .env.example before starting Python. Application logic is independent of known employee IDs. Next.js reads frontend/.env.local when a URL override is needed.
+Откройте [127.0.0.1:3000](http://127.0.0.1:3000). Прокси по умолчанию использует `http://127.0.0.1:8000`. Backend читает окружение процесса и **не загружает `.env` автоматически**. Next.js читает `frontend/.env.local`, если нужны переопределения.
 
-## API
+## 27. Demo Credentials
 
-Email setup, workflow, recovery guarantees and notification endpoints: [notifications](docs/notifications.md). Delivery starts disabled. HR must connect a mailbox, configure employee addresses and enable it; automatic recommendations also require a configured AI client. Test emails are explicit HR actions.
+Публичные `demo-hr`, `demo-active`, `demo-employee` больше не принимаются при запуске из окружения. Выбор роли на странице не выдаёт доступ.
 
-All /api endpoints require Authorization: Bearer TOKEN.
+```sh
+python backend/provision_access.py --hr --employee E0004
+```
 
-| Method | Path | Behavior |
+Команда сохраняет API-ключи и существующие приватные аккаунты, удаляет старые публичные credentials и создаёт случайные токены в игнорируемом `.env`, поле `DEV_IDENTITIES_JSON`. Скопируйте свой токен в форму входа; HR-токен сотрудникам не передавайте. После выдачи доступа перезапустите backend. Токены хранятся в браузере только в памяти страницы.
+
+To add imported employee identities, set DEV_IDENTITIES_JSON with a private token or run `python backend/provision_access.py --employee NEW_ID` before starting Python. Для завершения курса нужен собственный аккаунт нового сотрудника; HR не может завершить курс за него.
+
+Это приватные bearer credentials для MVP, без SSO, автоматического истечения и восстановления аккаунта.
+
+## 28. Environment Variables
+
+Источник: [.env.example](.env.example). Для изменения Compose defaults можно скопировать его в `.env`.
+
+| Группа | Переменная | Поведение |
 | --- | --- | --- |
-| GET | /health | Public readiness |
-| GET | /api/session | Server-resolved role and employee ID for the current token |
-| GET | /api/employees | Own summary for employees; all for HR |
-| GET | /api/employees/{id} | Profile, projected skills and effective history |
-| GET | /api/employees/{id}/trajectory | Next grade, goal, gaps and eligible candidates |
-| GET | /api/employees/{id}/recommendations/context | Full linked context; own employee or HR access |
-| POST | /api/employees/{id}/recommendations | Validated injected AI result; no_candidates without a model; 501 if provider missing |
-| POST | /api/employees/{id}/activities/{event_id}/complete | Own activity only; HR cannot complete |
-| GET | /api/hr/dashboard | HR-only gap, candidate-coverage and participation aggregates |
-| POST | /api/dataset/import | HR-only multipart employees/history |
-| GET | /api/market | Reward catalog; own ledger for employees, catalog-only access for HR |
-| POST | /api/market/redeem | Employee-only persisted reward redemption with balance and retry checks |
+| App | `DEV_IDENTITIES_JSON` | Серверное соответствие токен → employee/HR |
+| App | `NEXT_PUBLIC_API_URL` | Browser API prefix, default `/backend`, встраивается при сборке |
+| App | `BACKEND_INTERNAL_URL` | Прокси Next.js: native `http://127.0.0.1:8000`; Compose build задаёт `http://backend:8000` |
+| App | `FRONTEND_ORIGIN` | Разрешённый CORS origin, default `http://localhost:3000` |
+| Data | `DATA_RAW_DIR` | Native override каталога raw; Compose задаёт контейнерный путь |
+| Data | `STATE_PATH` | Native override state-файла; Compose задаёт контейнерный путь |
+| Data | `APPLICATION_DATE` | Пусто → дата снимка `2026-10-01`; override не раньше неё |
+| AI | `AI_PROVIDER` | Зарезервирована, пример `openai`; сейчас не используется |
+| AI | `OPENAI_API_KEY`, `NVIDIA_API_KEY` | Пустые server-only placeholders; текущий backend их не использует, Compose не передаёт |
+| AI | `AI_PROVIDER`, `OPENAI_API_KEY`, `OPENAI_MODEL`, `AI_TIMEOUT_SECONDS`, `AI_AUTO_PREPARE` | Live provider и фоновая подготовка |
+| Notifications | `MAIL_ENCRYPTION_KEY`, `PUBLIC_APP_URL`, `NOTIFICATION_WORKER_ENABLED`, `NOTIFICATION_POLL_SECONDS` | SMTP и worker |
 
-Completion body:
+Часы демо привязаны к снимку, а не системной дате. Для поздних сессий сдвигайте `APPLICATION_DATE` вперёд и перезапускайте backend; не возвращайте дату назад поверх сохранённых завершений. После изменения production URL-настроек пересоберите frontend. Реальные ключи нельзя помещать в `NEXT_PUBLIC_*`, frontend или коммитить в `.env`.
+
+## 29. API
+
+Все `/api` требуют `Authorization: Bearer TOKEN`; `/health` публичный. В таблице только существующие маршруты:
+
+| Method | Path | Назначение |
+| --- | --- | --- |
+| GET | `/health` | Состояние приложения |
+| GET | `/api/session` | Роль и employee ID текущего токена |
+| GET | `/api/employees` | Собственный профиль в списке / все сотрудники для HR |
+| GET | `/api/employees/{id}` | Профиль, текущие навыки, эффективная история |
+| GET | `/api/employees/{id}/trajectory` | Требования, дефициты, цель и кандидаты |
+| GET | `/api/employees/{id}/recommendations/context` | Полный авторизованный `AIRefinementInput` |
+| POST | `/api/employees/{id}/recommendations` | Live AI-выбор с проверенным объяснением / `no_candidates` |
+| POST | `/api/employees/{id}/activities/{event_id}/complete` | Завершение своей активности; HR запрещено |
+| GET | `/api/hr/dashboard` | HR-агрегаты и отсутствие кандидатов |
+| POST | `/api/dataset/import` | HR-only multipart `employees` / `history` |
+| GET | `/api/market` | Каталог и собственный ledger; HR получает только каталог |
+| POST | `/api/market/redeem` | Сохраняемый обмен награды, employee-only |
+
+Тело завершения:
 
 ```json
 {"command_id":"00000000-0000-4000-8000-000000000001","source_record_id":null,"session_date":null}
 ```
 
-Generate a UUID per intentional action and reuse the exact body after an uncertain response. The persisted receipt returns the original result on retry. Reusing a command ID with different content is 409. Completing the same non-recurring activity under another UUID is also rejected. Use source_record_id for an existing in_progress/overdue assignment; use session_date for a scheduled session.
-
-Market redemption body:
+Для существующего назначения передайте `source_record_id`, для известной сессии — `session_date`. Тело обмена:
 
 ```json
 {"command_id":"00000000-0000-4000-8000-000000000002","reward_id":"book"}
 ```
 
-Market applies the same retry principle. Each employee can redeem each reward once; insufficient balance and duplicate rewards return 409. Completion and redemption receipts persist in the same mutable overlay. The frontend retains operation IDs for retries during the current page session.
+На каждое новое намеренное действие генерируйте новый UUID. После неопределённого результата повторяйте тот же UUID и тело: сервер вернёт исходную квитанцию даже после рестарта. Изменение тела при том же ID, повтор неповторяемого завершения, недостаток монет или повтор награды дают конфликт.
 
-Errors use {error: {code, message, details}}. Statuses include 401, 403, 404, 409, 413, 422, 501 and 503. Private API responses are not cacheable. Import details include sanitized file/row/field locations (CSV header is row 1; employee array indices are zero-based), without echoing uploaded values.
+Ошибки имеют вид `{"error":{"code":"...","message":"...","details":[]}}`; `details` может содержать безопасные сведения о поле/строке. Используются 401/403/404/409/413/422/501/503. Stories API пока существует только в плане; Personal Progress, Calendar, внешнее LMS enrollment и редактирование цели не имеют рабочих endpoints. Notification/SMTP API реализован. Отдельного общего `GET /api/events` сейчас нет: каталог приходит в авторизованном контексте.
 
-## Dataset and imports
+## 30. Testing
 
-The starter kit contains 200 employees, 40 activities, 60 skills, 32 role/grade profiles and 2,743 history rows. Its synthetic data must remain within the hackathon; do not publish it elsewhere.
-
-Import employees.json using the original meta/employees envelope and/or activity_history.csv with all original columns. In HR view select one or both files. API multipart field names are employees and history. Maximum total request size is 10 MiB including multipart overhead. Catalog replacement, ZIP uploads and filesystem-path imports are unsupported.
-
-The whole prospective dataset is validated before a write. New IDs append; identical existing rows are no-ops; conflicting IDs or semantic duplicate participations reject the whole request. Imports and completions share one lock. Raw data is never edited.
-
-The dataset README's no-repeat rule conflicts with real repeated annual mandatory compliance history. Original history is preserved. Distinct existing mandatory compliance assignments can be completed, and imported distinct zero-gain compliance participations are accepted. Voluntary events remain non-repeatable except EV_036 (the documented club).
-
-## State, restart and reset
-
-Native state lives in data/state/state.json. Compose state lives in its named career_quest_state volume. Normal docker compose down preserves it. Startup validates state and its raw-data fingerprint; invalid/mismatched state fails visibly rather than resetting.
-
-For an intentional **disposable demo reset**, first stop the backend and back up the state file or Docker volume. Then remove only that demo state file (native), or explicitly remove this project's named state volume. This deletes imports, completions and Market redemptions, not data/raw. Do not use volume deletion for normal restarts. Multiple backend workers/processes sharing the file are unsupported.
-
-## Tests and checks
-
-Notification integration verification: all 175 backend tests passed, including fake SMTP, authorization, restart recovery and disk failure after mail acceptance. Frontend verification uses `npm run typecheck` and `npm run build`. Browser interaction and real mailbox delivery have not been verified. Commands are listed below.
+Из корня, с активированным Python-окружением и установленными dev-зависимостями:
 
 ```sh
-# From repository root, with .venv activated:
 python -m pytest backend/tests -q
 cd frontend
 npm run typecheck
@@ -299,22 +443,50 @@ cd ..
 docker compose config --quiet
 ```
 
-Tests cover real loading and original hashes, gaps, assessment replay, caps/no-regression, eligibility/evidence, authorization, completion retries/restarts, atomic rollback, imports and HR counts. Mutation tests use temporary state; raw data remains untouched. The HR real-dataset calculation has a two-second regression budget; overloaded hosts can affect timing. Latest installed Starlette emits an httpx test-client deprecation warning, documented separately from failures.
+Проверки при подготовке README, **23.09.2026**, без установки зависимостей:
 
-## Current status and next work
+| Проверка | Результат |
+| --- | --- |
+| Backend pytest | **158 passed**, 1 Starlette/httpx deprecation warning, 16.22 с; с `--basetemp=.pytest-readme-check-20260923 --tb=short` |
+| Frontend typecheck | Пройден |
+| Frontend production build | Пройден: webpack, TypeScript и генерация страниц |
+| Compose config | Пройден; Docker сообщил предупреждение о недоступном пользовательском `config.json` |
+| Browser / полный Docker startup | В этой задаче не запускались |
 
-Implemented: the deterministic foundation, authorized session/API, connected Halyk map and employee/HR UI, import/completion persistence, server-backed demonstration Market, same-origin Docker/native topology, complete linked LLM context, provider-independent prompt/JSON adapter and validated recommendation orchestration. The UI handles recommendation responses, evidence, hypotheses, questions and missing-provider errors.
+Первый pytest-запуск: 83 passed, 75 setup errors из-за доступа к временному каталогу. Повтор использует отдельный доступный каталог через `--basetemp`; результат указан выше. Это не исправление product-кода.
 
-Next: improve live recommendation quality/latency and populate HR recommendation coverage. Current employees_without_recommendation is null; employees_without_candidate is a separate deterministic measure. OpenAI uses an explicit network timeout and no automatic retries; the end-to-end ten-second target still needs latency work. Weekly pace estimates duration and is not sent to the LLM. Offer enrollment and email preferences now have persisted write endpoints; external LMS registration, profile/goal editing and answers to AI clarification questions remain unimplemented. See [notification workflow and API handoff](docs/notifications.md).
+Тесты покрывают raw-хеши/схемы, проекцию, eligibility, авторизацию, импорт, завершения, атомарность, повторы после рестарта, AI-контекст/валидацию и HR. Есть двухсекундный бюджет расчёта HR на реальном наборе. Отдельных Market-тестов и автоматизированного frontend/browser harness нет. Старые счётчики из аудита и handoff не являются результатом этого checkout.
 
-Foundation handoff: [docs/handoff.md](docs/handoff.md). Current frontend/API mapping and integration limits: [docs/frontend-integration.md](docs/frontend-integration.md).
+## 31. Demo Day Flow
 
-## Выбранный трек и кейс
+Сценарий на **60–90 секунд**, с заранее запущенным приложением:
 
-- Трек: Halyk Bank
-- Case 1: Career Quest — AI-навигатор развития сотрудника
+| Время | Действие |
+| --- | --- |
+| 0–15 с | Войти как сотрудник E0004; показать роль, следующий грейд и явную цель |
+| 15–30 с | Открыть дефицит/критический навык и ближайший шаг; объяснить правило подбора и недельный темп |
+| 30–40 с | Показать AI Navigator, выбранный моделью курс и проверенные факты его пользы |
+| 40–60 с | Открыть доступную самостоятельную активность или назначение и подтвердить уже выполненную работу; показать обновление навыков и +80 монет для добровольного события |
+| 60–70 с | Открыть Market: книга за 80 монет, если баланс достаточен и она ещё не обменена; показать demo-квитанцию |
+| 70–90 с | Сменить профиль на HR: частые дефициты, участие по событиям, сотрудники без кандидатов; кратко показать импорт |
 
-## Authors
+Перед показом проверьте доступность выбранной активности и награды в текущем сохранённом состоянии. Stories, XP и календарь можно назвать следующими этапами, но демонстрировать их как работающие экраны нельзя.
+
+## 32. Roadmap
+
+| Приоритет | Следующий результат |
+| --- | --- |
+| P0 — до Demo Day | Live-провайдер; реальные 1–3 рекомендации; проверка качества объяснений и фактов; сетевой timeout / бюджет ≤10 с; интеграционные проверки и актуальное покрытие рекомендациями для HR |
+| P0 — надёжность | Сохранять прохождение текущих тестов и HR performance budget; добавить Market-проверки; проверить браузерный сценарий и согласовать серверные ограничения mandatory completion |
+| P1 — вовлечение | Реализация Career Stories по подготовленному плану; Personal Progress / XP; Calendar; AI Copilot; opt-in уведомления и course offers |
+| P1 — управление развитием | Сохранение цели, запись на события и ответы на уточняющие вопросы |
+| P2 — продвинутые идеи | Career Simulator, Team Quests, Skill Duels, Manager View, AI Quest Master / Future Me / видео |
+
+Roadmap не означает наличие функций в текущей версии. Production-аутентификация необходима перед выходом за границы локального демо.
+
+## 33. Authors
+
+Команда **IFlow**:
 
 - [Zhassyn Zhalynuly](https://github.com/zzhassyn)
 - [Danial Amangeldi](https://github.com/danial41-design)

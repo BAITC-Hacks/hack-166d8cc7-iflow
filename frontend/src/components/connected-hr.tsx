@@ -226,6 +226,14 @@ function HRContent({ token, onSelectEmployee, onImported }: Props) {
         </>
       )}
 
+      {data && <section className="chr-card">
+        <h2>Без готовой AI-рекомендации ({data.dashboard.employees_without_recommendation.length})</h2>
+        <div className="chr-candidate-list">{data.dashboard.employees_without_recommendation.map(id => <button type="button" key={id} onClick={() => onSelectEmployee(id)}><strong>{employeeMap.get(id)?.full_name ?? id}</strong><span>{({not_generated: 'Ещё не создана', failed: 'Ошибка генерации', stale: 'Нужно обновить', needs_clarification: 'Нужно уточнение', no_candidates: 'Нет доступных курсов'} as Record<string,string>)[data.dashboard.recommendation_states[id]] ?? data.dashboard.recommendation_states[id]}</span></button>)}</div>
+        <h2>Каталог не закрывает критичные навыки</h2>
+        <p>Оценка по доступным сейчас мероприятиям с учётом их пределов роста.</p>
+        <div className="chr-candidate-list">{data.dashboard.critical_catalog_gaps.map(gap => <button type="button" key={`${gap.employee_id}-${gap.role}-${gap.grade}-${gap.skill_id}`} onClick={() => onSelectEmployee(gap.employee_id)}><strong>{employeeMap.get(gap.employee_id)?.full_name ?? gap.employee_id}</strong><span>{gap.name}: {gap.current_level} → максимум {gap.attainable_level}, требуется {gap.required_level} ({gap.role}, {gap.grade})</span></button>)}</div>
+        {!data.dashboard.critical_catalog_gaps.length && <p>Таких пробелов не найдено.</p>}
+      </section>}
       <HRNotificationCenter token={token} employees={loaded?.employees.items ?? []}/>
       <section className="chr-import chr-panel">
         <div className="chr-import-copy"><div className="chr-import-mark" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4"><path d="M12 16V3m-5 5 5-5 5 5M4 15v5a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-5" /></svg></div><span className="eyebrow">ИМПОРТ ДАННЫХ</span><h2>Добавьте сотрудников и историю</h2><p>Загрузите сотрудников и историю участия в установленном формате. После проверки записей показатели команды обновятся.</p><small>JSON для сотрудников · CSV для истории<br />Лимит запроса — 10 МиБ</small></div>

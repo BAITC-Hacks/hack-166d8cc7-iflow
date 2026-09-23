@@ -22,11 +22,10 @@ def wire_result(context):
     _, facts = request_payload(context)
     candidate = context.candidates[0]
     return {"status": "success", "recommendations": [{"event_id": candidate.event_id,
-        "explanation": "Развивает нужный навык; требования и история проверены.",
         "confidence": "high", "additional_value": None,
         "evidence_ids": [next(key for key, value in facts.items() if value == factor)
                          for factor in candidate.factors[:8]]}],
-        "hypotheses": [], "clarifying_questions": []}
+        "clarifying_questions": []}
 
 
 def mock_sdk(handler):
@@ -84,6 +83,19 @@ def test_timeout_and_refusal_do_not_create_a_recommendation(context):
     with pytest.raises(DomainError) as caught: provider.refine(context)
     assert caught.value.details == [{"reason": "ai_timeout"}]
     provider.close()
+
+
+def test_one_timeout_can_recover_without_replacing_llm_selection(context):
+    calls=[]
+    def handle(request):
+        calls.append(request)
+        if len(calls)==1:
+            raise httpx.ReadTimeout("stalled",request=request)
+        return httpx.Response(200,json=response_envelope(wire_result(context)))
+    provider=OpenAIRecommender(Settings(),mock_sdk(handle))
+    assert provider.refine(context).status=='success'
+    assert len(calls)==2
+    provider.close()
     envelope = response_envelope(wire_result(context))
     envelope["output"][0]["content"] = [{"type": "refusal", "refusal": "Cannot answer"}]
     provider = OpenAIRecommender(Settings(), mock_sdk(lambda _: httpx.Response(200, json=envelope)))
@@ -92,11 +104,12 @@ def test_timeout_and_refusal_do_not_create_a_recommendation(context):
     provider.close()
 
 
-def test_unknown_fact_id_is_rejected(context):
+def test_unknown_fact_id_cannot_break_valid_course_or_leak_prose(context):
     value = wire_result(context); value["recommendations"][0]["evidence_ids"][0] = "invented"
     provider = OpenAIRecommender(Settings(), mock_sdk(lambda _: httpx.Response(200, json=response_envelope(value))))
-    with pytest.raises(DomainError) as caught: provider.refine(context)
-    assert caught.value.details == [{"reason": "ai_unsupported_evidence"}]
+    result = provider.refine(context)
+    assert result.status == "success"
+    assert all(f in context.candidates[0].factors + context.facts for f in result.recommendations[0].evidence)
     provider.close()
 
 

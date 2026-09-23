@@ -236,8 +236,10 @@ export interface HRDashboard extends Version {
   skill_gap_counts: { skill_id: string; name: string; employee_count: number }[];
   participation_by_event: { event_id: string; title: string; status_counts: Record<string, number> }[];
   employees_without_candidate: string[];
-  recommendation_status: "not_implemented";
-  employees_without_recommendation: null;
+  recommendation_status: "available";
+  employees_without_recommendation: string[];
+  recommendation_states: Record<string, string>;
+  critical_catalog_gaps: { employee_id: string; role: string; grade: string; skill_id: string; name: string; current_level: number; required_level: number; attainable_level: number }[];
 }
 
 export interface MarketReward {

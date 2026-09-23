@@ -9,9 +9,9 @@ def dashboard(snapshot,clock):
     from app.services.hr import build_hr_dashboard
     return build_hr_dashboard(snapshot,clock)
 
-def test_recommendation_coverage_is_unknown(tiny_bundle,clock):
+def test_recommendation_coverage_records_missing_generation(tiny_bundle,clock):
     r=dashboard(build_snapshot(tiny_bundle),clock)
-    assert r.recommendation_status=="not_implemented" and r.employees_without_recommendation is None
+    assert r.recommendation_status=="available" and r.employees_without_recommendation == ["TEST_EMP"]
 
 def test_gap_counts_count_employees_not_levels(tiny_bundle,make_employee,clock):
     b=tiny_bundle.model_copy(update={"employees":(make_employee(),make_employee(employee_id="SECOND",skills={"SK_PYTHON":3}))})

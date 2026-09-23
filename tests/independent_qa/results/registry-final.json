@@ -1,0 +1,1122 @@
+[
+  {
+    "id": "D01",
+    "title": "Original archive integrity",
+    "status": "PASSED",
+    "detail": "[]",
+    "severity": null
+  },
+  {
+    "id": "D02",
+    "title": "24 distinct schema-preserving synthetic profiles",
+    "status": "PASSED",
+    "detail": "Full validity additionally checked by public import",
+    "severity": null
+  },
+  {
+    "id": "I01",
+    "title": "Public multipart import of new employees and history",
+    "status": "PASSED",
+    "detail": "{'added_employees': 24, 'unchanged_employees': 0, 'added_history': 41, 'unchanged_history': 0, 'revision': 1, 'as_of_date': '2026-10-01'}",
+    "severity": null
+  },
+  {
+    "id": "I02",
+    "title": "Reimport is idempotent",
+    "status": "PASSED",
+    "detail": "{'added_employees': 0, 'unchanged_employees': 24, 'added_history': 0, 'unchanged_history': 41, 'revision': 1, 'as_of_date': '2026-10-01'}",
+    "severity": null
+  },
+  {
+    "id": "P001",
+    "title": "Imported profile current skills match independent dataset oracle",
+    "status": "PASSED",
+    "detail": "JQA001",
+    "severity": null
+  },
+  {
+    "id": "E001",
+    "title": "All candidate eligibility and gains satisfy original catalog",
+    "status": "PASSED",
+    "detail": "[]",
+    "severity": null
+  },
+  {
+    "id": "P002",
+    "title": "Imported profile current skills match independent dataset oracle",
+    "status": "PASSED",
+    "detail": "JQA002",
+    "severity": null
+  },
+  {
+    "id": "E002",
+    "title": "All candidate eligibility and gains satisfy original catalog",
+    "status": "PASSED",
+    "detail": "[]",
+    "severity": null
+  },
+  {
+    "id": "P003",
+    "title": "Imported profile current skills match independent dataset oracle",
+    "status": "PASSED",
+    "detail": "JQA003",
+    "severity": null
+  },
+  {
+    "id": "E003",
+    "title": "All candidate eligibility and gains satisfy original catalog",
+    "status": "PASSED",
+    "detail": "[]",
+    "severity": null
+  },
+  {
+    "id": "P004",
+    "title": "Imported profile current skills match independent dataset oracle",
+    "status": "PASSED",
+    "detail": "JQA004",
+    "severity": null
+  },
+  {
+    "id": "E004",
+    "title": "All candidate eligibility and gains satisfy original catalog",
+    "status": "PASSED",
+    "detail": "[]",
+    "severity": null
+  },
+  {
+    "id": "P005",
+    "title": "Imported profile current skills match independent dataset oracle",
+    "status": "PASSED",
+    "detail": "JQA005",
+    "severity": null
+  },
+  {
+    "id": "E005",
+    "title": "All candidate eligibility and gains satisfy original catalog",
+    "status": "PASSED",
+    "detail": "[]",
+    "severity": null
+  },
+  {
+    "id": "P006",
+    "title": "Imported profile current skills match independent dataset oracle",
+    "status": "PASSED",
+    "detail": "JQA006",
+    "severity": null
+  },
+  {
+    "id": "E006",
+    "title": "All candidate eligibility and gains satisfy original catalog",
+    "status": "PASSED",
+    "detail": "[]",
+    "severity": null
+  },
+  {
+    "id": "P007",
+    "title": "Imported profile current skills match independent dataset oracle",
+    "status": "PASSED",
+    "detail": "JQA007",
+    "severity": null
+  },
+  {
+    "id": "E007",
+    "title": "All candidate eligibility and gains satisfy original catalog",
+    "status": "PASSED",
+    "detail": "[]",
+    "severity": null
+  },
+  {
+    "id": "P008",
+    "title": "Imported profile current skills match independent dataset oracle",
+    "status": "PASSED",
+    "detail": "JQA008",
+    "severity": null
+  },
+  {
+    "id": "E008",
+    "title": "All candidate eligibility and gains satisfy original catalog",
+    "status": "PASSED",
+    "detail": "[]",
+    "severity": null
+  },
+  {
+    "id": "P009",
+    "title": "Imported profile current skills match independent dataset oracle",
+    "status": "PASSED",
+    "detail": "JQA009",
+    "severity": null
+  },
+  {
+    "id": "E009",
+    "title": "All candidate eligibility and gains satisfy original catalog",
+    "status": "PASSED",
+    "detail": "[]",
+    "severity": null
+  },
+  {
+    "id": "P010",
+    "title": "Imported profile current skills match independent dataset oracle",
+    "status": "PASSED",
+    "detail": "JQA010",
+    "severity": null
+  },
+  {
+    "id": "E010",
+    "title": "All candidate eligibility and gains satisfy original catalog",
+    "status": "PASSED",
+    "detail": "[]",
+    "severity": null
+  },
+  {
+    "id": "P011",
+    "title": "Imported profile current skills match independent dataset oracle",
+    "status": "PASSED",
+    "detail": "JQA011",
+    "severity": null
+  },
+  {
+    "id": "E011",
+    "title": "All candidate eligibility and gains satisfy original catalog",
+    "status": "PASSED",
+    "detail": "[]",
+    "severity": null
+  },
+  {
+    "id": "P012",
+    "title": "Imported profile current skills match independent dataset oracle",
+    "status": "PASSED",
+    "detail": "JQA012",
+    "severity": null
+  },
+  {
+    "id": "E012",
+    "title": "All candidate eligibility and gains satisfy original catalog",
+    "status": "PASSED",
+    "detail": "[]",
+    "severity": null
+  },
+  {
+    "id": "P013",
+    "title": "Imported profile current skills match independent dataset oracle",
+    "status": "PASSED",
+    "detail": "JQA013",
+    "severity": null
+  },
+  {
+    "id": "E013",
+    "title": "All candidate eligibility and gains satisfy original catalog",
+    "status": "PASSED",
+    "detail": "[]",
+    "severity": null
+  },
+  {
+    "id": "P014",
+    "title": "Imported profile current skills match independent dataset oracle",
+    "status": "PASSED",
+    "detail": "JQA014",
+    "severity": null
+  },
+  {
+    "id": "E014",
+    "title": "All candidate eligibility and gains satisfy original catalog",
+    "status": "PASSED",
+    "detail": "[]",
+    "severity": null
+  },
+  {
+    "id": "P015",
+    "title": "Imported profile current skills match independent dataset oracle",
+    "status": "PASSED",
+    "detail": "JQA015",
+    "severity": null
+  },
+  {
+    "id": "E015",
+    "title": "All candidate eligibility and gains satisfy original catalog",
+    "status": "PASSED",
+    "detail": "[]",
+    "severity": null
+  },
+  {
+    "id": "P016",
+    "title": "Imported profile current skills match independent dataset oracle",
+    "status": "PASSED",
+    "detail": "JQA016",
+    "severity": null
+  },
+  {
+    "id": "E016",
+    "title": "All candidate eligibility and gains satisfy original catalog",
+    "status": "PASSED",
+    "detail": "[]",
+    "severity": null
+  },
+  {
+    "id": "P017",
+    "title": "Imported profile current skills match independent dataset oracle",
+    "status": "PASSED",
+    "detail": "JQA017",
+    "severity": null
+  },
+  {
+    "id": "E017",
+    "title": "All candidate eligibility and gains satisfy original catalog",
+    "status": "PASSED",
+    "detail": "[]",
+    "severity": null
+  },
+  {
+    "id": "P018",
+    "title": "Imported profile current skills match independent dataset oracle",
+    "status": "PASSED",
+    "detail": "JQA018",
+    "severity": null
+  },
+  {
+    "id": "E018",
+    "title": "All candidate eligibility and gains satisfy original catalog",
+    "status": "PASSED",
+    "detail": "[]",
+    "severity": null
+  },
+  {
+    "id": "P019",
+    "title": "Imported profile current skills match independent dataset oracle",
+    "status": "PASSED",
+    "detail": "JQA019",
+    "severity": null
+  },
+  {
+    "id": "E019",
+    "title": "All candidate eligibility and gains satisfy original catalog",
+    "status": "PASSED",
+    "detail": "[]",
+    "severity": null
+  },
+  {
+    "id": "P020",
+    "title": "Imported profile current skills match independent dataset oracle",
+    "status": "PASSED",
+    "detail": "JQA020",
+    "severity": null
+  },
+  {
+    "id": "E020",
+    "title": "All candidate eligibility and gains satisfy original catalog",
+    "status": "PASSED",
+    "detail": "[]",
+    "severity": null
+  },
+  {
+    "id": "P021",
+    "title": "Imported profile current skills match independent dataset oracle",
+    "status": "PASSED",
+    "detail": "JQA021",
+    "severity": null
+  },
+  {
+    "id": "E021",
+    "title": "All candidate eligibility and gains satisfy original catalog",
+    "status": "PASSED",
+    "detail": "[]",
+    "severity": null
+  },
+  {
+    "id": "P022",
+    "title": "Imported profile current skills match independent dataset oracle",
+    "status": "PASSED",
+    "detail": "JQA022",
+    "severity": null
+  },
+  {
+    "id": "E022",
+    "title": "All candidate eligibility and gains satisfy original catalog",
+    "status": "PASSED",
+    "detail": "[]",
+    "severity": null
+  },
+  {
+    "id": "P023",
+    "title": "Imported profile current skills match independent dataset oracle",
+    "status": "PASSED",
+    "detail": "JQA023",
+    "severity": null
+  },
+  {
+    "id": "E023",
+    "title": "All candidate eligibility and gains satisfy original catalog",
+    "status": "PASSED",
+    "detail": "[]",
+    "severity": null
+  },
+  {
+    "id": "P024",
+    "title": "Imported profile current skills match independent dataset oracle",
+    "status": "PASSED",
+    "detail": "JQA024",
+    "severity": null
+  },
+  {
+    "id": "E024",
+    "title": "All candidate eligibility and gains satisfy original catalog",
+    "status": "PASSED",
+    "detail": "[]",
+    "severity": null
+  },
+  {
+    "id": "B01",
+    "title": "Completed EV_006 excluded; EV_007 remains",
+    "status": "PASSED",
+    "detail": "See contexts/profiles in evidence.json",
+    "severity": null
+  },
+  {
+    "id": "B02",
+    "title": "Cap 3 course excluded for sole design 3-to-4 gap",
+    "status": "PASSED",
+    "detail": "See contexts/profiles in evidence.json",
+    "severity": null
+  },
+  {
+    "id": "B03",
+    "title": "Missing design prerequisite excludes EV_006 and EV_007",
+    "status": "PASSED",
+    "detail": "See contexts/profiles in evidence.json",
+    "severity": null
+  },
+  {
+    "id": "B04",
+    "title": "Frontend-only events excluded for backend career switch",
+    "status": "PASSED",
+    "detail": "See contexts/profiles in evidence.json",
+    "severity": null
+  },
+  {
+    "id": "B05",
+    "title": "Junior cannot access advanced Middle design",
+    "status": "PASSED",
+    "detail": "See contexts/profiles in evidence.json",
+    "severity": null
+  },
+  {
+    "id": "B06",
+    "title": "No valid activity returns empty candidate catalog",
+    "status": "PASSED",
+    "detail": "See contexts/profiles in evidence.json",
+    "severity": null
+  },
+  {
+    "id": "B07",
+    "title": "Recurring completed speaking club remains eligible",
+    "status": "PASSED",
+    "detail": "See contexts/profiles in evidence.json",
+    "severity": null
+  },
+  {
+    "id": "B08",
+    "title": "No goal defaults to next grade without inventing explicit goal",
+    "status": "PASSED",
+    "detail": "See contexts/profiles in evidence.json",
+    "severity": null
+  },
+  {
+    "id": "B09",
+    "title": "Maximum grade with all skills 5 has no fabricated next grade",
+    "status": "PASSED",
+    "detail": "See contexts/profiles in evidence.json",
+    "severity": null
+  },
+  {
+    "id": "B10",
+    "title": "After review activity adds both capped gains",
+    "status": "PASSED",
+    "detail": "See contexts/profiles in evidence.json",
+    "severity": null
+  },
+  {
+    "id": "B11",
+    "title": "Before review no double gain",
+    "status": "PASSED",
+    "detail": "See contexts/profiles in evidence.json",
+    "severity": null
+  },
+  {
+    "id": "B12",
+    "title": "Skill above cap never decreases",
+    "status": "PASSED",
+    "detail": "See contexts/profiles in evidence.json",
+    "severity": null
+  },
+  {
+    "id": "B13",
+    "title": "Self-paced empty upcoming sessions eligible",
+    "status": "PASSED",
+    "detail": "See contexts/profiles in evidence.json",
+    "severity": null
+  },
+  {
+    "id": "B14",
+    "title": "Multi-skill cap preserves 5 while allowing cloud gain",
+    "status": "PASSED",
+    "detail": "See contexts/profiles in evidence.json",
+    "severity": null
+  },
+  {
+    "id": "B15",
+    "title": "Same-day review interpretation",
+    "status": "NOT VERIFIED",
+    "detail": "Observed design level 2; README says after review but lacks intraday ordering. Strict > is defensible, cannot prove whether same-day completion was assessed.",
+    "severity": null
+  },
+  {
+    "id": "C01",
+    "title": "History pair equal role/grade/skills/goal",
+    "status": "PASSED",
+    "detail": "Only identity and history differ",
+    "severity": null
+  },
+  {
+    "id": "C02",
+    "title": "Career goal changes target analysis and candidate pool",
+    "status": "PASSED",
+    "detail": "Pair B",
+    "severity": null
+  },
+  {
+    "id": "C03",
+    "title": "Completed event changes eligible alternatives",
+    "status": "PASSED",
+    "detail": "Pair C",
+    "severity": null
+  },
+  {
+    "id": "C04",
+    "title": "Grade changes eligible alternatives",
+    "status": "PASSED",
+    "detail": "Pair E",
+    "severity": null
+  },
+  {
+    "id": "C05",
+    "title": "Critical flags alone under modified target requirements",
+    "status": "PASSED",
+    "detail": "Completed in supplementary isolated-catalog pair Z03-Z06; only critical flags differ.",
+    "severity": null
+  },
+  {
+    "id": "S01",
+    "title": "unknown employee",
+    "status": "PASSED",
+    "detail": "404",
+    "severity": null
+  },
+  {
+    "id": "S02",
+    "title": "anonymous profile",
+    "status": "PASSED",
+    "detail": "401",
+    "severity": null
+  },
+  {
+    "id": "S03",
+    "title": "Employee cannot read another employee or HR",
+    "status": "PASSED",
+    "detail": "/api/hr/dashboard: 403",
+    "severity": null
+  },
+  {
+    "id": "S04",
+    "title": "Employee cannot read another employee or HR",
+    "status": "PASSED",
+    "detail": "/api/employees/JQA002: 403",
+    "severity": null
+  },
+  {
+    "id": "S05",
+    "title": "Employee cannot read another employee or HR",
+    "status": "PASSED",
+    "detail": "/api/employees/JQA002/recommendations/context: 403",
+    "severity": null
+  },
+  {
+    "id": "S06",
+    "title": "Employee list includes only self",
+    "status": "PASSED",
+    "detail": "",
+    "severity": null
+  },
+  {
+    "id": "S07",
+    "title": "Employee cannot import",
+    "status": "PASSED",
+    "detail": "403",
+    "severity": null
+  },
+  {
+    "id": "V01",
+    "title": "Unknown skill rejected on public import",
+    "status": "PASSED",
+    "detail": "422",
+    "severity": null
+  },
+  {
+    "id": "V02",
+    "title": "Malformed JSON rejected",
+    "status": "PASSED",
+    "detail": "422",
+    "severity": null
+  },
+  {
+    "id": "V03",
+    "title": "Duplicate history ID in upload rejected",
+    "status": "PASSED",
+    "detail": "422",
+    "severity": null
+  },
+  {
+    "id": "H01",
+    "title": "HR finds employee with no candidates",
+    "status": "PASSED",
+    "detail": "",
+    "severity": null
+  },
+  {
+    "id": "H02",
+    "title": "HR reports employees without actual recommendation",
+    "status": "FAILED",
+    "detail": "{'recommendation_status': 'not_implemented', 'employees_without_recommendation': None}",
+    "severity": "HIGH"
+  },
+  {
+    "id": "H03",
+    "title": "HR identifies specific employee with uncovered critical gap despite optional candidate",
+    "status": "FAILED",
+    "detail": "JQA022 has unfillable critical design gap and optional speaking; only aggregate gaps are exposed",
+    "severity": "HIGH"
+  },
+  {
+    "id": "H04",
+    "title": "HR gap aggregation matches independent requirements",
+    "status": "PASSED",
+    "detail": "224 employees; source projections checked separately",
+    "severity": null
+  },
+  {
+    "id": "H05",
+    "title": "HR participation counts match original plus imported history",
+    "status": "PASSED",
+    "detail": "",
+    "severity": null
+  },
+  {
+    "id": "L001",
+    "title": "Public recommendation JQA001",
+    "status": "PASSED",
+    "detail": "200 success",
+    "severity": null
+  },
+  {
+    "id": "L002",
+    "title": "Public recommendation JQA002",
+    "status": "PASSED",
+    "detail": "200 success",
+    "severity": null
+  },
+  {
+    "id": "L003",
+    "title": "Public recommendation JQA003",
+    "status": "PASSED",
+    "detail": "200 success",
+    "severity": null
+  },
+  {
+    "id": "L004",
+    "title": "Public recommendation JQA004",
+    "status": "FAILED",
+    "detail": "503 {'code': 'unavailable', 'message': '\u041e\u0442\u0432\u0435\u0442 AI \u043d\u0435 \u043f\u0440\u043e\u0448\u0451\u043b \u043f\u0440\u043e\u0432\u0435\u0440\u043a\u0443 \u0444\u0430\u043a\u0442\u043e\u0432. \u0420\u0435\u043a\u043e\u043c\u0435\u043d\u0434\u0430\u0446\u0438\u0438 \u043d\u0435 \u0441\u043e\u0445\u0440\u0430\u043d\u0435\u043d\u044b.', 'details': [{'reason': 'ai_unsupported_evidence'}]}",
+    "severity": "HIGH"
+  },
+  {
+    "id": "L005",
+    "title": "Public recommendation JQA005",
+    "status": "PASSED",
+    "detail": "200 success",
+    "severity": null
+  },
+  {
+    "id": "L006",
+    "title": "Public recommendation JQA006",
+    "status": "PASSED",
+    "detail": "200 success",
+    "severity": null
+  },
+  {
+    "id": "L007",
+    "title": "Public recommendation JQA007",
+    "status": "PASSED",
+    "detail": "200 success",
+    "severity": null
+  },
+  {
+    "id": "L008",
+    "title": "Public recommendation JQA008",
+    "status": "PASSED",
+    "detail": "200 success",
+    "severity": null
+  },
+  {
+    "id": "L009",
+    "title": "Public recommendation JQA009",
+    "status": "PASSED",
+    "detail": "200 no_candidates",
+    "severity": null
+  },
+  {
+    "id": "L010",
+    "title": "Public recommendation JQA010",
+    "status": "PASSED",
+    "detail": "200 no_candidates",
+    "severity": null
+  },
+  {
+    "id": "L011",
+    "title": "Public recommendation JQA011",
+    "status": "PASSED",
+    "detail": "200 success",
+    "severity": null
+  },
+  {
+    "id": "L012",
+    "title": "Public recommendation JQA012",
+    "status": "PASSED",
+    "detail": "200 success",
+    "severity": null
+  },
+  {
+    "id": "L013",
+    "title": "Public recommendation JQA013",
+    "status": "PASSED",
+    "detail": "200 success",
+    "severity": null
+  },
+  {
+    "id": "L014",
+    "title": "Public recommendation JQA014",
+    "status": "PASSED",
+    "detail": "200 no_candidates",
+    "severity": null
+  },
+  {
+    "id": "L015",
+    "title": "Public recommendation JQA015",
+    "status": "PASSED",
+    "detail": "200 no_candidates",
+    "severity": null
+  },
+  {
+    "id": "L019",
+    "title": "Public recommendation JQA019",
+    "status": "PASSED",
+    "detail": "200 success",
+    "severity": null
+  },
+  {
+    "id": "L020",
+    "title": "Public recommendation JQA020",
+    "status": "PASSED",
+    "detail": "200 success",
+    "severity": null
+  },
+  {
+    "id": "L021",
+    "title": "Public recommendation JQA021",
+    "status": "PASSED",
+    "detail": "200 success",
+    "severity": null
+  },
+  {
+    "id": "L022",
+    "title": "Public recommendation JQA022",
+    "status": "PASSED",
+    "detail": "200 success",
+    "severity": null
+  },
+  {
+    "id": "L024",
+    "title": "Public recommendation JQA024",
+    "status": "PASSED",
+    "detail": "200 success",
+    "severity": null
+  },
+  {
+    "id": "M01",
+    "title": "Critical design wins over lower/larger public-speaking gap",
+    "status": "PASSED",
+    "detail": "['EV_006']",
+    "severity": null
+  },
+  {
+    "id": "M04",
+    "title": "Critical design wins over lower/larger public-speaking gap",
+    "status": "NOT VERIFIED",
+    "detail": "Initial JQA004 returned 503, so initial selection was unavailable. Independent controlled pair Z03/Z06 subsequently demonstrated critical sensitivity.",
+    "severity": null
+  },
+  {
+    "id": "R01",
+    "title": "Repeated recommendation succeeds and preserves result",
+    "status": "PASSED",
+    "detail": "Cached repeat is not independent LLM reasoning",
+    "severity": null
+  },
+  {
+    "id": "I03",
+    "title": "Imported employee completes eligible self-paced activity",
+    "status": "PASSED",
+    "detail": "200",
+    "severity": null
+  },
+  {
+    "id": "I04",
+    "title": "Same completion command is idempotent",
+    "status": "PASSED",
+    "detail": "",
+    "severity": null
+  },
+  {
+    "id": "I05",
+    "title": "Second complete with fresh command rejected",
+    "status": "PASSED",
+    "detail": "409",
+    "severity": null
+  },
+  {
+    "id": "I06",
+    "title": "Trajectory improves after completion",
+    "status": "PASSED",
+    "detail": "",
+    "severity": null
+  },
+  {
+    "id": "I07",
+    "title": "Recommendation after complete no longer suggests completed course",
+    "status": "PASSED",
+    "detail": "{'status': 'no_candidates', 'employee_id': 'JQA019', 'recommendations': [], 'revision': 2, 'as_of_date': '2026-10-01', 'hypotheses': [], 'clarifying_questions': []}",
+    "severity": null
+  },
+  {
+    "id": "X01",
+    "title": "Reject fabricated EV_FAKE",
+    "status": "PASSED",
+    "detail": "503 {'error': {'code': 'unavailable', 'message': 'AI recommendation unavailable or returned unsupported evidence', 'details': []}}",
+    "severity": null
+  },
+  {
+    "id": "X02",
+    "title": "Reject fabricated EV_999",
+    "status": "PASSED",
+    "detail": "503 {'error': {'code': 'unavailable', 'message': 'AI recommendation unavailable or returned unsupported evidence', 'details': []}}",
+    "severity": null
+  },
+  {
+    "id": "X03",
+    "title": "Reject fabricated free-text facts/course",
+    "status": "FAILED",
+    "detail": "200 {'status': 'success', 'employee_id': 'JQA005', 'recommendations': [{'event_id': 'EV_006', 'explanation': 'You completed 99 workshops because your manager forced you. This activity raises System Design to 99. Your goal is CEO. Take the invented Galactic Leadership Course.', 'evidence': [{'kind': 'current_grade', 'values': {'role': 'Backend Engineer', 'grade': 'Middle'}, 'source_ids': ['JQA005']}, {'kind': 'skill_levels', 'values': {'role': 'Backend Engineer', 'grade': 'Senior', 'skill_id': 'SK_API_DESIGN', 'current': 5, 'required': 4}, 'source_ids': ['SK_API_DESIGN']}, {'kind': 'attainable_gain', 'values': {'skill_id': 'SK_API_DESIGN', 'gain': 0}, 'source_ids': ['EV_006', 'SK_API_DESIGN']}], 'confidence': 'high', 'additional_value': None}], 'revision': 2, 'as_of_date': '2026-10-01', 'hypotheses': [], 'clarifying_questions': []}",
+    "severity": "HIGH"
+  },
+  {
+    "id": "T01",
+    "title": "Profile/API responses below 2 seconds",
+    "status": "PASSED",
+    "detail": "{'profile': {'n': 24, 'min': 0.0018894000095315278, 'avg': 0.002790954165296474, 'p95': 0.004595500009600073, 'max': 0.0053168999729678035}, 'trajectory': {'n': 24, 'min': 0.0041456000180915, 'avg': 0.006167033325861364, 'p95': 0.007731200021225959, 'max': 0.007918899995274842}, 'hr': {'n': 1, 'min': 0.9681025000172667, 'avg': 0.9681025000172667, 'p95': 0.9681025000172667, 'max': 0.9681025000172667}, 'live_ai': {'n': 16, 'min': 2.750526699994225, 'avg': 4.183636412497435, 'p95': 5.976343399961479, 'max': 5.976343399961479}, 'recommendation_cached': {'n': 1, 'min': 0.005903100012801588, 'avg': 0.005903100012801588, 'p95': 0.005903100012801588, 'max': 0.005903100012801588}}",
+    "severity": null
+  },
+  {
+    "id": "T02",
+    "title": "Live AI response below 10 seconds",
+    "status": "PASSED",
+    "detail": "{'n': 16, 'min': 2.750526699994225, 'avg': 4.183636412497435, 'p95': 5.976343399961479, 'max': 5.976343399961479}",
+    "severity": null
+  },
+  {
+    "id": "T03",
+    "title": "Browser rendered UI latency and full UI import click path",
+    "status": "NOT VERIFIED",
+    "detail": "ASGI public API exercised; no browser automation",
+    "severity": null
+  },
+  {
+    "id": "Z01",
+    "title": "Attractive activity excluded when mandatory",
+    "status": "PASSED",
+    "detail": "['mandatory']",
+    "severity": null
+  },
+  {
+    "id": "Z02",
+    "title": "Attractive activity excluded when no_sessions",
+    "status": "PASSED",
+    "detail": "['unavailable']",
+    "severity": null
+  },
+  {
+    "id": "Z03",
+    "title": "Critical-flag contrastive live recommendation False",
+    "status": "PASSED",
+    "detail": "{'status': 'success', 'employee_id': 'JQA004', 'recommendations': [{'event_id': 'EV_006', 'explanation': \"Given the employee's gap of 1 level in the critical skill System Design for their target Senior grade, and the event's offering to improve this skill from level 3 to 4, this offline 12-hour workshop is the most directly relevant development opportunity. The employee already meets or exceeds requirements in other key skills, making this focused enhancement of System Design crucial. The workshop also covers related skills like API Design and Observability, but the main value is the System Design upgrade needed for promotion readiness. Other options like the Architecture Review Circle also improve System Design but are less comprehensive and scheduled later. Public Speaking Club addresses a secondary gap but is less essential compared to System Design.\", 'evidence': [{'kind': 'skill_levels', 'values': {'role': 'Backend Engineer', 'grade': 'Senior', 'skill_id': 'SK_SYSTEM_DESIGN', 'current': 3, 'required': 4}, 'source_ids': ['SK_SYSTEM_DESIGN']}, {'kind': 'critical_skill', 'values': {'role': 'Backend Engineer', 'grade': 'Senior', 'skill_id': 'SK_SYSTEM_DESIGN', 'critical': True}, 'source_ids': ['SK_SYSTEM_DESIGN']}, {'kind': 'attainable_gain', 'values': {'skill_id': 'SK_SYSTEM_DESIGN', 'gain': 1}, 'source_ids': ['EV_006', 'SK_SYSTEM_DESIGN']}, {'kind': 'target_grade', 'values': {'role': 'Backend Engineer', 'grade': 'Senior'}, 'source_ids': ['Backend Engineer:Senior']}, {'kind': 'critical_skill', 'values': {'role': 'Backend Engineer', 'grade': 'Senior', 'skill_id': 'SK_API_DESIGN', 'critical': True}, 'source_ids': ['SK_API_DESIGN']}, {'kind': 'availability', 'values': {'format': 'offline', 'next_session': '2026-10-07', 'as_of_date': '2026-10-01'}, 'source_ids': ['EV_006']}, {'kind': 'duration_format', 'values': {'hours': 12.0, 'format': 'offline'}, 'source_ids': ['EV_006']}, {'kind': 'current_grade', 'values': {'role': 'Backend Engineer', 'grade': 'Middle'}, 'source_ids': ['JQA004']}], 'confidence': 'high', 'additional_value': None}], 'revision': 1, 'as_of_date': '2026-10-01', 'hypotheses': [{'statement': 'Employee may be interested in improving Public Speaking skills to meet next grade requirements since this skill is currently at level 0 and required at level 2 for Senior.', 'evidence': [{'kind': 'skill_levels', 'values': {'role': 'Backend Engineer', 'grade': 'Senior', 'skill_id': 'SK_PUBLIC_SPEAKING', 'current': 0, 'required': 2}, 'source_ids': ['SK_PUBLIC_SPEAKING']}, {'kind': 'critical_skill', 'values': {'role': 'Backend Engineer', 'grade': 'Senior', 'skill_id': 'SK_PUBLIC_SPEAKING', 'critical': False}, 'source_ids': ['SK_PUBLIC_SPEAKING']}], 'needs_confirmation': True}, {'statement': 'Employee prefers hybrid work format, but learning format preference is unknown and could affect choice of online vs offline events.', 'evidence': [{'kind': 'profile_context', 'values': {'role': 'Backend Engineer', 'grade': 'Middle', 'has_explicit_career_goal': True, 'target_role': 'Backend Engineer', 'target_grade': 'Senior', 'work_format': 'hybrid', 'interface_language': 'en', 'tenure_months': 24}, 'source_ids': ['JQA004']}], 'needs_confirmation': True}], 'clarifying_questions': ['\u041a\u0430\u043a\u0438\u0435 \u0442\u0435\u043c\u044b \u0442\u0435\u0431\u0435 \u0441\u0435\u0439\u0447\u0430\u0441 \u0438\u043d\u0442\u0435\u0440\u0435\u0441\u043d\u043e \u0440\u0430\u0437\u0432\u0438\u0432\u0430\u0442\u044c?', '\u041a\u0430\u043a\u043e\u0439 \u0444\u043e\u0440\u043c\u0430\u0442 \u043e\u0431\u0443\u0447\u0435\u043d\u0438\u044f \u0442\u0435\u0431\u0435 \u0443\u0434\u043e\u0431\u043d\u0435\u0435 \u0441\u0435\u0439\u0447\u0430\u0441?']}",
+    "severity": null
+  },
+  {
+    "id": "Z04",
+    "title": "Critical-flag contrastive live recommendation True",
+    "status": "PASSED",
+    "detail": "{'status': 'success', 'employee_id': 'JQA004', 'recommendations': [{'event_id': 'EV_036', 'explanation': \"The employee's only notable skill gap relative to the Senior Backend Engineer benchmark is Public Speaking, a critical skill for that career goal. The Public Speaking Club event directly addresses this gap, providing an opportunity to develop this currently absent but required skill. It is more relevant now than architecture or system design events because the employee already meets or exceeds all other current and next-level requirements except Public Speaking, and this event\u2019s short duration and frequent sessions facilitate timely skill development.\", 'evidence': [{'kind': 'skill_levels', 'values': {'role': 'Backend Engineer', 'grade': 'Senior', 'skill_id': 'SK_PUBLIC_SPEAKING', 'current': 0, 'required': 2}, 'source_ids': ['SK_PUBLIC_SPEAKING']}, {'kind': 'critical_skill', 'values': {'role': 'Backend Engineer', 'grade': 'Senior', 'skill_id': 'SK_PUBLIC_SPEAKING', 'critical': True}, 'source_ids': ['SK_PUBLIC_SPEAKING']}, {'kind': 'attainable_gain', 'values': {'skill_id': 'SK_PUBLIC_SPEAKING', 'gain': 1}, 'source_ids': ['EV_036', 'SK_PUBLIC_SPEAKING']}, {'kind': 'current_grade', 'values': {'role': 'Backend Engineer', 'grade': 'Middle'}, 'source_ids': ['JQA004']}, {'kind': 'target_grade', 'values': {'role': 'Backend Engineer', 'grade': 'Senior'}, 'source_ids': ['Backend Engineer:Senior']}], 'confidence': 'high', 'additional_value': None}], 'revision': 1, 'as_of_date': '2026-10-01', 'hypotheses': [{'statement': 'The employee might be interested in developing communication-related skills, including Public Speaking, as these are critical for their target Senior role and currently lacking.', 'evidence': [{'kind': 'current_grade', 'values': {'role': 'Backend Engineer', 'grade': 'Middle'}, 'source_ids': ['JQA004']}, {'kind': 'target_grade', 'values': {'role': 'Backend Engineer', 'grade': 'Senior'}, 'source_ids': ['Backend Engineer:Senior']}, {'kind': 'skill_levels', 'values': {'role': 'Backend Engineer', 'grade': 'Senior', 'skill_id': 'SK_PUBLIC_SPEAKING', 'current': 0, 'required': 2}, 'source_ids': ['SK_PUBLIC_SPEAKING']}, {'kind': 'critical_skill', 'values': {'role': 'Backend Engineer', 'grade': 'Senior', 'skill_id': 'SK_PUBLIC_SPEAKING', 'critical': True}, 'source_ids': ['SK_PUBLIC_SPEAKING']}], 'needs_confirmation': True}], 'clarifying_questions': ['What format of learning do you currently prefer (e.g., online, offline, workshop, self-paced)?', 'How many hours per week would you be able to dedicate to training or skill development?']}",
+    "severity": null
+  },
+  {
+    "id": "Z05",
+    "title": "Critical flags propagate independently of skill/role/grade/history",
+    "status": "PASSED",
+    "detail": "Only Senior Backend critical_skills modified in temporary catalog; immutable source intact",
+    "severity": null
+  },
+  {
+    "id": "Z06",
+    "title": "LLM selection responds to critical flag alone",
+    "status": "PASSED",
+    "detail": "['EV_006'] -> ['EV_036']",
+    "severity": null
+  },
+  {
+    "id": "Z07",
+    "title": "Imported identity has documented manual provisioning path",
+    "status": "PASSED",
+    "detail": "README line 231 documents DEV_IDENTITIES_JSON before startup. Foreign/HR complete 403 is correct. Main I03-I07 confirm provisioned own employee completes and progresses. Automatic provisioning not required by source T\u0417.",
+    "severity": null
+  },
+  {
+    "id": "Z08",
+    "title": "Incomplete in_progress does not increase skills",
+    "status": "PASSED",
+    "detail": "200",
+    "severity": null
+  },
+  {
+    "id": "Z09",
+    "title": "Incomplete dropped does not increase skills",
+    "status": "PASSED",
+    "detail": "200",
+    "severity": null
+  },
+  {
+    "id": "Z10",
+    "title": "Incomplete overdue does not increase skills",
+    "status": "PASSED",
+    "detail": "200",
+    "severity": null
+  },
+  {
+    "id": "Z11",
+    "title": "Unknown registered status rejected (not in original schema)",
+    "status": "PASSED",
+    "detail": "422",
+    "severity": null
+  },
+  {
+    "id": "Z12",
+    "title": "Inconsistent completed percentage rejected",
+    "status": "PASSED",
+    "detail": "422",
+    "severity": null
+  },
+  {
+    "id": "Z13",
+    "title": "Malformed completion command rejected",
+    "status": "PASSED",
+    "detail": "422",
+    "severity": null
+  },
+  {
+    "id": "SEC08",
+    "title": "Public demo HR credential does not grant privileged data",
+    "status": "FAILED",
+    "detail": "Public login/source credential demo-hr returned 200; UI exposes HR role button",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "PERF5",
+    "title": "Fresh recommendation API response under 10 seconds",
+    "status": "PASSED",
+    "detail": "9.910036 seconds, HTTP 200",
+    "severity": null
+  },
+  {
+    "id": "PERF12",
+    "title": "Fresh recommendation API response under 10 seconds",
+    "status": "PASSED",
+    "detail": "7.159150 seconds, HTTP 200",
+    "severity": null
+  },
+  {
+    "id": "PERF24",
+    "title": "Fresh recommendation API response under 10 seconds",
+    "status": "PASSED",
+    "detail": "3.851938 seconds, HTTP 200",
+    "severity": null
+  },
+  {
+    "id": "Q001",
+    "title": "Manual factual review: main JQA001",
+    "status": "FAILED",
+    "detail": "Claims Observability advances although current 5 exceeds event cap 4.",
+    "severity": "HIGH"
+  },
+  {
+    "id": "Q002",
+    "title": "Manual factual review: main JQA002",
+    "status": "PASSED",
+    "detail": "Correct critical System Design 3 to 4, role/goal, date/duration; subjective preference not treated as fact.",
+    "severity": null
+  },
+  {
+    "id": "Q003",
+    "title": "Manual factual review: main JQA003",
+    "status": "PASSED",
+    "detail": "Correct critical gap and repeated club noncompletion; same ranking as positive history pair is justified.",
+    "severity": null
+  },
+  {
+    "id": "Q005",
+    "title": "Manual factual review: main JQA005",
+    "status": "FAILED",
+    "detail": "Claims workshop enhances Observability although attainable gain is 0.",
+    "severity": "HIGH"
+  },
+  {
+    "id": "Q006",
+    "title": "Manual factual review: main JQA006",
+    "status": "PASSED",
+    "detail": "Correct completed EV_006, remaining EV_007, System Design 3 to 4. Communication gain described ambiguously as minimal, not an explicit numeric overclaim.",
+    "severity": null
+  },
+  {
+    "id": "Q007",
+    "title": "Manual factual review: main JQA007",
+    "status": "PASSED",
+    "detail": "Correct critical gap, EV_006 and equal attainable System Design gain for EV_007.",
+    "severity": null
+  },
+  {
+    "id": "Q008",
+    "title": "Manual factual review: main JQA008",
+    "status": "FAILED",
+    "detail": "Promises minor API Design gain despite current 5 and EV_005 cap 3.",
+    "severity": "HIGH"
+  },
+  {
+    "id": "Q011",
+    "title": "Manual factual review: main JQA011",
+    "status": "FAILED",
+    "detail": "Says EV_007 has no System Design gain; catalog/context show +1 and current 3.",
+    "severity": "HIGH"
+  },
+  {
+    "id": "Q012",
+    "title": "Manual factual review: main JQA012",
+    "status": "FAILED",
+    "detail": "Calls Data Modeling a critical skill; Senior Data Analyst critical set is Statistics and A/B Testing.",
+    "severity": "HIGH"
+  },
+  {
+    "id": "Q013",
+    "title": "Manual factual review: main JQA013",
+    "status": "FAILED",
+    "detail": "No career goal set, but explanation calls employee aiming for Senior; default assumption is not disclosed.",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "Q019",
+    "title": "Manual factual review: main JQA019",
+    "status": "FAILED",
+    "detail": "Calls Python a critical skill for Senior Backend; critical set is System Design and API Design.",
+    "severity": "HIGH"
+  },
+  {
+    "id": "Q020",
+    "title": "Manual factual review: main JQA020",
+    "status": "PASSED",
+    "detail": "Correct design gap and expressly no projected Observability gain; past club no-show followed by completion is not treated as current workshop failure.",
+    "severity": null
+  },
+  {
+    "id": "Q021",
+    "title": "Manual factual review: main JQA021",
+    "status": "FAILED",
+    "detail": "Describes System Design and Communication as already expert while System Design is 3 and target 4.",
+    "severity": "HIGH"
+  },
+  {
+    "id": "Q022",
+    "title": "Manual factual review: main JQA022",
+    "status": "FAILED",
+    "detail": "Says critical backend skills are expert; System Design remains 3 versus 4 with no available closing activity. Hides the catalog gap.",
+    "severity": "HIGH"
+  },
+  {
+    "id": "Q024",
+    "title": "Manual factual review: main JQA024",
+    "status": "PASSED",
+    "detail": "Correct Cloud 2 to 3 and no redundant CI/CD gain at 5.",
+    "severity": null
+  },
+  {
+    "id": "QS0",
+    "title": "Manual factual review: supplement critical_False",
+    "status": "PASSED",
+    "detail": "Correct prioritization of critical design gap over public speaking; speculative interests explicitly need confirmation.",
+    "severity": null
+  },
+  {
+    "id": "QS1",
+    "title": "Manual factual review: supplement critical_True",
+    "status": "FAILED",
+    "detail": "Correctly switches to EV_036 but falsely says all other next-grade requirements met; System Design remains 3 vs 4.",
+    "severity": "HIGH"
+  },
+  {
+    "id": "QP5",
+    "title": "Manual factual review: performance JQA005",
+    "status": "PASSED",
+    "detail": "Correct critical design gap, gain, prerequisites and scheduling.",
+    "severity": null
+  },
+  {
+    "id": "QP12",
+    "title": "Manual factual review: performance JQA012",
+    "status": "PASSED",
+    "detail": "Correct Data Modeling gap 2 and goal relevance; does not call it critical in this run.",
+    "severity": null
+  },
+  {
+    "id": "QP24",
+    "title": "Manual factual review: performance JQA024",
+    "status": "PASSED",
+    "detail": "Correct sole Cloud gap and event eligibility. Speculative certification motivation explicitly flagged needs_confirmation.",
+    "severity": null
+  },
+  {
+    "id": "MFH",
+    "title": "Live history contrast changes explanation with defensible identical choice",
+    "status": "PASSED",
+    "detail": "JQA002/JQA003 both EV_006; negative-history explanation explicitly deprioritizes club after declines/no_shows.",
+    "severity": null
+  },
+  {
+    "id": "MFG",
+    "title": "Explicit career switch overrides next-grade critical-only shortcut",
+    "status": "PASSED",
+    "detail": "JQA011 EV_006 -> JQA012 EV_025 despite backend critical design gap remaining. Text has separately reported factual error.",
+    "severity": null
+  }
+]

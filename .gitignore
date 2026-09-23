@@ -9,3 +9,5 @@ node_modules/
 *.tsbuildinfo
 data/state/
 .superpowers/
+tests/independent_qa/results-latest/
+tests/independent_qa/results/evidence.partial.json

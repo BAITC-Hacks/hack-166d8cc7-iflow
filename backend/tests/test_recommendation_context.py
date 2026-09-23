@@ -200,7 +200,7 @@ def test_ai_receives_context_and_can_cite_full_history(tiny_bundle, make_history
 
     response = recommend("TEST_EMP", snapshot, clock, JSONRecommender(complete))
     assert captured == [context.model_dump(mode="json")]
-    assert response.hypotheses[0].needs_confirmation
+    assert response.hypotheses == []  # Unverified provider prose is not exposed.
     assert response.clarifying_questions == data["clarifying_questions"]
     data["hypotheses"][0]["evidence"][0]["values"]["feedback_rating"] = 5
     with pytest.raises(ValueError, match="Hypothesis evidence"):

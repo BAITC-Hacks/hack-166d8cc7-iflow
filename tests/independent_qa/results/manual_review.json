@@ -1,0 +1,161 @@
+{
+  "evidence_sha256": {
+    "evidence.json": "393cb8d83d1ea5e5928c5a1a3fda2c9037f5c86870199ecb3bdb21d445c96d81",
+    "supplement.json": "e70d970201059bec1fa4a0309b3f0a10ee427889d07b8ef1871b9697000fad00",
+    "performance_api.json": "d18ff3f0be5955f893af963b924142fd81f4420ebfe8fbe0e884b13161ef1218"
+  },
+  "reviews": [
+    [
+      "Q001",
+      "main JQA001",
+      false,
+      "Claims Observability advances although current 5 exceeds event cap 4.",
+      "HIGH"
+    ],
+    [
+      "Q002",
+      "main JQA002",
+      true,
+      "Correct critical System Design 3 to 4, role/goal, date/duration; subjective preference not treated as fact.",
+      ""
+    ],
+    [
+      "Q003",
+      "main JQA003",
+      true,
+      "Correct critical gap and repeated club noncompletion; same ranking as positive history pair is justified.",
+      ""
+    ],
+    [
+      "Q005",
+      "main JQA005",
+      false,
+      "Claims workshop enhances Observability although attainable gain is 0.",
+      "HIGH"
+    ],
+    [
+      "Q006",
+      "main JQA006",
+      true,
+      "Correct completed EV_006, remaining EV_007, System Design 3 to 4. Communication gain described ambiguously as minimal, not an explicit numeric overclaim.",
+      ""
+    ],
+    [
+      "Q007",
+      "main JQA007",
+      true,
+      "Correct critical gap, EV_006 and equal attainable System Design gain for EV_007.",
+      ""
+    ],
+    [
+      "Q008",
+      "main JQA008",
+      false,
+      "Promises minor API Design gain despite current 5 and EV_005 cap 3.",
+      "HIGH"
+    ],
+    [
+      "Q011",
+      "main JQA011",
+      false,
+      "Says EV_007 has no System Design gain; catalog/context show +1 and current 3.",
+      "HIGH"
+    ],
+    [
+      "Q012",
+      "main JQA012",
+      false,
+      "Calls Data Modeling a critical skill; Senior Data Analyst critical set is Statistics and A/B Testing.",
+      "HIGH"
+    ],
+    [
+      "Q013",
+      "main JQA013",
+      false,
+      "No career goal set, but explanation calls employee aiming for Senior; default assumption is not disclosed.",
+      "MEDIUM"
+    ],
+    [
+      "Q019",
+      "main JQA019",
+      false,
+      "Calls Python a critical skill for Senior Backend; critical set is System Design and API Design.",
+      "HIGH"
+    ],
+    [
+      "Q020",
+      "main JQA020",
+      true,
+      "Correct design gap and expressly no projected Observability gain; past club no-show followed by completion is not treated as current workshop failure.",
+      ""
+    ],
+    [
+      "Q021",
+      "main JQA021",
+      false,
+      "Describes System Design and Communication as already expert while System Design is 3 and target 4.",
+      "HIGH"
+    ],
+    [
+      "Q022",
+      "main JQA022",
+      false,
+      "Says critical backend skills are expert; System Design remains 3 versus 4 with no available closing activity. Hides the catalog gap.",
+      "HIGH"
+    ],
+    [
+      "Q024",
+      "main JQA024",
+      true,
+      "Correct Cloud 2 to 3 and no redundant CI/CD gain at 5.",
+      ""
+    ],
+    [
+      "QS0",
+      "supplement critical_False",
+      true,
+      "Correct prioritization of critical design gap over public speaking; speculative interests explicitly need confirmation.",
+      ""
+    ],
+    [
+      "QS1",
+      "supplement critical_True",
+      false,
+      "Correctly switches to EV_036 but falsely says all other next-grade requirements met; System Design remains 3 vs 4.",
+      "HIGH"
+    ],
+    [
+      "QP5",
+      "performance JQA005",
+      true,
+      "Correct critical design gap, gain, prerequisites and scheduling.",
+      ""
+    ],
+    [
+      "QP12",
+      "performance JQA012",
+      true,
+      "Correct Data Modeling gap 2 and goal relevance; does not call it critical in this run.",
+      ""
+    ],
+    [
+      "QP24",
+      "performance JQA024",
+      true,
+      "Correct sole Cloud gap and event eligibility. Speculative certification motivation explicitly flagged needs_confirmation.",
+      ""
+    ]
+  ],
+  "adjudications": {
+    "M04": "Unavailable initial output cannot prove a wrong selection; NOT VERIFIED",
+    "C05": "Supplementary critical-only pair completed",
+    "Z07": "README documents provisioning; 403 is correct access control, not an import defect",
+    "SEC08": "Documented local demo scope: MEDIUM limitation"
+  },
+  "totals": {
+    "PASSED": 142,
+    "FAILED": 15,
+    "NOT VERIFIED": 3,
+    "TOTAL": 160
+  }
+}

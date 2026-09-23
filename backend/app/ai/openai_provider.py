@@ -1,6 +1,7 @@
 """OpenAI Responses adapter. Evidence is selected by reference, never rewritten."""
 import hashlib
 import json
+import time
 from typing import Literal
 
 from openai import OpenAI, APIConnectionError, APIStatusError, APITimeoutError
@@ -8,7 +9,7 @@ from pydantic import Field
 
 from app.core.errors import DomainError
 from app.schemas.common import Model
-from app.schemas.recommendation import RecommendationItem, RecommendationHypothesis, RecommendationResult
+from app.schemas.recommendation import RecommendationItem, RecommendationResult
 from .client import AIRefinementInput
 from .prompts import SYSTEM_INSTRUCTIONS
 from .recommender import DisabledRecommender, validate_recommendation_result
@@ -16,21 +17,14 @@ from .recommender import DisabledRecommender, validate_recommendation_result
 
 class WireItem(Model):
     event_id: str
-    explanation: str
     confidence: Literal["high", "uncertain"]
     additional_value: str | None
     evidence_ids: list[str] = Field(min_length=3, max_length=8)
 
 
-class WireHypothesis(Model):
-    statement: str
-    evidence_ids: list[str] = Field(min_length=1, max_length=5)
-
-
 class WireResult(Model):
     status: Literal["success", "no_candidates", "needs_clarification"]
     recommendations: list[WireItem] = Field(max_length=3)
-    hypotheses: list[WireHypothesis] = Field(max_length=3)
     clarifying_questions: list[str] = Field(max_length=2)
 
 
@@ -55,7 +49,10 @@ def request_payload(context):
         "Return evidence_ids from the candidate's factors or context.facts, resolved via evidence_index. "
         "Cite at least three distinct factor kinds and include this candidate's skill_levels, critical_skill or attainable_gain. "
         "For hypotheses cite existing evidence_ids too. Do not invent or rewrite facts. "
-        "Employee identity, revision and date are preserved by the server. Keep explanations concise (2-4 sentences).")
+        "Employee identity, revision and date are preserved by the server.")
+    instructions += "\nTransport contract: return only fields in the supplied schema. Do not generate explanations or hypotheses. " \
+        "The server renders user-facing explanations from verified facts. Focus on multi-factor selection and evidence_ids. " \
+        "Keep additional_value for extra choices under 15 words; primary null. Questions only when clarification changes the choice."
     return [{"role": "system", "content": instructions},
             {"role": "user", "content": json.dumps({"context": payload}, ensure_ascii=False)}], evidence
 
@@ -68,20 +65,34 @@ class OpenAIRecommender:
     def __init__(self, settings, client=None):
         self.model = settings.openai_model
         self.max_output_tokens = settings.ai_max_output_tokens
+        self.timeout_seconds = settings.ai_timeout_seconds
         self.client = client or OpenAI(api_key=settings.openai_api_key.get_secret_value(),
             base_url="https://api.openai.com/v1", timeout=settings.ai_timeout_seconds, max_retries=0)
-        self.cache_key = "openai:" + self.model + ":refs-v1:" + hashlib.sha256(SYSTEM_INSTRUCTIONS.encode()).hexdigest()[:16]
+        self.cache_key = "openai:" + self.model + ":selection-v3:" + hashlib.sha256(SYSTEM_INSTRUCTIONS.encode()).hexdigest()[:16]
         self.last_usage = None
 
     def close(self):
         self.client.close()
 
+    def _request(self, messages):
+        # One recovery attempt for stalled transport, sharing the original budget.
+        # Selection has no external side effects; authentication/quota errors do not retry.
+        deadline = time.monotonic() + self.timeout_seconds
+        for attempt in range(2):
+            budget = max(0.1, min(self.timeout_seconds / 2, deadline - time.monotonic()))
+            try:
+                return self.client.with_options(timeout=budget).responses.parse(
+                    model=self.model, input=messages, text_format=WireResult,
+                    max_output_tokens=self.max_output_tokens, store=False)
+            except APITimeoutError:
+                if attempt or deadline - time.monotonic() < 0.1:
+                    raise
+
     def refine(self, context: AIRefinementInput) -> RecommendationResult:
         messages, evidence = request_payload(context)
         self.last_usage = None
         try:
-            response = self.client.responses.parse(model=self.model, input=messages, text_format=WireResult,
-                max_output_tokens=self.max_output_tokens, store=False)
+            response = self._request(messages)
         except APITimeoutError:
             raise provider_error("ai_timeout", "AI не успел ответить. Попробуйте позже.") from None
         except APIConnectionError:
@@ -108,11 +119,17 @@ class OpenAIRecommender:
             raise provider_error("ai_incomplete", "AI не завершил подбор или отказался отвечать. Рекомендации не сохранены.")
         try:
             result = response.output_parsed
-            recommendations = [RecommendationItem(event_id=item.event_id, explanation=item.explanation,
-                confidence=item.confidence, additional_value=item.additional_value,
-                evidence=[evidence[key] for key in item.evidence_ids]) for item in result.recommendations]
-            hypotheses = [RecommendationHypothesis(statement=item.statement,
-                evidence=[evidence[key] for key in item.evidence_ids]) for item in result.hypotheses]
+            candidates = {c.event_id: c for c in context.candidates}
+            recommendations = []
+            for item in result.recommendations:
+                candidate = candidates[item.event_id]  # Unknown events still fail closed.
+                supported = candidate.factors + context.facts
+                selected = [evidence[key] for key in item.evidence_ids if key in evidence and evidence[key] in supported]
+                if len({f.kind for f in selected}) < 3 or not any(f.kind in {"skill_levels", "critical_skill", "attainable_gain"} for f in selected):
+                    selected = candidate.factors
+                recommendations.append(RecommendationItem(event_id=item.event_id, explanation="Pending verified explanation",
+                    confidence=item.confidence, additional_value=item.additional_value, evidence=selected))
+            hypotheses = []
             return validate_recommendation_result(context, RecommendationResult(status=result.status,
                 employee_id=context.employee_id, revision=context.revision, as_of_date=context.as_of_date,
                 recommendations=recommendations, hypotheses=hypotheses, clarifying_questions=result.clarifying_questions))

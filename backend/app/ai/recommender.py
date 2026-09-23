@@ -3,6 +3,7 @@ from app.schemas.recommendation import RecommendationResult
 from .client import AIRefinementInput
 from collections.abc import Callable
 from .prompts import build_recommendation_messages
+from .explanation import ground_result
 
 
 class JSONRecommender:
@@ -79,5 +80,5 @@ def validate_recommendation_result(context: AIRefinementInput,result: Recommenda
     # turns into extra nodes on the map or extra offers in the mail queue.
     if any(item.confidence != "high" or not (item.additional_value or "").strip() or needs_history_clarification(context, item.event_id)
            for item in result.recommendations[1:]):
-        return result.model_copy(update={"recommendations": result.recommendations[:1]})
-    return result
+        result = result.model_copy(update={"recommendations": result.recommendations[:1]})
+    return ground_result(context, result)

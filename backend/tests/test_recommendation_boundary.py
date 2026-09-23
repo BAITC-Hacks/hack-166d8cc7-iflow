@@ -30,7 +30,10 @@ def test_supported_result_and_no_candidates(tiny_bundle,clock):
     from app.schemas.recommendation import RecommendationResult,RecommendationItem
     context=context_for(tiny_bundle,clock);c=context.candidates[0]
     result=RecommendationResult(status="success",employee_id="TEST_EMP",recommendations=[RecommendationItem(event_id=c.event_id,explanation="Test explanation",evidence=c.factors)],revision=0,as_of_date=clock)
-    assert validate_recommendation_result(context,result)==result
+    checked = validate_recommendation_result(context,result)
+    assert checked.recommendations[0].event_id == c.event_id
+    assert checked.recommendations[0].explanation != "Test explanation"
+    assert validate_recommendation_result(context,checked) == checked
     empty=context.model_copy(update={"candidates":[]})
     none=RecommendationResult(status="no_candidates",employee_id="TEST_EMP",recommendations=[],revision=0,as_of_date=clock)
     assert validate_recommendation_result(empty,none)==none

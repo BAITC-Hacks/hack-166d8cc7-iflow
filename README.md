@@ -2,7 +2,7 @@
 Hackathon team repository for IFlow
 
 ## Authors
-- [Zhassyn Zhalynuly](https://github.com/zzhassyn)
+- [Zhassyn Zhalynuly](https://github.com/zzhassyn) (Backend Developer)
 - [Danial Amangeldi](https://github.com/danial41-design)
 - Nurislam Aldabergenuly
 -

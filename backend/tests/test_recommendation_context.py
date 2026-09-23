@@ -60,6 +60,28 @@ def test_primary_uncertainty_produces_question_not_course(tiny_bundle, clock):
     assert validate_recommendation_result(context, result) == result
 
 
+def test_repeated_unresolved_attempts_require_clarification(real_bundle, clock):
+    context = build_recommendation_context("E0047", build_snapshot(real_bundle), clock)
+    candidate = next(c for c in context.candidates if c.event_id == "EV_007")
+    raw = valid_result(context).model_dump()
+    raw["recommendations"] = [{"event_id": candidate.event_id, "explanation": "Fits a critical gap.",
+        "evidence": candidate.factors, "confidence": "high"}]
+    result = validate_recommendation_result(context, RecommendationResult.model_validate(raw))
+    assert result.status == "needs_clarification" and not result.recommendations
+    assert candidate.title in result.clarifying_questions[0]
+
+
+def test_repeated_attempts_do_not_leak_into_additional_offers(real_bundle, clock):
+    context = build_recommendation_context("E0047", build_snapshot(real_bundle), clock)
+    raw = valid_result(context).model_dump()
+    candidates = sorted(context.candidates, key=lambda c: c.event_id == "EV_007")
+    raw["recommendations"] = [{"event_id": c.event_id, "explanation": "Matches a skill gap.",
+        "evidence": c.factors, "confidence": "high", "additional_value": "Additional relevant skill."} for c in candidates]
+    result = validate_recommendation_result(context, RecommendationResult.model_validate(raw))
+    assert result.status == "success" and len(result.recommendations) == 1
+    assert result.recommendations[0].event_id != "EV_007"
+
+
 def test_symbat_receives_complete_profile_and_linked_history(real_bundle, clock):
     snapshot = build_snapshot(real_bundle, revision=7)
     context = build_recommendation_context("E0047", snapshot, clock)

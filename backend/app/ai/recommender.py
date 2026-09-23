@@ -18,6 +18,20 @@ class DisabledRecommender:
     def refine(self,context: AIRefinementInput) -> RecommendationResult:
         raise DomainError("recommendations_not_implemented","An AI provider is not configured")
 
+def needs_history_clarification(context, event_id):
+    if not any(pref.key == "noncompletion_reasons" for pref in context.unknown_preferences):
+        return False
+    prior = sorted((row.participation for row in context.history if row.event.event_id == event_id),
+                   key=lambda row: row.date, reverse=True)
+    unresolved = 0
+    for row in prior:
+        if row.status == "completed":
+            break
+        if row.status in {"no_show", "dropped", "declined"}:
+            unresolved += 1
+    return unresolved >= 2
+
+
 def validate_recommendation_result(context: AIRefinementInput,result: RecommendationResult) -> RecommendationResult:
     if (result.employee_id,result.revision,result.as_of_date)!=(context.employee_id,context.revision,context.as_of_date):
         raise ValueError("Recommendation context is stale or mismatched")
@@ -50,9 +64,20 @@ def validate_recommendation_result(context: AIRefinementInput,result: Recommenda
         if not result.clarifying_questions:
             raise ValueError("Uncertain primary choice requires clarifying questions")
         return result.model_copy(update={"status": "needs_clarification", "recommendations": []})
+    primary = result.recommendations[0]
+    if needs_history_clarification(context, primary.event_id):
+        title = allowed[primary.event_id].title
+        questions = {
+            "ru": f'Что помешало завершить или посетить «{title}» в прошлые разы? Это поможет выбрать подходящий следующий шаг.',
+            "kk": f'«{title}» іс-шарасына бұрын қатысуға немесе оны аяқтауға не кедергі болды?',
+            "en": f'What prevented you from attending or completing "{title}" previously? This will help choose a suitable next step.',
+        }
+        question = questions[context.employee.preferred_language]
+        return result.model_copy(update={"status": "needs_clarification", "recommendations": [],
+            "clarifying_questions": [question] + [q for q in result.clarifying_questions if q != question][:1]})
     # Conservative server gate: uncertainty or missing marginal benefit never
     # turns into extra nodes on the map or extra offers in the mail queue.
-    if any(item.confidence != "high" or not (item.additional_value or "").strip()
+    if any(item.confidence != "high" or not (item.additional_value or "").strip() or needs_history_clarification(context, item.event_id)
            for item in result.recommendations[1:]):
         return result.model_copy(update={"recommendations": result.recommendations[:1]})
     return result

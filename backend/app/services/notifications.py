@@ -33,12 +33,13 @@ def fingerprint(value):
 
 
 class NotificationService:
-    def __init__(self, dataset, ai_client, mailer, as_of_date, app_url, now=None):
+    def __init__(self, dataset, ai_client, mailer, as_of_date, app_url, now=None, auto_prepare=True):
         self.dataset, self.ai_client, self.mailer = dataset, ai_client, mailer
         self.as_of_date, self.app_url = as_of_date, app_url.rstrip("/")
         self.now = now or (lambda: datetime.now(timezone.utc))
         self.run_lock = Lock()
         self.cursor = 0
+        self.auto_prepare = auto_prepare
 
     @property
     def state(self):
@@ -61,7 +62,8 @@ class NotificationService:
 
     def _input_fingerprint(self, employee_id, snapshot):
         return fingerprint({
-            "selection_policy": "one-strongest-v2",
+            "selection_policy": "one-strongest-v3-history-check",
+            "ai_config": getattr(self.ai_client, "cache_key", type(self.ai_client).__name__),
             "employee": snapshot.employees.get(employee_id).model_dump(mode="json"),
             "history": [r.model_dump(mode="json") for r in effective_history(snapshot, employee_id)],
             "events": [e.model_dump(mode="json") for e in snapshot.events.list()],
@@ -537,7 +539,7 @@ class NotificationService:
         try:
             self.recover()
             self.dispatch(limit=1)
-            if isinstance(self.ai_client, DisabledRecommender):
+            if not self.auto_prepare or isinstance(self.ai_client, DisabledRecommender):
                 return
             employees = sorted(self.dataset.capture().employees.list(), key=lambda e: e.employee_id)
             for _ in range(len(employees)):

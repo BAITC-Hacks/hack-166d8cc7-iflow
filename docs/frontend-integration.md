@@ -218,20 +218,11 @@ their factors, clearly marked hypotheses and clarifying questions. Response
 employee identity, revision and application date must match the current context.
 The interface asks for a fresh request if those inputs have changed.
 
-A live provider is not configured. When eligible events need a model, the default
-endpoint returns HTTP 501 and the UI explains that the provider is unavailable.
-When there are no candidates, `no_candidates` can be returned without calling a
-model. The rule-based map remains available in both situations.
-
-Provider setup still needs transport timeouts within the ten-second budget;
-setting a reserved API-key environment variable alone does not install a provider.
-See [the LLM context contract](llm-context.md) for the supported injection and
-validation flow. Weekly pace and answers to clarification questions are not
-inputs to the current endpoint.
+OpenAI Responses is configured through the root `.env` (`AI_PROVIDER=openai`, `OPENAI_API_KEY`). See [provider setup](openai-provider.md). Missing credentials return 501; no candidates requires no model call. The map displays only the saved AI selection, with no rule-based filler nodes. Weekly pace changes duration estimates only. Saving answers to clarification questions is still pending.
 
 ## Remaining work and validation status
 
-- Configure a live LLM provider and evaluate recommendation quality.
+- Extend live model evaluations and meet the end-to-end latency target.
 - Add write contracts for profile/career-goal editing, event enrollment and
   answers to clarification questions.
 - Populate HR recommendation-coverage metrics when the provider workflow exists.

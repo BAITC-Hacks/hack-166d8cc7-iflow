@@ -27,6 +27,15 @@ every choice; it is a qualitative assessment, not a probability. Do not treat
 eligible alternatives as a required sequence of courses. If even the strongest
 choice cannot be justified without missing information, return status
 needs_clarification, recommendations=[], and one or two focused questions.
+Set additional_value=null for the primary choice. Distinguish skills marked
+critical by the role profile from skills that are merely useful; never call an
+unmarked skill critical. Name actual prior outcomes, not "attempts" or motivation.
+When the leading activity has repeated unresolved drops/no-shows/declines or low
+feedback, explicitly compare a viable alternative and account for those outcomes.
+Skill relevance alone does not justify confidently repeating that same activity.
+If the choice depends on why it repeatedly failed, ask that specific question and
+return needs_clarification instead of a high-confidence invitation. This is not a
+permanent ban: a later success or supplied explanation can change the assessment.
 
 employee.skills are assessed levels at last_review_date; current_skills already
 includes the deterministic post-assessment completion projection. Missing skills
@@ -44,6 +53,8 @@ attempts chronologically: dropping once and later completing is not simple rejec
 A no-show, drop, low rating or repeated failed attempt does not reveal its cause.
 Work format does not determine learning preferences. preferred_language is interface
 language, not course language. Never infer personality, laziness or motivation as fact.
+Do not speculate about learning format from work format or interface language,
+even as a tentative hypothesis. Prefer no hypotheses to weak or irrelevant ones.
 
 Only verifiable facts go into recommendations and their explanations. Any inferred
 interest/preference belongs in hypotheses, explicitly tentative, with supported

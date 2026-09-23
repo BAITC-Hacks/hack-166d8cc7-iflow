@@ -29,6 +29,37 @@ def valid_result(context):
     })
 
 
+@pytest.mark.parametrize("count", [1, 2, 3])
+def test_only_well_supported_extra_choices_survive(tiny_bundle, make_event, clock, count):
+    bundle = tiny_bundle.model_copy(update={"events": tuple(make_event(event_id=f"CHOICE_{i}") for i in range(3))})
+    context = build_recommendation_context("TEST_EMP", build_snapshot(bundle), clock)
+    assert len(context.candidates) >= 3
+    raw = valid_result(context).model_dump()
+    raw["recommendations"] = [{"event_id": c.event_id, "explanation": "Fits current skill requirements.",
+        "evidence": c.factors, "confidence": "high", "additional_value": "Addresses a distinct current gap."}
+        for c in context.candidates[:count]]
+    result = validate_recommendation_result(context, RecommendationResult.model_validate(raw))
+    assert len(result.recommendations) == count
+    if count > 1:
+        raw["recommendations"][-1]["confidence"] = "uncertain"
+        assert len(validate_recommendation_result(context, RecommendationResult.model_validate(raw)).recommendations) == 1
+        raw["recommendations"][-1]["confidence"] = "high"
+        raw["recommendations"][-1]["additional_value"] = "  "
+        assert len(validate_recommendation_result(context, RecommendationResult.model_validate(raw)).recommendations) == 1
+
+
+def test_primary_uncertainty_produces_question_not_course(tiny_bundle, clock):
+    context = build_recommendation_context("TEST_EMP", build_snapshot(tiny_bundle), clock)
+    raw = valid_result(context).model_dump()
+    raw["recommendations"][0]["confidence"] = "uncertain"
+    with pytest.raises(ValueError, match="clarifying questions"):
+        validate_recommendation_result(context, RecommendationResult.model_validate(raw))
+    raw["clarifying_questions"] = ["Какую задачу вы хотите решать увереннее?"]
+    result = validate_recommendation_result(context, RecommendationResult.model_validate(raw))
+    assert result.status == "needs_clarification" and not result.recommendations
+    assert validate_recommendation_result(context, result) == result
+
+
 def test_symbat_receives_complete_profile_and_linked_history(real_bundle, clock):
     snapshot = build_snapshot(real_bundle, revision=7)
     context = build_recommendation_context("E0047", snapshot, clock)

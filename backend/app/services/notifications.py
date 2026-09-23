@@ -61,6 +61,7 @@ class NotificationService:
 
     def _input_fingerprint(self, employee_id, snapshot):
         return fingerprint({
+            "selection_policy": "one-strongest-v2",
             "employee": snapshot.employees.get(employee_id).model_dump(mode="json"),
             "history": [r.model_dump(mode="json") for r in effective_history(snapshot, employee_id)],
             "events": [e.model_dump(mode="json") for e in snapshot.events.list()],
@@ -168,7 +169,7 @@ class NotificationService:
                 raise DomainError("conflict", "Employee data changed while generating; retry with fresh context")
             context = build_recommendation_context(employee_id, current, self.as_of_date())
             result = result.model_copy(update={"revision": current.revision})
-            validate_recommendation_result(context, result)
+            result = validate_recommendation_result(context, result)
             state = self.state.model_copy(deep=True)
             selected = {item.event_id for item in result.recommendations}
             for oid, old in state.offers.items():
@@ -196,7 +197,7 @@ class NotificationService:
                         title=candidate.title, explanation=item.explanation, rank=rank, created_at=self.now(),
                         updated_at=self.now(), session_date=session, input_fingerprint=token)
                     state = self._log(state, "offer_created", employee_id, oid)
-            state.generations[employee_id] = GenerationRecord(fingerprint=token, status=result.status if result.status == "no_candidates" else "ready",
+            state.generations[employee_id] = GenerationRecord(fingerprint=token, status="ready" if result.status == "success" else result.status,
                 updated_at=self.now(), result=result)
             self._save(state)
         return result

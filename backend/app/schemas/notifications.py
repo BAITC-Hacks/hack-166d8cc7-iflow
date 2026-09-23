@@ -143,7 +143,7 @@ class JournalEntry(Model):
 
 class GenerationRecord(Model):
     fingerprint: str
-    status: Literal["ready", "no_candidates", "failed"]
+    status: Literal["ready", "no_candidates", "needs_clarification", "failed"]
     updated_at: AwareDatetime
     retry_at: AwareDatetime | None = None
     error_code: str | None = None

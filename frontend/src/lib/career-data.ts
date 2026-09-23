@@ -1,4 +1,4 @@
-import type { Event as CatalogEvent, RecommendationContext, SkillGap } from './types';
+import type { Event as CatalogEvent, RecommendationContext, RecommendationItem } from './types';
 
 export const formats: Record<string, string> = { online: 'Онлайн', offline: 'Очно', self_paced: 'В своём темпе' };
 export const categories: Record<string, string> = { course: 'Курс', workshop: 'Воркшоп', mentoring: 'Менторство', certification: 'Сертификация', meetup: 'Встреча', compliance: 'Обязательное', onboarding: 'Онбординг' };
@@ -15,36 +15,14 @@ export const actualGain = (context: RecommendationContext, event: CatalogEvent, 
   return change ? Math.max(0, Math.min(change.max_level, (context.current_skills[id] ?? 0) + change.gain) - (context.current_skills[id] ?? 0)) : 0;
 };
 
-export function planSteps(context: RecommendationContext, gaps: SkillGap[], weeklyHours: number) {
-  const current = { ...context.current_skills };
-  const candidates = context.candidates.map(candidate => context.event_catalog.find(event => event.event_id === candidate.event_id)!).filter(Boolean)
-    .filter(event => event.format === 'self_paced' || event.duration_hours <= weeklyHours);
-  const plan: { event: CatalogEvent; start: number; end: number; reasons: string[] }[] = [];
-  let used = 0;
-  while (plan.length < 3) {
-    const score = (event: CatalogEvent) => gaps.reduce((sum, gap) => {
-      const develop = event.develops_skills.find(skill => skill.skill_id === gap.skill_id);
-      if (!develop) return sum;
-      const level = current[gap.skill_id] ?? 0;
-      return sum + Math.max(0, Math.min(gap.required_level - level, develop.gain, develop.max_level - level)) * (gap.is_critical ? 3 : 1);
-    }, 0);
-    const event = candidates.filter(item => !plan.some(step => step.event.event_id === item.event_id) && score(item) > 0)
-      .sort((a, b) => score(b) - score(a) || a.duration_hours - b.duration_hours || a.event_id.localeCompare(b.event_id))[0];
-    if (!event) break;
-    if (event.format !== 'self_paced' && used % weeklyHours + event.duration_hours > weeklyHours) used = Math.ceil(used / weeklyHours) * weeklyHours;
-    const start = Math.floor(used / weeklyHours) + 1;
-    used += event.duration_hours;
-    const end = Math.ceil(used / weeklyHours);
-    const addressed = gaps.filter(gap => gap.required_level > (current[gap.skill_id] ?? 0) && event.develops_skills.some(change => change.skill_id === gap.skill_id && change.max_level > (current[gap.skill_id] ?? 0)));
-    const past = context.history.filter(item => item.event.event_id === event.event_id);
-    plan.push({ event, start, end, reasons: [
-      `Развивает нужные навыки: ${addressed.map(gap => `${gap.name}${gap.is_critical ? ' (критический)' : ''}`).join(', ')}.`,
-      `Роль ${context.employee.role} и грейд ${context.employee.grade} подходят; предварительные требования проверены сервером.`,
-      `${hours(event.duration_hours)}, ${formats[event.format].toLowerCase()}. ${start === end ? `В пределах недели ${start}.` : `Распределяем по неделям ${start}–${end}.`} ${past.length ? `В истории есть ${past.length} участий в этом событии.` : 'В истории нет участий в этом событии.'}`,
-    ] });
-    for (const change of event.develops_skills) current[change.skill_id] = Math.max(current[change.skill_id] ?? 0, Math.min(change.max_level, (current[change.skill_id] ?? 0) + change.gain));
-  }
-  return plan;
+export function planSteps(context: RecommendationContext, recommendations: RecommendationItem[], weeklyHours: number) {
+  // Presentation only: keep AI order and cardinality; never add catalog fillers.
+  return recommendations.slice(0, 3).flatMap(item => {
+    const event = context.event_catalog.find(event => event.event_id === item.event_id);
+    if (!event || !context.candidates.some(candidate => candidate.event_id === item.event_id)) return [];
+    return [{ event, start: 1, end: Math.max(1, Math.ceil(event.duration_hours / Math.max(1, weeklyHours))),
+      reasons: [item.explanation, ...(item.additional_value ? [item.additional_value] : [])] }];
+  });
 }
 
 export interface CompletionOption { key: string; source_record_id: string | null; session_date: string | null; label: string }

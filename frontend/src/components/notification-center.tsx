@@ -103,11 +103,11 @@ function HRMail({token, employees}: {token: string; employees: Employees}) {
   </section>;
 }
 
-export function EmployeeNotificationCenter({token, employeeId}: {token: string; employeeId: string}) {
-  return <EmployeeMail key={`${token}:${employeeId}`} token={token} employeeId={employeeId}/>;
+export function EmployeeNotificationCenter({token, employeeId, onChanged}: {token: string; employeeId: string; onChanged?: () => void}) {
+  return <EmployeeMail key={`${token}:${employeeId}`} token={token} employeeId={employeeId} onChanged={onChanged}/>;
 }
 
-function EmployeeMail({token, employeeId}: {token: string; employeeId: string}) {
+function EmployeeMail({token, employeeId, onChanged}: {token: string; employeeId: string; onChanged?: () => void}) {
   const [data, setData] = useState<EmployeeNotifications | null>(null);
   const [preferences, setPreferences] = useState<Preferences | null>(null);
   const [later, setLater] = useState<Record<string, string>>({});
@@ -130,12 +130,13 @@ function EmployeeMail({token, employeeId}: {token: string; employeeId: string}) 
       await mailRequest(`${base}/offers/${encodeURIComponent(id)}/actions`, token, {...payload, command_id: command}, signal);
       if (!signal.aborted && action === 'view') setExpanded(id);
       await load(signal);
+      if (!signal.aborted) onChanged?.();
     });
   }
   return <section className="panel notification-center"><div className="section-title"><div><span className="eyebrow">СЛЕДУЮЩИЙ ШАГ</span><h2>Предложения и письма</h2></div><button className="button secondary" disabled={busy} onClick={() => run(load)}>Обновить</button></div>
     {notice && <p className="mail-notice" role="status">{notice}</p>}
     {data?.offers.length === 0 && <p>Предложения появятся после подготовки рекомендации. {data.generation?.status === 'failed' ? 'Подготовка временно недоступна.' : ''}</p>}
-    {data?.offers.map(offer => <article className="mail-offer" key={offer.id}><div className="section-title"><h3>{offer.title}</h3><span className="badge">{title(offer.status)}</span></div>
+    {data?.offers.filter(offer => ['proposed', 'viewed', 'snoozed', 'enrolled'].includes(offer.status)).map(offer => <article className="mail-offer" key={offer.id}><div className="section-title"><h3>{offer.title}</h3><span className="badge">{title(offer.status)}</span></div>
       {offer.status === 'proposed' && expanded !== offer.id ? <button className="text-button" disabled={busy} onClick={() => act(offer.id, 'view')}>Посмотреть предложение</button> : <p>{offer.explanation}</p>}
       {['proposed', 'viewed', 'snoozed'].includes(offer.status) && <><div className="mail-actions"><button className="button primary" disabled={busy} onClick={() => act(offer.id, 'enroll')}>Записаться{offer.session_date ? ` · ${offer.session_date}` : ''}</button></div>
         <details><summary>Отложить или отказаться</summary><div className="mail-grid"><label>Напомнить в общее время системы<input type="datetime-local" value={later[offer.id] ?? ''} onChange={e => setLater({...later, [offer.id]: e.target.value})}/></label><button className="button secondary" disabled={busy || !later[offer.id]} onClick={() => act(offer.id, 'later')}>Напомнить позже</button><label>Почему не подходит? Необязательно<input maxLength={1000} value={reasons[offer.id] ?? ''} onChange={e => setReasons({...reasons, [offer.id]: e.target.value})}/></label><button className="button secondary" disabled={busy} onClick={() => act(offer.id, 'decline')}>Не подходит</button></div></details></>}

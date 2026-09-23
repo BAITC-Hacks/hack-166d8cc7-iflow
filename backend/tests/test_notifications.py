@@ -67,6 +67,23 @@ def first_offer(service): return next(iter(service.state.offers.values()))
 def accepted(service): return [d for d in service.state.deliveries.values() if d.status == "accepted"]
 
 
+def test_uncertain_refresh_removes_old_offers_and_sends_nothing(workflow):
+    service, now, ai, mail = workflow
+    service.state.generations.clear()  # Force a new model response in this fixture.
+    class UncertainAI(FakeAI):
+        def refine(self, context):
+            result = super().refine(context)
+            return result.model_copy(update={"recommendations": [result.recommendations[0].model_copy(update={"confidence": "uncertain"})],
+                "clarifying_questions": ["Какая задача сейчас приоритетна?"]})
+    service.ai_client = UncertainAI()
+    result = service.generate("TEST_EMP")
+    assert result.status == "needs_clarification"
+    assert service.state.generations["TEST_EMP"].status == "needs_clarification"
+    assert all(offer.status == "invalidated" for offer in service.state.offers.values())
+    service.dispatch()
+    assert not mail.sent
+
+
 def test_disk_failure_after_smtp_acceptance_recovers_without_resend(workflow, monkeypatch):
     service, now, ai, mail = workflow
     repository = service.dataset.state_repository

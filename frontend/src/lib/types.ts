@@ -186,6 +186,8 @@ export interface RecommendationItem {
   event_id: string;
   explanation: string;
   evidence: RecommendationFactor[];
+  confidence: 'high' | 'uncertain';
+  additional_value: string | null;
 }
 
 export interface RecommendationHypothesis {
@@ -195,7 +197,7 @@ export interface RecommendationHypothesis {
 }
 
 export interface RecommendationResult extends Version {
-  status: "success" | "no_candidates";
+  status: "success" | "no_candidates" | "needs_clarification";
   employee_id: string;
   recommendations: RecommendationItem[];
   hypotheses: RecommendationHypothesis[];

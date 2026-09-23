@@ -265,6 +265,6 @@ Verification results, known limits, final tree and next-agent instructions: [doc
 
 ## Authors
 
-- [Zhassyn Zhalynuly](https://github.com/zzhassyn) (Backend Developer)
-- [Danial Amangeldi](https://github.com/danial41-design) (Backend Developer)
+- [Zhassyn Zhalynuly](https://github.com/zzhassyn)
+- [Danial Amangeldi](https://github.com/danial41-design) (Backend/ML Developer)
 - Nurislam Aldabergenuly

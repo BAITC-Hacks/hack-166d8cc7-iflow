@@ -29,3 +29,16 @@ class ActivityHistory(Model):
         if self.status == "dropped" and not 5 <= pct <= 95:
             raise ValueError("Dropped participation requires 5 to 95 percent")
         return self
+
+class EffectiveCompletion(Model):
+    completion_key: ID
+    event_id: ID
+    completed_on: Date
+
+class ParticipationView(Model):
+    source_record_id: str | None
+    event_id: ID
+    date: Date
+    status: Status
+    completed_on: Date | None
+    source: ActivityHistory | None
